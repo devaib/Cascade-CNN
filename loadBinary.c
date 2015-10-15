@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define PATH "/home/binghao/cnn/model.net"
+#define PATH "/home/binghao/model1.net"
 
 int main(){
     FILE *f;
