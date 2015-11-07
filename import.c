@@ -14,7 +14,7 @@ int main(void)
     float *b = malloc(N*sizeof(*b));   
 
     // Binary file operations
-    FILE *f = fopen("/Users/wbh/cnn/module1.bin", "rb");
+    FILE *f = fopen("/home/binghao/cnn/module1.bin", "rb");
     assert(fread(w, sizeof(*w), N*M, f) == N*M);
     assert(fread(b, sizeof(*b), N, f) == N);
     fclose(f);
