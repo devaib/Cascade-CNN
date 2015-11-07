@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project(Cnn_layer)
+find_package(OpenCV)
+include_directories(${OpenCV_INCLUDE_DIRS})
+add_executable(Cnn_layer Cnn_layer.c)
+target_link_libraries(Cnn_layer ${OpenCV_LIBS})
