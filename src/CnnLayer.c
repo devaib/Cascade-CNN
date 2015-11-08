@@ -3,8 +3,8 @@
 #include <math.h>
 #include <cv.h>
 #include <highgui.h>
-#include "/Users/wbh/cnn/src/Convolution.c"
-// #include "/home/binghao/cnn/src/Convolution.c"
+// #include "/Users/wbh/cnn/src/Convolution.c"
+#include "/home/binghao/cnn/src/Convolution.c"
 
 int main( int argc, char *argv[] ){
     IplImage *srcImg;

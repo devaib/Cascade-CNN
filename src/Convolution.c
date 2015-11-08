@@ -40,8 +40,8 @@ int Convolution(int img[][12], int height, int width, int channels){
     float *weight = malloc(Depth * Filter * sizeof(*weight));
     float *bias = malloc(Depth * sizeof(*bias));
 
-    // FILE *f = fopen("/home/binghao/cnn/module1.bin", "rb");
-    FILE *f = fopen("/Users/wbh/cnn/module1.bin", "rb");
+    FILE *f = fopen("/home/binghao/cnn/module1.bin", "rb");
+    // FILE *f = fopen("/Users/wbh/cnn/module1.bin", "rb");
     assert(fread(weight, sizeof(*weight), Depth*Filter, f) == Depth*Filter );
     assert(fread(bias, sizeof(*bias), Depth, f) == Depth);
     fclose(f);
@@ -88,7 +88,7 @@ int Convolution(int img[][12], int height, int width, int channels){
         for (row = 0; row < 10; row++){
             printf("-----------------------\n");
             for (col = 0; col < 10; col++){
-                printf("output of filter_num %d at row %d, col %d is : %f\n", filter_num, row, col, output[filter_num][row][col]);
+                printf("value of filter_num %d at row %d, col %d is : %f\n", filter_num, row, col, output[filter_num][row][col]);
             }
         }
     }
