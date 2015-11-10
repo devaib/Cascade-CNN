@@ -6,7 +6,6 @@
 float MultiplyByElement(float m1[][3], float m2[][3], int size){
     int i,j;
     float result = 0.0;
-    float output[16][10][10];
 
     for (i = 0; i < size; i++){
         for (j = 0; j < size; j++){
@@ -14,6 +13,8 @@ float MultiplyByElement(float m1[][3], float m2[][3], int size){
             // printf("%f * %f = %f\n", m1[i][j], m2[i][j], m1[i][j] * m2[i][j]);
         }
     }
+    printf("result: %f\n", result);
+    //exit(0);
 
     return result;
 }
@@ -58,8 +59,10 @@ int Convolution(int img[][12], int height, int width, int channels){
     for (k = 0; k < 16; k++){
         for (i = 0; i < 3; i++){
             for (j = 0; j < 3; j++){
-                printf("filter[%d][%d][%d] =  %f\n", k, i, j, weight[9*k + i + 3*j]);
-                filter[k][i][j] = weight[i + 3*j];
+                // printf("filter[%d][%d][%d] =  %f\n", k, i, j, weight[9*k + i + 3*j]);
+                // filter[k][i][j] = weight[9*k + i + 3*j];
+                printf("filter[%d][%d][%d] =  %f\n", k, i, j, weight[9*k + 3*i + j]);
+                filter[k][i][j] = weight[9*k + 3*i + j];
             }
         }
     }
@@ -72,7 +75,7 @@ int Convolution(int img[][12], int height, int width, int channels){
             for (col = 0; col < 10; col++){
                 for (i = 0; i < 3; i++){
                     for (j = 0; j < 3; j++){
-                        img_segment[i][j] = img[i+row][j+col];
+                        img_segment[i][j] = img[i+row][j+col] / 255.0;
                     }
                 }
 
@@ -84,15 +87,25 @@ int Convolution(int img[][12], int height, int width, int channels){
         }
     }
 
+    FILE *fp = fopen("/home/binghao/cnn/conv_layer_output.txt","w");
+    if (f = NULL){
+        printf("Error opening file!\n");
+        exit(1);
+    }
+
     for (filter_num = 0; filter_num < 16; filter_num++){
         for (row = 0; row < 10; row++){
-            printf("-----------------------\n");
+            // printf("-----------------------\n");
+            fprintf(fp, "-----------------------\n");
             for (col = 0; col < 10; col++){
-                printf("value of filter_num %d at row %d, col %d is : %f\n", filter_num, row, col, output[filter_num][row][col]);
+                // printf("value of filter_num %d at row %d, col %d is : %f\n", filter_num, row, col, output[filter_num][row][col]);
+                fprintf(fp, "value of filter_num %d at row %d, col %d is : %f\n", filter_num, row, col, output[filter_num][row][col]);
             }
         }
     }
     printf("output size: %d * %d *%d", row, col, filter_num);
+
+    fclose(fp);
     
     return 0;
 }
