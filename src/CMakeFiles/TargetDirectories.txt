@@ -1,1 +1,1 @@
-/home/binghao/cnn/src/CMakeFiles/CnnLayer.dir
+/Users/wbh/cnn/src/CMakeFiles/cnn.dir
