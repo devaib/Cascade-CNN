@@ -27,6 +27,15 @@ int firstLayer(int img[][12], int height, int width, int channels){
     float filter[16][3][3];
     float output1[16][10][10];
 
+    char path[] = "/home/binghao/cnn/module1.bin";
+    // char path[] = "/Users/wbh/cnn/module1.bin";
+
+    char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
+    // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
+
+    char pooling_output_path[] = "/home/binghao/cnn/pooling_ouput.txt";
+    // char pooling_output_path[] = "/Users/wbh/cnn/pooling_ouput.txt";
+
     // output the image data
     printf("image data start");
     for (i = 0; i < height; i++){
@@ -43,8 +52,8 @@ int firstLayer(int img[][12], int height, int width, int channels){
     float *weight = malloc(Depth * Filter * sizeof(*weight));
     float *bias = malloc(Depth * sizeof(*bias));
 
-    // FILE *f = fopen("/home/binghao/cnn/module1.bin", "rb");
-    FILE *f = fopen("/Users/wbh/cnn/module1.bin", "rb");
+    
+    FILE *f = fopen(path, "rb");
     assert(fread(weight, sizeof(*weight), Depth*Filter, f) == Depth*Filter );
     assert(fread(bias, sizeof(*bias), Depth, f) == Depth);
     fclose(f);
@@ -123,8 +132,7 @@ int firstLayer(int img[][12], int height, int width, int channels){
         }
     }
 
-    // FILE *ffp = fopen("/home/binghao/cnn/conv_layer_output.txt","w");
-    FILE *ffp = fopen("/Users/wbh/cnn/pooling_ouput.txt","w");
+    FILE *ffp = fopen(pooling_output_path,"w");
     for (k = 0; k < 16; k++){
         for (i = 0; i < 5; i++){
             for (j = 0; j < 5; j++){
@@ -138,8 +146,7 @@ int firstLayer(int img[][12], int height, int width, int channels){
 
     fclose(ffp);
 
-    // FILE *fp = fopen("/home/binghao/cnn/conv_layer_output.txt","w");
-    FILE *fp = fopen("/Users/wbh/cnn/conv_layer_output.txt","w");
+    FILE *fp = fopen(conv_layer_output_path,"w");
     if (f == NULL){
         printf("Error opening file!\n");
         exit(1);

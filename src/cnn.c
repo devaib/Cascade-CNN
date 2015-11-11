@@ -3,8 +3,8 @@
 #include <math.h>
 #include <cv.h>
 #include <highgui.h>
-#include "/Users/wbh/cnn/src/firstLayer.c"
-// #include "/home/binghao/cnn/src/Convolution.c"
+// #include "/Users/wbh/cnn/src/firstLayer.c"
+#include "/home/binghao/cnn/src/firstLayer.c"
 
 int main( int argc, char *argv[] ){
     IplImage *srcImg;
