@@ -3,8 +3,8 @@
 #include <math.h>
 #include <cv.h>
 #include <highgui.h>
-#include "/Users/wbh/cnn/src/firstLayer.c"
-// #include "/home/binghao/cnn/src/firstLayer.c"
+// #include "/Users/wbh/cnn/src/firstLayer.c"
+#include "/home/binghao/cnn/src/firstLayer.c"
 
 int main( int argc, char *argv[] ){
     IplImage *srcImg;
@@ -57,7 +57,7 @@ int main( int argc, char *argv[] ){
     int res;
     res = firstLayer(img, height, width, channels);
 
-    printf("Image size: %d x %d, channels: %d, step: %d\n", width, height, channels, step);
+    // printf("Image size: %d x %d, channels: %d, step: %d\n", width, height, channels, step);
 
     // show the image
     cvShowImage("mainWin1", srcImg);
