@@ -209,12 +209,15 @@ int firstLayer(int img[][12], int height, int width, int channels){
 
     // softmax
     float output8[2];
+    float out;
     float summ = expf(output7[0]) + expf(output7[1]);
-    output8[0] = -logf(expf(output7[0]) / summ);
-    output8[1] = -logf(expf(output7[1]) / summ);
+    output8[0] = logf(expf(output7[0]) / summ);
+    output8[1] = logf(expf(output7[1]) / summ);
+    out = expf(output8[1]);
 
     printf("output 1: %f\n", output8[0]);
     printf("output 2: %f\n", output8[1]);
+    printf("out: %f\n", out); 
 
     /*
     FILE *ffp = fopen(pooling_output_path,"w");

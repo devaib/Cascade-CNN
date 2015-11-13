@@ -65,7 +65,7 @@ int main( int argc, char *argv[] ){
     }
     int res;
     res = firstLayer(img, 12, 12, channels);
-    // cvSaveImage("/Users/wbh/cnn/car12.jpg", dstImg, 0);
+    // cvSaveImage("/home/binghao/cnn/cat.jpg", dstImg, 0);
 
 
     // show the image

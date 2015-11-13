@@ -1,12 +1,13 @@
 require 'nn'
 require 'image'
 require 'torch'
--- local filename ='/home/binghao/cnn/cat12.jpg'
-local filename ='/Users/wbh/cnn/cat12.jpg'
+local filename ='/home/binghao/cnn/resize/img/9.jpg'
+-- local filename ='/Users/wbh/cnn/cat12.jpg'
 local im =  image.load(filename):float()
+im=image.scale(im,12,12)
 torch.setdefaulttensortype('torch.FloatTensor')
--- network1 = torch.load('/home/binghao/cnn/model.net')
-network1 = torch.load('/Users/wbh/cnn/model.net')
+network1 = torch.load('/home/binghao/cnn/model.net')
+-- network1 = torch.load('/Users/wbh/cnn/model.net')
 net12 = nn.Sequential()
 net12:add(network1.modules[1])
 net12:add(network1.modules[2])
