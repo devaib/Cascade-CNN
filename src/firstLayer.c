@@ -43,14 +43,14 @@ int firstLayer(int img[][12], int height, int width, int channels){
     float filter2[16][16][5][5];
     float output1[16][10][10];
 
-    char path[] = "/home/binghao/cnn/module1.bin";
-    // char path[] = "/Users/wbh/cnn/module1.bin";
+    // char path[] = "/home/binghao/cnn/module1.bin";
+    char path[] = "/Users/wbh/cnn/module1.bin";
 
-    char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
-    // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
+    // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
+    char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
 
-    char pooling_output_path[] = "/home/binghao/cnn/pooling_ouput.txt";
-    // char pooling_output_path[] = "/Users/wbh/cnn/pooling_ouput.txt";
+    // char pooling_output_path[] = "/home/binghao/cnn/pooling_ouput.txt";
+    char pooling_output_path[] = "/Users/wbh/cnn/pooling_ouput.txt";
 
     /*
     // output the image data
@@ -98,7 +98,7 @@ int firstLayer(int img[][12], int height, int width, int channels){
         printf("bias[%d] = %f\n", i, bias2[i]);
     }
     exit(0);
-    //*/
+    */
 
     // output the filter
     for (k = 0; k < 16; k++){
@@ -213,7 +213,6 @@ int firstLayer(int img[][12], int height, int width, int channels){
     output8[0] = -logf(expf(output7[0]) / summ);
     output8[1] = -logf(expf(output7[1]) / summ);
 
-    printf("---------------------------\n");
     printf("output 1: %f\n", output8[0]);
     printf("output 2: %f\n", output8[1]);
     exit(0);

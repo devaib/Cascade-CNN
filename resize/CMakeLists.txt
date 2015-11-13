@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project(Display)
+find_package(OpenCV)
+include_directories(${OpenCV_INCLUDE_DIRS})
+add_executable(Display DisplayImage.c)
+target_link_libraries(Display ${OpenCV_LIBS})
