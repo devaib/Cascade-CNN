@@ -43,14 +43,14 @@ int firstLayer(int img[][12], int height, int width, int channels){
     float filter2[16][16][5][5];
     float output1[16][10][10];
 
-    // char path[] = "/home/binghao/cnn/module1.bin";
-    char path[] = "/Users/wbh/cnn/module1.bin";
+    char path[] = "/home/binghao/cnn/module1.bin";
+    // char path[] = "/Users/wbh/cnn/module1.bin";
 
-    // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
-    char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
+    char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
+    // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
 
-    // char pooling_output_path[] = "/home/binghao/cnn/pooling_ouput.txt";
-    char pooling_output_path[] = "/Users/wbh/cnn/pooling_ouput.txt";
+    char pooling_output_path[] = "/home/binghao/cnn/pooling_ouput.txt";
+    // char pooling_output_path[] = "/Users/wbh/cnn/pooling_ouput.txt";
 
     /*
     // output the image data

@@ -1,1 +1,1 @@
-/Users/wbh/cnn/resize/CMakeFiles/Display.dir
+/home/binghao/cnn/resize/CMakeFiles/Display.dir
