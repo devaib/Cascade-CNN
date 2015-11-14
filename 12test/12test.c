@@ -44,6 +44,7 @@ int main(void){
     char path[50];
     char file[50];
     strcpy(path, "/Users/wbh/cnn/test/c_faces/pic");
+    // strcpy(path, "/Users/wbh/cnn/test/nonfaces/4");
 
     char *suffix = ".jpg";
     char imgNum[10];
@@ -53,19 +54,31 @@ int main(void){
     // loop over test data set
     int loop;
     int digits;
-    for (loop = 1; loop < 14266; loop++){
+    for (loop = 1; loop < 14266; loop++){           // c_faces
+    // for (loop = 1; loop < 8620; loop++){         // nonfaces
         strcpy(file, path);
-        // add the zeros in the filename
         digits = (int)log10f((float)loop);
+        
+        // add the zeros in the filename(for c_faces)
         while (digits < 5 - 1){
             num = itos(0, imgNum);
             strcat(file, num);
             digits++;
         }
+
+        /*
+        // add zeros in the filename(for nonfaces)
+        while (digits < 4 - 1){
+            num = itos(0, imgNum);
+            strcat(file, num);
+            digits++;
+        }
+        */
+
         num = itos(loop, imgNum);
         strcat(file, num); 
         strcat(file, suffix); 
-        printf("%s\n", file);
+        printf("%s\n",file);
     
 
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
@@ -75,7 +88,6 @@ int main(void){
         continue;
     }
 
-    /*
     // get the image data
     width = srcImg -> width;
     height = srcImg -> height;
@@ -83,7 +95,6 @@ int main(void){
     channels = srcImg -> nChannels;
     data = (uchar*) srcImg -> imageData;
     printf("Image size: %d x %d, channels: %d, step: %d\n", width, height, channels, step);
-    */
 
     /*
     // create a window
@@ -102,20 +113,28 @@ int main(void){
     */
 
     // void cvPyrDown(srcImg, dstImg, IPL_GAUSSIAN_5*5);
+    /*
+     * resize the srcImg(any size) to dstImg(12*12)
     cvResize(srcImg, dstImg, CV_INTER_AREA);
     step = dstImg -> widthStep;
     channels = srcImg -> nChannels;
     data = (uchar*) dstImg-> imageData;
-    int img[12][12];
-    for (i = 0; i < 12; i++){
-        for (j = 0; j < 12; j++){
-            img[i][j] = data[i*step + j*channels];
-        }
-    }
-    int res;
-    res = firstLayer(img, 12, 12, channels);
-    // cvSaveImage("/home/binghao/cnn/cat.jpg", dstImg, 0);
+    */
 
+    const int PixelSpacing = 4; 
+    int row, col;
+    int img[12][12];
+    for (row = 0; row + 12 <= width; row += PixelSpacing){
+        for (col = 0; col + 12 <= height; col += PixelSpacing){
+            for (i = 0; i < 12; i++){
+                for (j = 0; j < 12; j++){
+                    img[i][j] = data[(i+row)*step + (j+col)*channels];
+                }
+            }
+            int res;
+            printf("%d%% tested, testing on image %s\n", (int)((float)loop*100/14266), file);
+            res = firstLayer(img, 12, 12, channels);
+            // cvSaveImage("/home/binghao/cnn/cat.jpg", dstImg, 0);
 
     /*
     // show the image
@@ -133,8 +152,10 @@ int main(void){
     cvDestroyWindow("mainWin1");
     cvDestroyWindow("mainWin2");
     */
+    
+        }
+    }
 
-    break;
     }
 
     return 0;
