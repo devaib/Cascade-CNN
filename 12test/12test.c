@@ -94,38 +94,35 @@ int main(void){
     channels = srcImg -> nChannels;
     data = (uchar*) srcImg -> imageData;
 
-    // image pyramid loop start
-    while (srcImg -> width >= 16){     
+    // image pyramid loop starts
+    const int MinImageSize = 16;
+    while (srcImg -> width >= MinImageSize){     
 
-    const int PixelSpacing = 4; 
-    int row, col;
-    int img[12][12];
-    for (row = 0; row + 12 <= width; row += PixelSpacing){
-        for (col = 0; col + 12 <= height; col += PixelSpacing){
-            for (i = 0; i < 12; i++){
-                for (j = 0; j < 12; j++){
-                    img[i][j] = data[(i+row)*step + (j+col)*channels];
+        const int PixelSpacing = 4;
+        int row, col;
+        int img[12][12];
+        
+        // window sliding loop starts
+        for (row = 0; row + 12 <= width; row += PixelSpacing){
+            for (col = 0; col + 12 <= height; col += PixelSpacing){
+                for (i = 0; i < 12; i++){
+                    for (j = 0; j < 12; j++){
+                        img[i][j] = data[(i+row)*step + (j+col)*channels];
+                    }
                 }
+                int res;
+                printf("%d%% tested, testing on image %s\n", (int)((float)loop*100/14266), file);
+                printf("image size: %d, test on row: %d, col: %d\n", srcImg -> width, row, col);
+                res = firstLayer(img, 12, 12, channels);
+                // cvSaveImage("/home/binghao/cnn/cat.jpg", dstImg, 0);
             }
-            int res;
-            printf("%d%% tested, testing on image %s\n", (int)((float)loop*100/14266), file);
-            printf("image size: %d, test on row: %d, col: %d\n", srcImg -> width, row, col);
-            res = firstLayer(img, 12, 12, channels);
-            // cvSaveImage("/home/binghao/cnn/cat.jpg", dstImg, 0);
-        }
-    }
+        }   // window sliding loop ends
 
-    // image pyramid
-    dstImg = doPyrDown(srcImg);
-    width = dstImg -> width;
-    height = dstImg -> height;
-    step = dstImg -> widthStep;
-    channels = dstImg -> nChannels;
-    data = (uchar*) dstImg-> imageData;
+        // pyramid down
+        dstImg = doPyrDown(srcImg);
+        srcImg = dstImg;
 
-    srcImg = dstImg;
-
-    } // image pyramid loop ends
+        } // image pyramid loop ends
 
     } // image testset loop ends
 
