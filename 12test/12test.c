@@ -5,6 +5,7 @@
 #include <highgui.h>
 #include <string.h>
 #include <math.h>
+#include <unistd.h>
 #include "/Users/wbh/cnn/12test/firstLayer.c"
 // #include "/home/binghao/cnn/resize/firstLayer.c"
 
@@ -24,6 +25,13 @@ char* itos(int i, char b[]){
     return b;
 }
 
+IplImage* doPyrDown(IplImage* src){
+    IplImage* result = cvCreateImage(cvSize(src -> width/2, src -> height/2), src -> depth, src -> nChannels);
+    cvPyrDown(src, result, CV_GAUSSIAN_5x5);
+
+    return result;
+}
+
 int main(void){
     IplImage *srcImg;
     IplImage *dstImg;
@@ -31,16 +39,6 @@ int main(void){
     uchar *data;
     int i, j, k;
 
-    /*
-    if ( argc < 2 ){
-        printf("No image file\n");
-        exit(0);
-    }
-    */
-
-    // load an image
-    // srcImg = cvLoadImage(argv[1], CV_LOAD_IMAGE_ANYCOLOR);
-    // dstImg = cvLoadImage(argv[1], CV_LOAD_IMAGE_ANYCOLOR);
     char path[50];
     char file[50];
     strcpy(path, "/Users/wbh/cnn/test/c_faces/pic");
@@ -51,9 +49,10 @@ int main(void){
     char *num;
     strcat(path, imgNum);
 
-    // loop over test data set
     int loop;
     int digits;
+
+    // image test loop starts
     for (loop = 1; loop < 14266; loop++){           // c_faces
     // for (loop = 1; loop < 8620; loop++){         // nonfaces
         strcpy(file, path);
@@ -82,7 +81,7 @@ int main(void){
     
 
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
-    dstImg = cvCreateImage(cvSize(12, 12), IPL_DEPTH_8U, 1);
+    // dstImg = cvCreateImage(cvSize(12, 12), IPL_DEPTH_8U, 1);
     if (!srcImg){
         printf("Could not load image file: %s\n", file);
         continue;
@@ -94,32 +93,9 @@ int main(void){
     step = srcImg -> widthStep;
     channels = srcImg -> nChannels;
     data = (uchar*) srcImg -> imageData;
-    printf("Image size: %d x %d, channels: %d, step: %d\n", width, height, channels, step);
 
-    /*
-    // create a window
-    cvNamedWindow("mainWin1", CV_WINDOW_AUTOSIZE);
-    cvMoveWindow("mainWin1", 100, 100);
-    cvNamedWindow("mainWin2", CV_WINDOW_AUTOSIZE);
-    cvMoveWindow("mainWin2", 500, 100);
-    */
-
-    /*
-    // invert the image (loop order: height ==> width ==> channels)
-    for (i = 0; i < height; i++)
-        for (j = 0; j < width; j++)
-            for (k = 0; k < channels; k++)
-                dstImg -> imageData[i*step + j*channels + k] = data[i*step + j*channels + k] - 30;
-    */
-
-    // void cvPyrDown(srcImg, dstImg, IPL_GAUSSIAN_5*5);
-    /*
-     * resize the srcImg(any size) to dstImg(12*12)
-    cvResize(srcImg, dstImg, CV_INTER_AREA);
-    step = dstImg -> widthStep;
-    channels = srcImg -> nChannels;
-    data = (uchar*) dstImg-> imageData;
-    */
+    // image pyramid loop start
+    while (srcImg -> width >= 16){     
 
     const int PixelSpacing = 4; 
     int row, col;
@@ -133,30 +109,25 @@ int main(void){
             }
             int res;
             printf("%d%% tested, testing on image %s\n", (int)((float)loop*100/14266), file);
+            printf("image size: %d, test on row: %d, col: %d\n", srcImg -> width, row, col);
             res = firstLayer(img, 12, 12, channels);
             // cvSaveImage("/home/binghao/cnn/cat.jpg", dstImg, 0);
-
-    /*
-    // show the image
-    cvShowImage("mainWin1", srcImg);
-    cvShowImage("mainWin2", dstImg);
-    
-    // wait for a key
-    // cvWaitKey(0);
-
-    // release the images
-    cvReleaseImage(&srcImg);
-    cvReleaseImage(&dstImg);
-
-    // destroy the windows
-    cvDestroyWindow("mainWin1");
-    cvDestroyWindow("mainWin2");
-    */
-    
         }
     }
 
-    }
+    // image pyramid
+    dstImg = doPyrDown(srcImg);
+    width = dstImg -> width;
+    height = dstImg -> height;
+    step = dstImg -> widthStep;
+    channels = dstImg -> nChannels;
+    data = (uchar*) dstImg-> imageData;
+
+    srcImg = dstImg;
+
+    } // image pyramid loop ends
+
+    } // image testset loop ends
 
     return 0;
 }

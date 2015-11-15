@@ -21,6 +21,8 @@ string.h
 -
 math.h
 -
+unistd.h
+-
 /Users/wbh/cnn/12test/firstLayer.c
 -
 
