@@ -49,12 +49,10 @@ int main(int argc, char *argv[]){
             printf("row: %d, col: %d, width: %d, height: %d\n", row, col, width, height);
 
             cvNamedWindow("win1", CV_WINDOW_AUTOSIZE);
-            cvMoveWindow("win1", 100, 100);
             cvRectangle(src, cvPoint(col, row), cvPoint(col+200, row+200), cvScalar(255, 0, 0, 0), 2, 4, 0);
             cvShowImage("win1", src);
 
             cvNamedWindow("win2", CV_WINDOW_AUTOSIZE);
-            cvMoveWindow("win2", 500, 500);
             cvShowImage("win2", dst);
 
             cvWaitKey(500);

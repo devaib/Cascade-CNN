@@ -27,7 +27,6 @@ int main(int argc, char *argv[]){
     const int MinImageSize = 10;
     while (src -> width >= MinImageSize){
         cvNamedWindow("win1", CV_WINDOW_AUTOSIZE);
-        cvMoveWindow("win1", 500, 500);
 
         width = src -> width;
         height = src -> height;
