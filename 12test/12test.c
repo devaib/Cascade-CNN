@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
 #include <cv.h>
 #include <highgui.h>
 #include <string.h>
@@ -18,15 +17,16 @@ char* itos(int i, char b[]){
         shifter = shifter/10;
     }while(shifter);
     *p = '\0';
-    do{ //Move back, inserting digits as u go
+    do{ //Move back and insert digits
         *--p = digit[i%10];
         i = i/10;
     }while(i);
     return b;
 }
 
-IplImage* doPyrDown(IplImage* src){
-    IplImage* result = cvCreateImage(cvSize(src -> width/2, src -> height/2), src -> depth, src -> nChannels);
+// image pyramid
+IplImage* doPyrDown(IplImage *src){
+    IplImage* result = cvCreateImage(cvSize(src -> width / 2, src -> height / 2), src -> depth, src -> nChannels);
     cvPyrDown(src, result, CV_GAUSSIAN_5x5);
 
     return result;
@@ -118,7 +118,7 @@ int main(void){
             }
         }   // window sliding loop ends
 
-        // pyramid down
+        // down pyramid
         dstImg = doPyrDown(srcImg);
         srcImg = dstImg;
 
