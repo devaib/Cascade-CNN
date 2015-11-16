@@ -87,16 +87,16 @@ int main(void){
         continue;
     }
 
-    // get the image data
-    width = srcImg -> width;
-    height = srcImg -> height;
-    step = srcImg -> widthStep;
-    channels = srcImg -> nChannels;
-    data = (uchar*) srcImg -> imageData;
-
     // image pyramid loop starts
     const int MinImageSize = 16;
     while (srcImg -> width >= MinImageSize){     
+        
+        // get the image data
+        width = srcImg -> width;
+        height = srcImg -> height;
+        step = srcImg -> widthStep;
+        channels = srcImg -> nChannels;
+        data = (uchar*) srcImg -> imageData;
 
         const int PixelSpacing = 4;
         int row, col;
