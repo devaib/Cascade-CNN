@@ -43,8 +43,8 @@ int firstLayer(int img[][12], int height, int width, int channels){
     float filter2[16][16][5][5];
     float output1[16][10][10];
 
-    char path[] = "/home/binghao/cnn/module1.bin";
-    // char path[] = "/Users/wbh/cnn/module1.bin";
+    // char path[] = "/home/binghao/cnn/module1.bin";
+    char path[] = "/Users/wbh/cnn/module1.bin";
 
     // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
     // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
@@ -206,15 +206,20 @@ int firstLayer(int img[][12], int height, int width, int channels){
             output7[i] += output4[j] * linear_para[i][j];
         }
         output7[i] += bias3[i];
-        // printf("output7[%d] = %f\n", i, output7[i]);
+        printf("output7[%d] = %f\n", i, output7[i]);
     }
 
     // softmax
     float output8[2];
-    float out;
-    float summ = expf(output7[0]) + expf(output7[1]);
-    output8[0] = logf(expf(output7[0]) / summ);
-    output8[1] = logf(expf(output7[1]) / summ);
+    float out, logsum;
+    float a, b, c, d;
+    a = output7[0];
+    b = output7[1];
+    c = a < b ? a : b;      // c = min(a, b)
+    d = a + b - c;          // d = max(a, b)
+    logsum = c + logf(1 + expf(d - c));
+    output8[0] = a - logsum;
+    output8[1] = b - logsum;
     out = expf(output8[1]);
 
     printf("output 1: %f\n", output8[0]);

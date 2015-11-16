@@ -1,1 +1,1 @@
-/home/binghao/cnn/testpyr/build/CMakeFiles/pyr.dir
+/Users/wbh/cnn/testpyr/build/CMakeFiles/pyr.dir

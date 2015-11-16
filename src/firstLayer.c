@@ -43,8 +43,8 @@ int firstLayer(int img[][12], int height, int width, int channels){
     float filter2[16][16][5][5];
     float output1[16][10][10];
 
-    char path[] = "/home/binghao/cnn/module1.bin";
-    // char path[] = "/Users/wbh/cnn/module1.bin";
+    // char path[] = "/home/binghao/cnn/module1.bin";
+    char path[] = "/Users/wbh/cnn/module1.bin";
 
     // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
     // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
@@ -211,14 +211,15 @@ int firstLayer(int img[][12], int height, int width, int channels){
 
     // softmax
     float output8[2];
-    float out;
-    float a, b, c;
+    float out, logsum;
+    float a, b, c, d;
     a = output7[0];
     b = output7[1];
-    c = a > b ? a : b;
-    printf("%f\n", c);
-    
-
+    c = a < b ? a : b;      // c = min(a, b)
+    d = a + b - c;          // d = max(a, b)
+    logsum = c + logf(1 + expf(d - c));
+    output8[0] = a - logsum;
+    output8[1] = b - logsum;
     out = expf(output8[1]);
 
     printf("output 1: %f\n", output8[0]);

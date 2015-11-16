@@ -1,1 +1,1 @@
-/home/binghao/cnn/testslide/build/CMakeFiles/slide.dir
+/Users/wbh/cnn/testslide/build/CMakeFiles/slide.dir
