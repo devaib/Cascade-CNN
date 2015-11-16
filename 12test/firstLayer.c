@@ -206,7 +206,7 @@ int firstLayer(int img[][12], int height, int width, int channels){
             output7[i] += output4[j] * linear_para[i][j];
         }
         output7[i] += bias3[i];
-        printf("output7[%d] = %f\n", i, output7[i]);
+        // printf("output7[%d] = %f\n", i, output7[i]);
     }
 
     // softmax
