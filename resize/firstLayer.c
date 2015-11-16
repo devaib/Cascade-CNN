@@ -46,10 +46,10 @@ int firstLayer(int img[][12], int height, int width, int channels){
     char path[] = "/home/binghao/cnn/module1.bin";
     // char path[] = "/Users/wbh/cnn/module1.bin";
 
-    char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
+    // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
     // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
 
-    char pooling_output_path[] = "/home/binghao/cnn/pooling_ouput.txt";
+    // char pooling_output_path[] = "/home/binghao/cnn/pooling_ouput.txt";
     // char pooling_output_path[] = "/Users/wbh/cnn/pooling_ouput.txt";
 
     /*
@@ -90,7 +90,7 @@ int firstLayer(int img[][12], int height, int width, int channels){
     fclose(f);
 
     /*
-    // output the weight and bias
+    // output the weight and bias of module4
     for (i = 0; i < Depth; i++){
         for (j = 0; j < Filter2; j++){
             printf("weight[%d, %d] = %f\n", i, j, weight2[Filter2 * i + j]);
@@ -127,12 +127,13 @@ int firstLayer(int img[][12], int height, int width, int channels){
     for (i = 0; i < 2; i++){
         for (j = 0; j < 16; j++){
             linear_para[i][j] = weight3[16*i + j];
+            // printf("linear parameter[%d][%d] = %f\n", i, j, weight3[16*i + j]); 
         }
     }
 
     // convolution
     int row, col, filter_num;
-    double res;
+    float res;
     for (filter_num = 0; filter_num < 16; filter_num++){
         for (row = 0; row < 10; row++){
             for (col = 0; col < 10; col++){
@@ -146,6 +147,7 @@ int firstLayer(int img[][12], int height, int width, int channels){
                 res += bias[filter_num];
 
                 output1[filter_num][row][col] = res;
+                // printf("output1[%d][%d][%d] = %f\n", filter_num, row, col, res);
             }
         }
     }

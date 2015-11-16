@@ -5,8 +5,8 @@
 #include <string.h>
 #include <math.h>
 #include <unistd.h>
-#include "/Users/wbh/cnn/12test/firstLayer.c"
-// #include "/home/binghao/cnn/resize/firstLayer.c"
+// #include "/Users/wbh/cnn/12test/firstLayer.c"
+#include "/home/binghao/cnn/12test/firstLayer.c"
 
 char* itos(int i, char b[]){
     char const digit[] = "0123456789";
@@ -41,7 +41,7 @@ int main(void){
 
     char path[50];
     char file[50];
-    strcpy(path, "/Users/wbh/cnn/test/c_faces/pic");
+    strcpy(path, "/home/binghao/cnn/test/c_faces/pic");
     // strcpy(path, "/Users/wbh/cnn/test/nonfaces/4");
 
     char *suffix = ".jpg";

@@ -46,10 +46,10 @@ int firstLayer(int img[][12], int height, int width, int channels){
     char path[] = "/home/binghao/cnn/module1.bin";
     // char path[] = "/Users/wbh/cnn/module1.bin";
 
-    char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
+    // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
     // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
 
-    char pooling_output_path[] = "/home/binghao/cnn/pooling_ouput.txt";
+    // char pooling_output_path[] = "/home/binghao/cnn/pooling_ouput.txt";
     // char pooling_output_path[] = "/Users/wbh/cnn/pooling_ouput.txt";
 
     /*
@@ -90,7 +90,7 @@ int firstLayer(int img[][12], int height, int width, int channels){
     fclose(f);
 
     /*
-    // output the weight and bias
+    // output the weight and bias of module4
     for (i = 0; i < Depth; i++){
         for (j = 0; j < Filter2; j++){
             printf("weight[%d, %d] = %f\n", i, j, weight2[Filter2 * i + j]);
@@ -127,12 +127,13 @@ int firstLayer(int img[][12], int height, int width, int channels){
     for (i = 0; i < 2; i++){
         for (j = 0; j < 16; j++){
             linear_para[i][j] = weight3[16*i + j];
+            // printf("linear parameter[%d][%d] = %f\n", i, j, weight3[16*i + j]); 
         }
     }
 
     // convolution
     int row, col, filter_num;
-    double res;
+    float res;
     for (filter_num = 0; filter_num < 16; filter_num++){
         for (row = 0; row < 10; row++){
             for (col = 0; col < 10; col++){
@@ -146,6 +147,7 @@ int firstLayer(int img[][12], int height, int width, int channels){
                 res += bias[filter_num];
 
                 output1[filter_num][row][col] = res;
+                // printf("output1[%d][%d][%d] = %f\n", filter_num, row, col, res);
             }
         }
     }
@@ -204,18 +206,24 @@ int firstLayer(int img[][12], int height, int width, int channels){
             output7[i] += output4[j] * linear_para[i][j];
         }
         output7[i] += bias3[i];
-        // printf("output7[%d] = %f\n", i, output7[i]);
+        printf("output7[%d] = %f\n", i, output7[i]);
     }
 
     // softmax
     float output8[2];
-    float summ = expf(output7[0]) + expf(output7[1]);
-    output8[0] = -logf(expf(output7[0]) / summ);
-    output8[1] = -logf(expf(output7[1]) / summ);
+    float out;
+    float a, b, c;
+    a = output7[0];
+    b = output7[1];
+    c = a > b ? a : b;
+    printf("%f\n", c);
+    
+
+    out = expf(output8[1]);
 
     printf("output 1: %f\n", output8[0]);
     printf("output 2: %f\n", output8[1]);
-    exit(0);
+    printf("out: %f\n", out); 
 
     /*
     FILE *ffp = fopen(pooling_output_path,"w");

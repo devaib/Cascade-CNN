@@ -54,6 +54,7 @@ int main(int argc, char *argv[]){
 
             cvNamedWindow("win2", CV_WINDOW_AUTOSIZE);
             cvShowImage("win2", dst);
+            cvMoveWindow("win2", 100, 100);
 
             cvWaitKey(500);
 

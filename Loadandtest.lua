@@ -1,7 +1,7 @@
 require 'nn'
 require 'image'
 require 'torch'
-local filename ='/home/binghao/cnn/resize/img/9.jpg'
+local filename ='/home/binghao/cnn/src/1.jpg'
 -- local filename ='/Users/wbh/cnn/cat12.jpg'
 local im =  image.load(filename):float()
 im=image.scale(im,12,12)
