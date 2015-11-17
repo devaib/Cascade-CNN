@@ -12,6 +12,9 @@ int main( int argc, char *argv[] ){
     int height, width, step, channels;
     uchar *data;
     int i, j, k;
+    float mean_x = 0.0;
+    float mean_x2 = 0.0;
+    float std = 0.0;
 
     if ( argc < 2 ){
         printf("No image file\n");
@@ -33,7 +36,7 @@ int main( int argc, char *argv[] ){
     channels = srcImg -> nChannels;
     data = (uchar*) srcImg -> imageData;
 
-    int img[width][height];
+    float img[width][height];
 
     // create a window
     cvNamedWindow("mainWin1", CV_WINDOW_AUTOSIZE);
@@ -42,9 +45,23 @@ int main( int argc, char *argv[] ){
     cvMoveWindow("mainWin2", 500, 100);
 
     // read the image into img
-    for (i = 0; i < height; i++)
-        for (j = 0; j < width; j++)
-            img[i][j] = data[ i*step + j*channels];
+    for (i = 0; i < height; i++){
+        for (j = 0; j < width; j++){
+            img[i][j] = data[ i*step + j*channels] / 255.0;
+            mean_x += img[i][j];
+            mean_x2 += pow(img[i][j], 2);
+        }
+    }
+    mean_x /= 144.0;
+    mean_x2 /= 144.0;
+    std = sqrt(mean_x2 - pow(mean_x, 2));
+    for (i = 0; i < height; i++){
+        for (j = 0; j < width; j++){
+            img[i][j] -= mean_x;
+            img[i][j] /= std;
+            // printf("img[%d][%d] = %f\n", i, j, img[i][j]);
+        }
+    }
 
     /*
     for (i = 0; i < height; i++){
@@ -54,7 +71,7 @@ int main( int argc, char *argv[] ){
     }
     */
 
-    int res;
+    float res;
     res = firstLayer(img, height, width, channels);
 
     // printf("Image size: %d x %d, channels: %d, step: %d\n", width, height, channels, step);

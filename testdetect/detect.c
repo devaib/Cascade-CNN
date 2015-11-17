@@ -5,8 +5,8 @@
 #include <string.h>
 #include <math.h>
 #include <unistd.h>
-#include "/Users/wbh/cnn/12test/firstLayer.c"
-// #include "/home/binghao/cnn/12test/firstLayer.c"
+#include "/Users/wbh/cnn/testdetect/firstLayer.c"
+// #include "/home/binghao/cnn/testdetect/firstLayer.c"
 
 char* itos(int i, char b[]){
     char const digit[] = "0123456789";
@@ -81,15 +81,19 @@ int main(void){
     
 
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
-    // dstImg = cvCreateImage(cvSize(12, 12), IPL_DEPTH_8U, 1);
     if (!srcImg){
         printf("Could not load image file: %s\n", file);
         continue;
     }
+    srcImg = doPyrDown(srcImg);              // 32 x 32
+    //srcImg = doPyrDown(srcImg); srcImg = doPyrDown(srcImg);      // 16 x 16
+    dstImg = cvCreateImage(cvSize(400, 400), IPL_DEPTH_8U, 1);
+
+    cvNamedWindow("win", CV_WINDOW_AUTOSIZE);
 
     // image pyramid loop starts
-    const int MinImageSize = 16;
-    while (srcImg -> width >= MinImageSize){     
+    // const int MinImageSize = 16;
+    // while (srcImg -> width >= MinImageSize){     
         
         // get the image data
         width = srcImg -> width;
@@ -116,21 +120,26 @@ int main(void){
                 res = firstLayer(img, 12, 12, channels);
                 
                 // threshold
-                if (res > -9.0){
+                if (res > -15.0){
                     printf("----------face detected--------\n----\n----\n----- \n" );
+                    cvRectangle(srcImg, cvPoint(col, row), cvPoint(col+12, row+12), cvScalar(255, 0, 0, 0), 1, 4, 0);
                 }
                 // cvSaveImage("/home/binghao/cnn/cat.jpg", dstImg, 0);
             }
         }   // window sliding loop ends
 
         // down pyramid
-        dstImg = doPyrDown(srcImg);
-        srcImg = dstImg;
+        // dstImg = doPyrDown(srcImg);
+        // srcImg = dstImg;
 
-        } // image pyramid loop ends
+        // } // image pyramid loop ends
+        cvResize(srcImg, dstImg, CV_INTER_AREA);
+        cvShowImage("win", dstImg);
+        cvWaitKey(1000);
 
     } // image testset loop ends
 
+        cvDestroyWindow("win");
     return 0;
 }
 
