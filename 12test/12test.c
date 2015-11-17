@@ -98,13 +98,13 @@ int main(void){
         channels = srcImg -> nChannels;
         data = (uchar*) srcImg -> imageData;
 
-        const int PixelSpacing = 4;
+        const int Stride = 4;
         int row, col;
         int img[12][12];
         
         // window sliding loop starts
-        for (row = 0; row + 12 <= width; row += PixelSpacing){
-            for (col = 0; col + 12 <= height; col += PixelSpacing){
+        for (row = 0; row + 12 <= height; row += Stride){
+            for (col = 0; col + 12 <= width; col += Stride){
                 for (i = 0; i < 12; i++){
                     for (j = 0; j < 12; j++){
                         img[i][j] = data[(i+row)*step + (j+col)*channels];
