@@ -2,9 +2,10 @@ require 'nn'
 require 'nnx'
 require 'image'
 require 'torch'
---local filename ='/Users/wbh/cnn/resize/img/1.jpg'
+local filename ='/Users/wbh/cnn/resize/img/2.jpg'
 --local filename ='/Users/wbh/cnn/test/c_faces/pic00009.jpg'
-local filename ='/Users/wbh/cnn/test/nonfaces/40009.jpg'
+--local filename ='/Users/wbh/cnn/test/nonfaces/40009.jpg'
+--local filename = '/Users/wbh/cnn/src/3.jpg'
 local im =  image.load(filename):float()
 im=image.scale(im,12,12)
 local imean=im:mean()

@@ -38,6 +38,9 @@ int main(void){
     int height, width, step, channels;
     uchar *data;
     int i, j, k;
+    float mean_x = 0.0;
+    float mean_x2 = 0.0;
+    float std = 0.0;
 
     char path[50];
     char file[50];
@@ -85,8 +88,11 @@ int main(void){
         printf("Could not load image file: %s\n", file);
         continue;
     }
-    srcImg = doPyrDown(srcImg);              // 32 x 32
-    //srcImg = doPyrDown(srcImg); srcImg = doPyrDown(srcImg);      // 16 x 16
+    
+    // image pyramid manually
+    // srcImg = doPyrDown(srcImg);              // 32 x 32
+    srcImg = doPyrDown(srcImg); srcImg = doPyrDown(srcImg);      // 16 x 16
+
     dstImg = cvCreateImage(cvSize(400, 400), IPL_DEPTH_8U, 1);
 
     cvNamedWindow("win", CV_WINDOW_AUTOSIZE);
@@ -104,7 +110,7 @@ int main(void){
 
         const int Stride = 4;
         int row, col;
-        int img[12][12];
+        float img[12][12];
         
         // window sliding loop starts
         for (row = 0; row + 12 <= height; row += Stride){
@@ -112,18 +118,32 @@ int main(void){
                 for (i = 0; i < 12; i++){
                     for (j = 0; j < 12; j++){
                         img[i][j] = data[(i+row)*step + (j+col)*channels];
+                        mean_x += img[i][j];
+                        mean_x2 += pow(img[i][j], 2);
                     }
                 }
-                double res;
+                mean_x /= 144.0;
+                mean_x2 /= 144.0;
+                std = sqrt(mean_x2 - pow(mean_x, 2));
+                for (i = 0; i < 12; i++){
+                    for (j = 0; j < 12; j++){
+                        img[i][j] -= mean_x;
+                        img[i][j] /= std;
+                        // printf("img[%d][%d] = %f\n", i, j, img[i][j]);
+                    }
+                }
+
+                float res;
                 printf("%d%% tested, testing on image %s\n", (int)((float)loop*100/14266), file);
                 printf("image size: %d, test on row: %d, col: %d\n", srcImg -> width, row, col);
                 res = firstLayer(img, 12, 12, channels);
                 
                 // threshold
-                if (res > -15.0){
-                    printf("----------face detected--------\n----\n----\n----- \n" );
+                if (res > 0.5){
+                    printf("\n\n------------------ face detected -------------------\n\n");
                     cvRectangle(srcImg, cvPoint(col, row), cvPoint(col+12, row+12), cvScalar(255, 0, 0, 0), 1, 4, 0);
                 }
+
                 // cvSaveImage("/home/binghao/cnn/cat.jpg", dstImg, 0);
             }
         }   // window sliding loop ends

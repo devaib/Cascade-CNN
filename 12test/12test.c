@@ -38,6 +38,9 @@ int main(void){
     int height, width, step, channels;
     uchar *data;
     int i, j, k;
+    float mean_x = 0.0;
+    float mean_x2 = 0.0;
+    float std = 0.0;
 
     char path[50];
     char file[50];
@@ -100,26 +103,38 @@ int main(void){
 
         const int Stride = 4;
         int row, col;
-        int img[12][12];
+        float img[12][12];
+        mean_x = 0.0;
+        mean_x2 = 0.0;
         
         // window sliding loop starts
         for (row = 0; row + 12 <= height; row += Stride){
             for (col = 0; col + 12 <= width; col += Stride){
                 for (i = 0; i < 12; i++){
                     for (j = 0; j < 12; j++){
-                        img[i][j] = data[(i+row)*step + (j+col)*channels];
+                        img[i][j] = data[(i+row)*step + (j+col)*channels] / 255.0;
+                        mean_x += img[i][j];
+                        mean_x2 += pow(img[i][j], 2);
                     }
                 }
-                double res;
+
+                mean_x /= 144.0;
+                mean_x2 /= 144.0;
+                std = sqrt(mean_x2 - pow(mean_x, 2));
+                for (i = 0; i < 12; i++){
+                    for (j = 0; j < 12; j++){
+                        img[i][j] -= mean_x;
+                        img[i][j] /= std;
+                        //printf("img[%d][%d] = %f\n", i, j, img[i][j]);
+                    }
+                }
+                printf("here\n");
+
+                float res;
                 printf("%d%% tested, testing on image %s\n", (int)((float)loop*100/14266), file);
                 printf("image size: %d, test on row: %d, col: %d\n", srcImg -> width, row, col);
                 res = firstLayer(img, 12, 12, channels);
                 
-                // threshold
-                if (res > -9.0){
-                    printf("----------face detected--------\n----\n----\n----- \n" );
-                }
-                // cvSaveImage("/home/binghao/cnn/cat.jpg", dstImg, 0);
             }
         }   // window sliding loop ends
 

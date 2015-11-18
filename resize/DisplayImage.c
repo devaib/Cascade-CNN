@@ -12,6 +12,9 @@ int main( int argc, char *argv[] ){
     int height, width, step, channels;
     uchar *data;
     int i, j, k;
+    float mean_x = 0.0;
+    float mean_x2 = 0.0;
+    float std = 0.0;
 
     if ( argc < 2 ){
         printf("No image file\n");
@@ -57,13 +60,26 @@ int main( int argc, char *argv[] ){
     step = dstImg -> widthStep;
     channels = srcImg -> nChannels;
     data = (uchar*) dstImg-> imageData;
-    int img[12][12];
+    float img[12][12];
     for (i = 0; i < 12; i++){
         for (j = 0; j < 12; j++){
-            img[i][j] = data[i*step + j*channels];
+            img[i][j] = data[i*step + j*channels] / 255.0;
+            mean_x += img[i][j];
+            mean_x2 += pow(img[i][j], 2);
         }
     }
-    int res;
+    mean_x /= 144.0;
+    mean_x2 /= 144.0;
+    std = sqrt(mean_x2 - pow(mean_x, 2));
+    for (i = 0; i < 12; i++){
+        for (j = 0; j < 12; j++){
+            img[i][j] -= mean_x;
+            img[i][j] /= std;
+            // printf("img[%d][%d] = %f\n", i, j, img[i][j]);
+        }
+    }
+
+    float res;
     res = firstLayer(img, 12, 12, channels);
     // cvSaveImage("/home/binghao/cnn/cat.jpg", dstImg, 0);
 
