@@ -6,7 +6,23 @@
 #include "/Users/wbh/cnn/resize/firstLayer.c"
 // #include "/home/binghao/cnn/resize/firstLayer.c"
 
-int main( int argc, char *argv[] ){
+char* itos(int i, char b[]){
+    char const digit[] = "0123456789";
+    char* p = b;
+    int shifter = i;
+    do{ //Move to where representation ends
+        ++p;
+        shifter = shifter/10;
+    }while(shifter);
+    *p = '\0';
+    do{ //Move back and insert digits
+        *--p = digit[i%10];
+        i = i/10;
+    }while(i);
+    return b;
+}
+
+int main( void ){ 
     IplImage *srcImg;
     IplImage *dstImg;
     int height, width, step, channels;
@@ -15,45 +31,56 @@ int main( int argc, char *argv[] ){
     float mean_x = 0.0;
     float mean_x2 = 0.0;
     float std = 0.0;
+    int faces = 0;
+    int nonfaces = 0;
 
-    if ( argc < 2 ){
-        printf("No image file\n");
-        exit(0);
+    char path[50];
+    char file[50];
+    strcpy(path, "/Users/wbh/cnn/test/c_faces/pic");
+    // strcpy(path, "/Users/wbh/cnn/test/nonfaces/4");
+
+    char *suffix = ".jpg";
+    char imgNum[10];
+    char *num;
+    strcat(path, imgNum);
+
+    int loop;
+    int digits;
+
+    for (loop = 1; loop < 14266; loop++){
+    // for (loop = 1; loop < 8620; loop++){
+
+    strcpy(file, path);
+    digits = (int)log10f((float)loop);
+    
+    // add the zeros in the filename(for c_faces)
+    while (digits < 5 - 1){
+        num = itos(0, imgNum);
+        strcat(file, num);
+        digits++;
     }
+
+    /*
+    // add zeros in the filename(for nonfaces)
+    while (digits < 4 - 1){
+        num = itos(0, imgNum);
+        strcat(file, num);
+        digits++;
+    }
+    */
+
+    num = itos(loop, imgNum);
+    strcat(file, num); 
+    strcat(file, suffix); 
+    printf("%d%% tested, testing on %s\n", (int)((float)loop/14266*100), file);
 
     // load an image
-    // srcImg = cvLoadImage(argv[1], CV_LOAD_IMAGE_ANYCOLOR);
-    // dstImg = cvLoadImage(argv[1], CV_LOAD_IMAGE_ANYCOLOR);
-    srcImg = cvLoadImage(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
+    srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
     dstImg = cvCreateImage(cvSize(12, 12), IPL_DEPTH_8U, 1);
     if (!srcImg){
-        printf("Could not load image file: %s\n", argv[1]);
-        exit(0);
+        printf("Could not load image file: %s\n", file); 
+        continue;
     }
-
-    /*
-    // get the image data
-    width = srcImg -> width;
-    height = srcImg -> height;
-    step = srcImg -> widthStep;
-    channels = srcImg -> nChannels;
-    data = (uchar*) srcImg -> imageData;
-    printf("Image size: %d x %d, channels: %d, step: %d\n", width, height, channels, step);
-    */
-
-    // create a window
-    cvNamedWindow("mainWin1", CV_WINDOW_AUTOSIZE);
-    cvMoveWindow("mainWin1", 100, 100);
-    cvNamedWindow("mainWin2", CV_WINDOW_AUTOSIZE);
-    cvMoveWindow("mainWin2", 500, 100);
-
-    /*
-    // invert the image (loop order: height ==> width ==> channels)
-    for (i = 0; i < height; i++)
-        for (j = 0; j < width; j++)
-            for (k = 0; k < channels; k++)
-                dstImg -> imageData[i*step + j*channels + k] = data[i*step + j*channels + k] - 30;
-    */
 
     // void cvPyrDown(srcImg, dstImg, IPL_GAUSSIAN_5*5);
     cvResize(srcImg, dstImg, CV_INTER_AREA);
@@ -82,22 +109,18 @@ int main( int argc, char *argv[] ){
     float res;
     res = firstLayer(img, 12, 12, channels);
     // cvSaveImage("/home/binghao/cnn/cat.jpg", dstImg, 0);
-
-
-    // show the image
-    cvShowImage("mainWin1", srcImg);
-    cvShowImage("mainWin2", dstImg);
     
-    // wait for a key
-    cvWaitKey(0);
+    if (res > 0.5){
+        faces++;
 
-    // release the images
-    cvReleaseImage(&srcImg);
-    cvReleaseImage(&dstImg);
+    }else{
+        nonfaces++;
+    }
+    }
 
-    // destroy the windows
-    cvDestroyWindow("mainWin1");
-    cvDestroyWindow("mainWin2");
+    printf("-----------------------------\n");
+    float ratio = (float)faces / ((float)faces + (float)nonfaces);
+    printf("object detected: %d out of %d, correct ratio: %.2f%%", faces, faces + nonfaces, ratio*100);
 
     return 0;
 }

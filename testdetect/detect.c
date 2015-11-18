@@ -141,7 +141,7 @@ int main(void){
                 // threshold
                 if (res > 0.5){
                     printf("\n\n------------------ face detected -------------------\n\n");
-                    cvRectangle(srcImg, cvPoint(col, row), cvPoint(col+12, row+12), cvScalar(255, 0, 0, 0), 1, 4, 0);
+                    cvRectangle(srcImg, cvPoint(col, row), cvPoint(col+11, row+11), cvScalar(255, 0, 0, 0), 1, 4, 0);
                 }
 
                 // cvSaveImage("/home/binghao/cnn/cat.jpg", dstImg, 0);

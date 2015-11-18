@@ -263,7 +263,7 @@ float firstLayer(float img[][12], int height, int width, int channels){
     
     */
 
-    return 0;
+    return out[0];
 }
 
 
