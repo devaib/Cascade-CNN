@@ -1,1 +1,0 @@
-/Users/wbh/cnn/12test/build/CMakeFiles/12test.dir

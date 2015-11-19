@@ -1,1 +1,0 @@
-/Users/wbh/cnn/testdetect/build/CMakeFiles/detect.dir

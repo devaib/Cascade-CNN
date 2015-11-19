@@ -1,1 +1,0 @@
-/Users/wbh/cnn/resize/build/CMakeFiles/Display.dir

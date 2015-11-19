@@ -1,0 +1,1 @@
+/Users/wbh/cnn/12net/src/build/CMakeFiles/cnn.dir
