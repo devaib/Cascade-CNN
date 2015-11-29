@@ -36,7 +36,7 @@ float MultiplyByElement5(float m1[][5][5], float m2[][5][5], int size){
     return result;
 }
 
-int firstLayer(int img[][12], int height, int width, int channels){
+float firstLayer(float img[][12], int height, int width, int channels){
     int i, j, k, l;
     float img_segment[3][3];
     float filter[16][3][3];
@@ -44,7 +44,7 @@ int firstLayer(int img[][12], int height, int width, int channels){
     float output1[16][10][10];
 
     // char path[] = "/home/binghao/cnn/module1.bin";
-    char path[] = "/Users/wbh/cnn/module1.bin";
+    char path[] = "/Users/wbh/cnn/12cnet/module1.bin";
 
     // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
     // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
@@ -139,7 +139,7 @@ int firstLayer(int img[][12], int height, int width, int channels){
             for (col = 0; col < 10; col++){
                 for (i = 0; i < 3; i++){
                     for (j = 0; j < 3; j++){
-                        img_segment[i][j] = img[i+row][j+col] / 255.0;
+                        img_segment[i][j] = img[i+row][j+col];
                     }
                 }
 
@@ -182,11 +182,10 @@ int firstLayer(int img[][12], int height, int width, int channels){
                     }
                 }
                 output2[k][row][col] = maxpool;
-                // printf("result: %f\n", maxpool);    exit(0);
+                // printf("result: %f, filter: %d, row: %d, col: %d\n", maxpool, k, row, col);  
             }
         }
     }
-
 
     // convolution 2
     float output4[16];
@@ -211,7 +210,7 @@ int firstLayer(int img[][12], int height, int width, int channels){
 
     // softmax
     float output8[2];
-    float out, logsum;
+    float out[2], logsum;
     float a, b, c, d;
     a = output7[0];
     b = output7[1];
@@ -220,11 +219,15 @@ int firstLayer(int img[][12], int height, int width, int channels){
     logsum = c + logf(1 + expf(d - c));
     output8[0] = a - logsum;
     output8[1] = b - logsum;
-    out = expf(output8[1]);
+    out[0] = expf(output8[0]);
+    out[1] = expf(output8[1]);
 
+    /*
     printf("output 1: %f\n", output8[0]);
     printf("output 2: %f\n", output8[1]);
-    printf("out: %f\n", out); 
+    printf("out: %f\n", out[0]); 
+    printf("out: %f\n", out[1]); 
+    */
 
     /*
     FILE *ffp = fopen(pooling_output_path,"w");
@@ -261,7 +264,7 @@ int firstLayer(int img[][12], int height, int width, int channels){
     
     */
 
-    return 0;
+    return out[0];
 }
 
 

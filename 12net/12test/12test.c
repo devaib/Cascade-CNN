@@ -158,9 +158,11 @@ int main(void){
         } // image pyramid loop end
 
         // show all the detected objects
-        while (--num_object >= 0){
+        while (num_object > 0){
+            num_object--;
             printf("face detected at image size: %d, row: %d, col: %d\n", object[num_object][0], object[num_object][1], object[num_object][2]);
         }
+        exit(0);
 
     } // image testset loop ends
 

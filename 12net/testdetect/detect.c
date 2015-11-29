@@ -90,8 +90,8 @@ int main(void){
     }
     
     // image pyramid manually
-    // srcImg = doPyrDown(srcImg);              // 32 x 32
-    srcImg = doPyrDown(srcImg); srcImg = doPyrDown(srcImg);      // 16 x 16
+    srcImg = doPyrDown(srcImg);              // 32 x 32
+    // srcImg = doPyrDown(srcImg); srcImg = doPyrDown(srcImg);      // 16 x 16
 
     dstImg = cvCreateImage(cvSize(400, 400), IPL_DEPTH_8U, 1);
 
@@ -150,8 +150,9 @@ int main(void){
                 // threshold
                 if (res > 0.5){
                     printf("\n\n------------------ face detected at row: %d, col: %d -------------------\n\n", row, col);
-                    object[num_object++][0] = col;
+                    object[num_object][0] = col;
                     object[num_object][1] = row;
+                    num_object++;
                     
                 }
 
@@ -159,7 +160,8 @@ int main(void){
             }
         }   // window sliding loop ends
         while (num_object >= 0){
-            col = object[num_object--][0];
+            num_object--;
+            col = object[num_object][0];
             row = object[num_object][1];
             cvRectangle(srcImg, cvPoint(col, row), cvPoint(col+11, row+11), cvScalar(255, 0, 0, 0), 1, 4, 0);
         }
