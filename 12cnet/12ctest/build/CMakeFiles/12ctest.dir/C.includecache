@@ -6,6 +6,16 @@
 
 #IncludeRegexTransform: 
 
+/Users/wbh/cnn/12cnet/12ctest/12ConvLayer.c
+stdio.h
+-
+stdlib.h
+-
+assert.h
+-
+math.h
+-
+
 /Users/wbh/cnn/12cnet/12ctest/12ctest.c
 stdlib.h
 -
@@ -22,6 +32,8 @@ math.h
 unistd.h
 -
 /Users/wbh/cnn/12cnet/12ctest/firstLayer.c
+-
+/Users/wbh/cnn/12cnet/12ctest/12ConvLayer.c
 -
 
 /Users/wbh/cnn/12cnet/12ctest/firstLayer.c

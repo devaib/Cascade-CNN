@@ -4,8 +4,9 @@
 #include <math.h>
 
 #define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
+#define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
 
-float MultiplyByElement3(float m1[][3], float m2[][3], int size){
+float MultiplyByElement3_12c(float m1[][3], float m2[][3], int size){
     int i,j;
     float result = 0.0;
 
@@ -21,7 +22,7 @@ float MultiplyByElement3(float m1[][3], float m2[][3], int size){
     return result;
 }
 
-float MultiplyByElement5(float m1[][5][5], float m2[][5][5], int size){
+float MultiplyByElement5_12c(float m1[][5][5], float m2[][5][5], int size){
     int i,j,k;
     float result = 0.0;
 
@@ -36,7 +37,7 @@ float MultiplyByElement5(float m1[][5][5], float m2[][5][5], int size){
     return result;
 }
 
-float ConvLayer12(float img[][12], int height, int width, int channels){
+float* ConvLayer12(float img[][12], int height, int width, int channels){
     int i, j, k, l;
     float img_segment[3][3];
     float filter[16][3][3];
@@ -144,7 +145,7 @@ float ConvLayer12(float img[][12], int height, int width, int channels){
                     }
                 }
 
-                res = MultiplyByElement3(filter[filter_num], img_segment, 3);
+                res = MultiplyByElement3_12c(filter[filter_num], img_segment, 3);
                 res += bias[filter_num];
 
                 output1[filter_num][row][col] = res;
@@ -191,7 +192,7 @@ float ConvLayer12(float img[][12], int height, int width, int channels){
     // convolution 2
     float output4[128];
     for (i = 0; i < 128; i++){
-        output4[i] = bias2[i] + MultiplyByElement5(filter2[i], output2, 5);
+        output4[i] = bias2[i] + MultiplyByElement5_12c(filter2[i], output2, 5);
         if (output4[i] < 0){
             output4[i] = 0.0;
         }
@@ -209,19 +210,63 @@ float ConvLayer12(float img[][12], int height, int width, int channels){
         // printf("output7[%d] = %f\n", i, output7[i]);
     }
 
+
     // softmax
-    float output8[2];
-    float out[2], logsum;
-    float a, b, c, d;
-    a = output7[0];
-    b = output7[1];
-    c = a < b ? a : b;      // c = min(a, b)
-    d = a + b - c;          // d = max(a, b)
-    logsum = c + logf(1 + expf(d - c));
-    output8[0] = a - logsum;
-    output8[1] = b - logsum;
-    out[0] = expf(output8[0]);
-    out[1] = expf(output8[1]);
+    float *out_12c = malloc(sizeof(*out_12c));
+    float out[45];
+    float minimum = output7[0];
+    float sum = 0;
+    float logsum;
+    float detect[45][3];
+
+
+    for (i = 0; i < 45; i++){
+        minimum = min(output7[i], minimum);
+    }
+    for (i = 0; i < 45; i++){
+        sum += expf(output7[i] - minimum);
+    }
+    logsum = minimum + logf(sum);
+
+    // different scales
+    float s[5] = {0.83, 0.91, 1.0, 1.10, 1.21};
+    float x[3] = {-0.17, 0.0, 0.17};
+    float y[3] = {-0.17, 0.0, 0.17};
+    float sn = 0;
+    float xn = 0;
+    float yn = 0;
+
+    // the threshold
+    float thres = 0.1;
+
+    int m = 0;
+    for (i = 0; i < 5; i++){
+        for (j = 0; j < 3; j++){
+            for (k = 0; k < 3; k++){
+                out[9*i+3*j+k] = expf(output7[9*i+3*j+k] - logsum);
+                if (out[9*i+3*j+k] > thres){
+                    // printf("out[%d] = %f\n", 9*i+3*j+k, out[9*i+3*j+k]);
+                    // printf("i: %d, j: %d, k: %d\n", i, j, k);
+
+                    sn += s[i];
+                    xn += x[j];
+                    yn += y[k];
+                    m++;
+                }
+            }
+        }
+    }
+    
+    sn /= m;
+    xn /= m;
+    yn /= m;
+
+    out_12c[0] = sn;
+    out_12c[1] = xn;
+    out_12c[2] = yn;
+
+    // printf("%f, %f, %f\n", out_12c[0], out_12c[1], out_12c[2]);
+
 
     /*
     printf("output 1: %f\n", output8[0]);
@@ -265,7 +310,7 @@ float ConvLayer12(float img[][12], int height, int width, int channels){
     
     */
 
-    return out[0];
+    return out_12c;
 }
 
 

@@ -7,7 +7,7 @@
 #include <unistd.h>
 //#include "/Users/wbh/cnn/12cnet/12ctest/firstLayer.c"
 #include "/Users/wbh/cnn/12cnet/12ctest/firstLayer.c"
-//#include "/Users/wbh/cnn/12cnet/12ctest/12ConvLayer.c"
+#include "/Users/wbh/cnn/12cnet/12ctest/12ConvLayer.c"
 
 #define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
 #define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
@@ -90,8 +90,8 @@ int main(void){
 
     // ----------------------------------------------------------
     // for testing
-    // char file[] = "/Users/wbh/cnn/12net/resize/img/2.jpg";
-    // printf("For testing: %s\n",file);
+    char file[] = "/Users/wbh/cnn/12cnet/img/lena.jpg";
+    printf("For testing: %s\n",file);
     // ----------------------------------------------------------
 
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
@@ -111,7 +111,7 @@ int main(void){
     // object coordinate information
     int object[10000][4];
     int num_object = 0;
-
+    
     // image pyramid loop starts
     const int MinImageSize = 16;
     
@@ -162,14 +162,78 @@ int main(void){
 
                 // printf("%d%% tested, testing on image %s\n", (int)((float)loop*100/14266), file);
                 // printf("image size: %d, test on row: %d, col: %d\n", width, row, col);
+                
+                // send the 12 * 12 detection window to 12 calibration if it's detected as a face
                 res = firstLayer(img, 12, 12, channels);
                 if (res > 0.5){
-                    // printf("\n\n---------- face detected at row: %d, col: %d ------------\n\n", row, col);
-                    object[num_object][0] = width;
-                    object[num_object][1] = height;
-                    object[num_object][2] = row;
-                    object[num_object][3] = col;
-                    num_object++;
+                    printf("\n\n---------- face detected at row: %d, col: %d ------------\n\n", row, col);
+
+                    float *out_12c;
+                    out_12c = ConvLayer12(img, 12, 12, channels);
+
+                    // printf("detection: %f, %f, %f\n", out_12c[0], out_12c[1], out_12c[2]);
+                    float s, x, y;
+                    s = out_12c[0];
+                    x = out_12c[1];
+                    y = out_12c[2];
+
+                    free(out_12c);
+                    
+                    // real position and size of the detected window in original image
+                    int multiplicant;
+                    int realPos_w, realPos_h , realWinSize_w, realWinSize_h;
+
+                    multiplicant = WIDTH / width; 
+
+                    realWinSize_w = 12 * multiplicant;
+                    realWinSize_h = 12 * multiplicant;
+                    realPos_w = row * multiplicant;
+                    realPos_h = col * multiplicant;
+
+                    // calibration 
+                    int cali_x, cali_y, cali_w, cali_h;
+ 
+                    cali_x = (int)(realPos_w - x * realWinSize_w / s);
+                    cali_y = (int)(realPos_h - y * realWinSize_h / s);
+                    cali_w = (int)(realWinSize_w / s);
+                    cali_h = (int)(realWinSize_h / s);
+                    
+                    // make sure the calibration image not beyond the boundary
+                    if (cali_x >= WIDTH || cali_y >= HEIGHT){
+                        continue;
+                    }
+                    cali_x = max(cali_x, 0);
+                    cali_y = max(cali_y, 0);
+                    cali_w = min(cali_w, WIDTH - cali_x);
+                    cali_h = min(cali_h, HEIGHT - cali_y);
+
+                    // ----------- for testing -----------------
+                    // skip the small windows
+                    if (width > 100)
+                        continue;
+                    // -----------------------------------------
+
+                    printf("real window size: %d * %d,  position row: %d, col: %d\n", realWinSize_w, realWinSize_h, realPos_w, realPos_h);
+                    printf("x: %f, y: %f, s: %f\n", x, y, s);
+                    printf("cali window position: %d, %d,  cali position width: %d, height: %d\n", cali_x, cali_y, cali_w, cali_h);
+
+                    
+                    IplImage *origImg = cvCloneImage(originalImg);
+                    cvNamedWindow("12 net", CV_WINDOW_AUTOSIZE);
+                    cvMoveWindow("12 net", 0, 100);
+                    cvRectangle(origImg, cvPoint(realPos_w, realPos_h), cvPoint(realPos_w + realWinSize_w, realPos_h + realWinSize_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+                    cvShowImage("12 net", origImg);
+
+                    IplImage *origImg_cali = cvCloneImage(originalImg);
+                    cvNamedWindow("12 calibration", CV_WINDOW_AUTOSIZE);
+                    cvMoveWindow("12 calibration", 600, 100);
+                    cvRectangle(origImg_cali, cvPoint(cali_x, cali_y), cvPoint(cali_x + cali_w, cali_y + cali_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+                    cvShowImage("12 calibration", origImg_cali);
+                    
+
+                    cvWaitKey(700);
+
+
                 }
                 
             }
@@ -181,116 +245,7 @@ int main(void){
 
         } // image pyramid loop end
 
-        // calibration
-
-        int multiplicant;
-        
-        // real position and size of the detected window in original image
-        int realPos_w, realPos_h , realWinSize_w, realWinSize_h;
-
-        // different scales
-        float s[5] = {0.83, 0.91, 1.0, 1.10, 1.21};
-        float x[3] = {-0.17, 0.0, 0.17};
-        float y[3] = {-0.17, 0.0, 0.17};
-
-        while (num_object > 0){
-            num_object--;
-            // printf("face detected at image size: %d * %d, row: %d, col: %d\n", object[num_object][0], object[num_object][1], object[num_object][2], object[num_object][3]);
-            
-            // ratio of the pyramid and original image 
-            multiplicant = WIDTH / object[num_object][0];
-
-            realWinSize_w = 12 * multiplicant;
-            realWinSize_h = 12 * multiplicant;
-            realPos_w = object[num_object][2] * multiplicant;
-            realPos_h = object[num_object][3] * multiplicant;
-
-            printf("real window size: %d * %d,  position row: %d, col: %d\n", realWinSize_w, realWinSize_h, realPos_w, realPos_h);
-            
-            int sn, xn, yn;
-            int cali_x, cali_y, cali_w, cali_h;
-
-            // loop over 45 calibrations
-            for (sn = 0; sn < 5; sn++){
-                for (xn = 0; xn < 3; xn++){
-                    for (yn = 0; yn < 3; yn++){
-                cali_x = (int)(realPos_w - x[xn] * realWinSize_w / s[sn]);
-                cali_y = (int)(realPos_h - y[yn] * realWinSize_h / s[sn]);
-                cali_w = (int)(realWinSize_w / s[sn]);
-                cali_h = (int)(realWinSize_h / s[sn]);
-
-                // make sure the calibration image not beyond the boundary
-                cali_x = max(cali_x, 0);
-                cali_y = max(cali_y, 0);
-                cali_w = min(cali_w, WIDTH - cali_x);
-                cali_h = min(cali_h, HEIGHT - cali_y);
-
-                IplImage *calibImg;
-                calibImg = cvCreateImage(cvSize(cali_w, cali_h), IPL_DEPTH_8U, 1);
-
-                // originalImg->imageData = (uchar*) originalImg->imageData;
-                // calibImg->imageData = (uchar*) originalImg->imageData;
-
-                int row, col;
-                float img[12][12];
-
-                for (row = 0; row < cali_h; row++){
-                    for (col = 0; col < cali_w; col++){
-                        calibImg->imageData[row*calibImg->widthStep + col*calibImg->nChannels] = originalImg->imageData[(row+cali_y)*originalImg->widthStep + (col+cali_x)*originalImg->nChannels];
-                    }
-                }
-                        printf("x: %d, y: %d, w: %d, h: %d\n", cali_x, cali_y, cali_w, cali_h);
-                cvNamedWindow("win", CV_WINDOW_AUTOSIZE);
-                cvShowImage("win", calibImg);
-                cvWaitKey(500);
-                cvDestroyWindow("win");
-                
-                /*
-                IplImage *tmpImg;
-                tmpImg = cvCreateImage(cvSize(12, 12), IPL_DEPTH_8U, 1);
-                cvResize(originalImg, tmpImg, CV_INTER_AREA);
-
-                // get the image data
-                width = tmpImg -> width;
-                height = tmpImg -> height;
-                step = tmpImg -> widthStep;
-                channels = tmpImg -> nChannels;
-                data = (uchar*) tmpImg -> imageData;
-
-                        mean_x = 0.0;
-                        mean_x2 = 0.0;
-
-                        for (i = 0; i < 12; i++){
-                            for (j = 0; j < 12; j++){
-                                img[i][j] = data[(i+row)*step + (j+col)*channels] / 255.0;
-                                mean_x += img[i][j];
-                                mean_x2 += pow(img[i][j], 2);
-                            }
-                        }
-
-                        mean_x /= 144.0;
-                        mean_x2 /= 144.0;
-                        std = sqrt(mean_x2 - pow(mean_x, 2));
-                        for (i = 0; i < 12; i++){
-                            for (j = 0; j < 12; j++){
-                                img[i][j] -= mean_x;
-                                img[i][j] /= std;
-                                printf("img[%d][%d] = %f\n", i, j, img[i][j]);
-                            }
-                        }
-
-                        //printf("%f, %f, %f, %f\n", cali_x, cali_y, cali_w, cali_h);
-                        
-                        // resize();
-                    */
-                    }
-                }
-            } // loop over 45 calibration end
-
-            
-        } // loop over single image end
-
-                exit(0);
+        exit(0);
 
     } // image testset loop ends
 

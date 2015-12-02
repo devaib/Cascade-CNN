@@ -90,7 +90,7 @@ int main(void){
 
     // ----------------------------------------------------------
     // for testing
-    char file[] = "/Users/wbh/cnn/12cnet/img/7.jpg";
+    char file[] = "/Users/wbh/cnn/12cnet/img/lena.jpg";
     printf("For testing: %s\n",file);
     // ----------------------------------------------------------
 
@@ -163,7 +163,7 @@ int main(void){
                 // printf("%d%% tested, testing on image %s\n", (int)((float)loop*100/14266), file);
                 // printf("image size: %d, test on row: %d, col: %d\n", width, row, col);
                 res = firstLayer(img, 12, 12, channels);
-                if (res > 0.5){
+                if (res > 0.95){
                     // printf("\n\n---------- face detected at row: %d, col: %d ------------\n\n", row, col);
                     object[num_object][0] = width;
                     object[num_object][1] = height;
@@ -210,6 +210,11 @@ int main(void){
             int sn, xn, yn;
             int cali_x, cali_y, cali_w, cali_h;
 
+                IplImage *origImg = cvCloneImage(originalImg);
+                cvNamedWindow("win3", CV_WINDOW_AUTOSIZE);
+                cvMoveWindow("win3", 0, 100);
+                cvRectangle(origImg, cvPoint(realPos_w, realPos_h), cvPoint(realPos_w + realWinSize_w, realPos_h + realWinSize_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+                cvShowImage("win3", origImg);
             // loop over 45 calibrations
             for (sn = 0; sn < 5; sn++){
                 for (xn = 0; xn < 3; xn++){
@@ -243,8 +248,6 @@ int main(void){
                     }
                 }
                         printf("x: %d, y: %d, w: %d, h: %d\n", cali_x, cali_y, cali_w, cali_h);
-                cvNamedWindow("win1", CV_WINDOW_AUTOSIZE);
-                cvShowImage("win1", calibImg);
                 
                 IplImage *resizedImg;
                 resizedImg = cvCreateImage(cvSize(12, 12), IPL_DEPTH_8U, 1);
@@ -254,12 +257,13 @@ int main(void){
                 tmpImg = cvCreateImage(cvSize(100, 100), IPL_DEPTH_8U, 1);
                 cvResize(resizedImg, tmpImg, CV_INTER_AREA);
 
+                cvNamedWindow("win1", CV_WINDOW_AUTOSIZE);
+                cvShowImage("win1", calibImg);
+                cvMoveWindow("win1", 550, 100);
                 cvNamedWindow("win2", CV_WINDOW_AUTOSIZE);
                 cvShowImage("win2", tmpImg);
-                cvMoveWindow("win2", 0, 300);
-                cvWaitKey(300);
-                cvDestroyWindow("win1");
-                cvDestroyWindow("win2");
+                cvMoveWindow("win2", 900, 100);
+                cvWaitKey(50);
 
                 /*
                 // get the image data
