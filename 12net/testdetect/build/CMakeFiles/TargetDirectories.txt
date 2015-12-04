@@ -1,1 +1,1 @@
-/Users/wbh/cnn/12net/testdetect/build/CMakeFiles/detect.dir
+/home/binghao/cnn/12net/testdetect/build/CMakeFiles/detect.dir
