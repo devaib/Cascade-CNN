@@ -3,8 +3,8 @@
 #include <math.h>
 #include <cv.h>
 #include <highgui.h>
-#include "/Users/wbh/cnn/12net/src/firstLayer.c"
-// #include "/home/binghao/cnn/src/firstLayer.c"
+// #include "/Users/wbh/cnn/12net/src/firstLayer.c"
+#include "/home/binghao/cnn/12net/src/firstLayer.c"
 
 int main( int argc, char *argv[] ){
     IplImage *srcImg;
@@ -59,7 +59,7 @@ int main( int argc, char *argv[] ){
         for (j = 0; j < width; j++){
             img[i][j] -= mean_x;
             img[i][j] /= std;
-            // printf("img[%d][%d] = %f\n", i, j, img[i][j]);
+            printf("img[%d][%d] = %f\n", i, j, img[i][j]);
         }
     }
 
