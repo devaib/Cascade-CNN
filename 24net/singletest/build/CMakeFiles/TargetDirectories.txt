@@ -1,0 +1,1 @@
+/Users/wbh/cnn/24net/24test/build/CMakeFiles/24test.dir

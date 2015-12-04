@@ -166,7 +166,7 @@ int main(void){
                 // send the 12 * 12 detection window to 12 calibration if it's detected as a face
                 res = firstLayer(img, 12, 12, channels);
                 if (res > 0.5){
-                    printf("\n\n---------- face detected at row: %d, col: %d ------------\n\n", row, col);
+                    // printf("\n\n---------- face detected at row: %d, col: %d ------------\n\n", row, col);
 
                     float *out_12c;
                     out_12c = ConvLayer12(img, 12, 12, channels);

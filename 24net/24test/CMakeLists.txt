@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project(24test)
+find_package(OpenCV)
+include_directories(${OpenCV_INCLUDE_DIRS})
+add_executable(24test 24test.c)
+target_link_libraries(24test ${OpenCV_LIBS})
