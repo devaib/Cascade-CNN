@@ -5,8 +5,8 @@
 #include <string.h>
 #include <math.h>
 #include <unistd.h>
-#include "/Users/wbh/cnn/12net/testdetect/firstLayer.c"
-// #include "/home/binghao/cnn/testdetect/firstLayer.c"
+// #include "/Users/wbh/cnn/12net/testdetect/firstLayer.c"
+#include "/home/binghao/cnn/12net/testdetect/firstLayer.c"
 
 char* itos(int i, char b[]){
     char const digit[] = "0123456789";
@@ -44,7 +44,7 @@ int main(void){
 
     char path[50];
     char file[50];
-    strcpy(path, "/Users/wbh/cnn/test/c_faces/pic");
+    strcpy(path, "/home/binghao/cnn/test/c_faces/pic");
     // strcpy(path, "/Users/wbh/cnn/test/nonfaces/4");
 
     char *suffix = ".jpg";
@@ -90,7 +90,7 @@ int main(void){
     }
     
     // image pyramid manually
-    srcImg = doPyrDown(srcImg);              // 32 x 32
+    // srcImg = doPyrDown(srcImg);              // 32 x 32
     // srcImg = doPyrDown(srcImg); srcImg = doPyrDown(srcImg);      // 16 x 16
 
     dstImg = cvCreateImage(cvSize(400, 400), IPL_DEPTH_8U, 1);
