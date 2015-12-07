@@ -40,12 +40,12 @@ float MultiplyByElement10_24(float m1[][10][10], float m2[][10][10], int size){
 float ConvLayer24(float img[][24], int height, int width, int channels){
     int i, j, k, l;
     float img_segment[5][5];
-    float filter[16][5][5];
+    float filter[64][5][5];
     float filter2[128][64][10][10];
     float output1[64][20][20];
 
-    char path[] = "/home/binghao/cnn/24net/24net.bin";
-    // char path[] = "/Users/wbh/cnn/24net/24net.bin";
+    // char path[] = "/home/binghao/cnn/24net/24net.bin";
+    char path[] = "/Users/wbh/cnn/24net/24net.bin";
 
     // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
     // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
@@ -92,6 +92,7 @@ float ConvLayer24(float img[][24], int height, int width, int channels){
 
     fclose(f);
 
+
     /*
     // output the weight and bias of module4
     for (i = 0; i < Depth; i++){
@@ -113,6 +114,7 @@ float ConvLayer24(float img[][24], int height, int width, int channels){
         }
     }
 
+
     // output the filter2
     for (l = 0; l < 128; l++){
         for (k = 0; k < 64; k++){
@@ -130,10 +132,9 @@ float ConvLayer24(float img[][24], int height, int width, int channels){
     for (i = 0; i < 2; i++){
         for (j = 0; j < 128; j++){
             linear_para[i][j] = weight3[128*i + j];
-            printf("linear parameter[%d][%d] = %f\n", i, j, weight3[128*i + j]); 
+            // printf("linear parameter[%d][%d] = %f\n", i, j, weight3[128*i + j]); 
         }
     }
-    exit(0);
 
     // convolution
     int row, col, filter_num;
@@ -155,7 +156,6 @@ float ConvLayer24(float img[][24], int height, int width, int channels){
             }
         }
     }
-
 
     // padding
     float input2[64][22][22];
@@ -232,15 +232,6 @@ float ConvLayer24(float img[][24], int height, int width, int channels){
     printf("out: %f\n", out[0]); 
     printf("out: %f\n", out[1]); 
 
-    // printf("%f, %f, %f\n", out_12c[0], out_12c[1], out_12c[2]);
-
-
-    /*
-    printf("output 1: %f\n", output8[0]);
-    printf("output 2: %f\n", output8[1]);
-    printf("out: %f\n", out[0]); 
-    printf("out: %f\n", out[1]); 
-    */
 
     /*
     FILE *ffp = fopen(pooling_output_path,"w");

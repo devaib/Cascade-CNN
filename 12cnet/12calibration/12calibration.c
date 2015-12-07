@@ -90,7 +90,7 @@ int main(void){
 
     // ----------------------------------------------------------
     // for testing
-    char file[] = "/Users/wbh/cnn/12cnet/img/lena.jpg";
+    char file[] = "/Users/wbh/cnn/12cnet/img/2.jpg";
     printf("For testing: %s\n",file);
     // ----------------------------------------------------------
 

@@ -5,8 +5,8 @@
 #include <string.h>
 #include <math.h>
 #include <unistd.h>
-// #include "/Users/wbh/cnn/24net/singletest/24Layer.c"
-#include "/home/binghao/cnn/24net/singletest/24Layer.c"
+#include "/Users/wbh/cnn/24net/singletest/24Layer.c"
+// #include "/home/binghao/cnn/24net/singletest/24Layer.c"
 
 #define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
 #define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
@@ -23,8 +23,9 @@ int main(void){
     int i, j, k;
 
     // load the image
-    // char file = "/Users/wbh/cnn/24net/singletest/1.jpg";
-    char file[] = "/home/binghao/cnn/24net/singletest/1.jpg";
+    char file[] = "/Users/wbh/cnn/12cnet/img/2.jpg";
+    // char file[] = "/home/binghao/cnn/24net/singletest/1.jpg";
+    
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
     if (!srcImg){
         printf("Could not load image file: %s\n", file);
@@ -61,12 +62,15 @@ int main(void){
         for (j = 0; j < 24; j++){
             img[i][j] -= mean_x;
             img[i][j] /= std;
-            printf("img[%d][%d] = %f\n", i, j, img[i][j]);
+            // printf("img[%d][%d] = %f\n", i, j, img[i][j]);
         }
     }
     
     res = ConvLayer24(img, height, width, channels);
 
+    cvNamedWindow("win1", CV_WINDOW_AUTOSIZE);
+    cvShowImage("win1", dstImg);
+    cvWaitKey(0);
 
-
+    return 0;
 }
