@@ -123,6 +123,33 @@ singletest/fast:
 	$(MAKE) -f CMakeFiles/singletest.dir/build.make CMakeFiles/singletest.dir/build
 .PHONY : singletest/fast
 
+24CLayer.o: 24CLayer.c.o
+
+.PHONY : 24CLayer.o
+
+# target to build an object file
+24CLayer.c.o:
+	$(MAKE) -f CMakeFiles/singletest.dir/build.make CMakeFiles/singletest.dir/24CLayer.c.o
+.PHONY : 24CLayer.c.o
+
+24CLayer.i: 24CLayer.c.i
+
+.PHONY : 24CLayer.i
+
+# target to preprocess a source file
+24CLayer.c.i:
+	$(MAKE) -f CMakeFiles/singletest.dir/build.make CMakeFiles/singletest.dir/24CLayer.c.i
+.PHONY : 24CLayer.c.i
+
+24CLayer.s: 24CLayer.c.s
+
+.PHONY : 24CLayer.s
+
+# target to generate assembly for a file
+24CLayer.c.s:
+	$(MAKE) -f CMakeFiles/singletest.dir/build.make CMakeFiles/singletest.dir/24CLayer.c.s
+.PHONY : 24CLayer.c.s
+
 singletest.o: singletest.c.o
 
 .PHONY : singletest.o
@@ -159,6 +186,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... singletest"
+	@echo "... 24CLayer.o"
+	@echo "... 24CLayer.i"
+	@echo "... 24CLayer.s"
 	@echo "... singletest.o"
 	@echo "... singletest.i"
 	@echo "... singletest.s"

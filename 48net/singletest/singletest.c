@@ -5,11 +5,11 @@
 #include <string.h>
 #include <math.h>
 #include <unistd.h>
-// #include "/Users/wbh/cnn/24net/singletest/48Layer.c"
-// #include "/home/binghao/cnn/48net/singletest/48Layer.c"
 
 #define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
 #define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
+
+float ConvLayer48(float img[][48], int height, int width, int channels);
 
 int main(void){
     IplImage *srcImg;
@@ -23,8 +23,8 @@ int main(void){
     int i, j, k;
 
     // load the image
-    // char file[] = "/Users/wbh/cnn/12cnet/img/2.jpg";
-    char file[] = "/home/binghao/cnn/test/1/3_1_111.jpg";
+    char file[] = "/Users/wbh/cnn/test/nonfaces/40015.jpg";
+    // char file[] = "/home/binghao/cnn/test/1/3_1_111.jpg";
     
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
     if (!srcImg){
@@ -65,7 +65,7 @@ int main(void){
             // printf("img[%d][%d] = %f\n", i, j, img[i][j]);
         }
     }
-    
+     
     res = ConvLayer48(img, height, width, channels);
 
     cvNamedWindow("win1", CV_WINDOW_AUTOSIZE);

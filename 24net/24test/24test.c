@@ -7,7 +7,6 @@
 #include <unistd.h>
 #include "/Users/wbh/cnn/24net/24test/firstLayer.c"
 #include "/Users/wbh/cnn/24net/24test/12ConvLayer.c"
-#include "/Users/wbh/cnn/24net/24test/24Layer.c"
 
 #define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
 #define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})

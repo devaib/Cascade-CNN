@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/singletest.dir/singletest.c.o"
+  "CMakeFiles/singletest.dir/24CLayer.c.o"
   "singletest.pdb"
   "singletest"
 )

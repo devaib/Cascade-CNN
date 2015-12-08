@@ -5,11 +5,13 @@
 #include <string.h>
 #include <math.h>
 #include <unistd.h>
-#include "/Users/wbh/cnn/24net/singletest/24Layer.c"
+// #include "/Users/wbh/cnn/24net/singletest/24Layer.c"
 // #include "/home/binghao/cnn/24net/singletest/24Layer.c"
 
 #define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
 #define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
+
+float ConvLayer24(float img[][24], int height, int width, int channels);
 
 int main(void){
     IplImage *srcImg;
@@ -23,7 +25,7 @@ int main(void){
     int i, j, k;
 
     // load the image
-    char file[] = "/Users/wbh/cnn/12cnet/img/2.jpg";
+    char file[] = "/Users/wbh/cnn/test/nonfaces/40025.jpg";
     // char file[] = "/home/binghao/cnn/24net/singletest/1.jpg";
     
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
@@ -42,7 +44,7 @@ int main(void){
     channels = dstImg -> nChannels;
     data = (uchar*) dstImg -> imageData;
 
-    // processing a 12*12 image
+    // processing a 24*24 image
     float img[24][24];
     mean_x = 0.0;
     mean_x2 = 0.0;

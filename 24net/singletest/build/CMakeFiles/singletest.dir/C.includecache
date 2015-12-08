@@ -31,8 +31,6 @@ math.h
 -
 unistd.h
 -
-/Users/wbh/cnn/24net/singletest/24Layer.c
--
 
 /usr/local/include/opencv/cv.h
 opencv2/core/core_c.h
