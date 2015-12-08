@@ -12,7 +12,7 @@
 float Layer12(float img[][12], int width, int height, int channels);
 float* CaliLayer12(float img[][12], int width, int height, int channels);
 float Layer24(float img[][24], int width, int height, int channels);
-// float* CaliLayer24(float img[][24], int width, int height, int channels);
+float* CaliLayer24(float img[][24], int width, int height, int channels);
 
 char* itos(int i, char b[]){
     char const digit[] = "0123456789";
@@ -51,7 +51,8 @@ int main(void){
 
     char path[50];
     char file[50];
-    strcpy(path, "/Users/wbh/cnn/test/c_faces/pic");
+    // strcpy(path, "/Users/wbh/cnn/test/c_faces/pic");
+    strcpy(path, "/home/binghao/cnn/test/c_faces/pic");
     // strcpy(path, "/Users/wbh/cnn/test/nonfaces/4");
 
     char *suffix = ".jpg";
@@ -92,7 +93,7 @@ int main(void){
 
     // ----------------------------------------------------------
     // for testing
-    char file[] = "/Users/wbh/cnn/test/img/lena.jpg";
+    char file[] = "/home/binghao/cnn/test/img/lena.jpg";
     printf("For testing: %s\n",file);
     // ----------------------------------------------------------
 
@@ -279,6 +280,36 @@ int main(void){
                     if (res > 0.5){
                         printf("object detected\n\n");
 
+                        float *out_24c;
+                        out_24c = CaliLayer24(img24, 24, 24, input24Img->nChannels);
+                        float s_24, x_24, y_24;
+                        s_24 = out_24c[0];
+                        x_24 = out_24c[1];
+                        y_24 = out_24c[2];
+                        free(out_24c);
+                        printf("s: %f, x: %f, y: %f\n", s_24, x_24, y_24);
+
+                        // 24 calibration
+                        int cali24_x, cali24_y, cali24_w, cali24_h;
+
+                        cali24_x = (int)(cali_x - x_24 * cali_w / s_24);
+                        cali24_y = (int)(cali_y - y_24 * cali_h / s_24);
+                        cali24_w = (int)(cali_w / s_24);
+                        cali24_h = (int)(cali_h / s_24);
+
+                        printf("24_x: %d, 24_y: %d, 24_w: %d, 24_h: %d\n", cali24_x, cali24_y, cali24_w, cali24_h);
+
+                        cvResetImageROI(originalImg);
+
+                        IplImage *origImg_cali24 = cvCloneImage(originalImg);
+                        cvNamedWindow("24 calibration", CV_WINDOW_AUTOSIZE);
+                        cvMoveWindow("24 calibration", 0, 300);
+                        cvRectangle(origImg_cali24, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+                        cvShowImage("24 calibration", origImg_cali24);
+                        
+
+                        
+
                         
                         
                     }
@@ -287,6 +318,9 @@ int main(void){
 
 
                     cvWaitKey(0);
+
+                    cvDestroyWindow("24 calibration");
+
                     // reset to original image
                     cvResetImageROI(originalImg);
                 }

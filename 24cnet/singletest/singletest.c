@@ -11,7 +11,7 @@
 #define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
 #define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
 
-float ConvLayer24(float img[][24], int height, int width, int channels);
+float* CaliLayer24(float img[][24], int height, int width, int channels);
 
 int main(void){
     IplImage *srcImg;
@@ -25,8 +25,8 @@ int main(void){
     int i, j, k;
 
     // load the image
-    char file[] = "/Users/wbh/cnn/test/c_faces/pic00008.jpg";
-    // char file[] = "/home/binghao/cnn/24net/singletest/1.jpg";
+    // char file[] = "/Users/wbh/cnn/test/c_faces/pic00008.jpg";
+    char file[] = "/home/binghao/cnn/test/1/14_1_111.jpg";
     
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
     if (!srcImg){
@@ -68,7 +68,12 @@ int main(void){
         }
     }
     
-    res = ConvLayer24(img, height, width, channels);
+    float *out_24c;
+    out_24c = CaliLayer24(img, height, width, channels);
+
+    printf("out1: %f, out2: %f, out3: %f\n", out_24c[0], out_24c[1], out_24c[2]);
+
+    free(out_24c);
 
     cvNamedWindow("win1", CV_WINDOW_AUTOSIZE);
     cvShowImage("win1", dstImg);

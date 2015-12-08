@@ -1,1 +1,1 @@
-/Users/wbh/cnn/24cnet/24ctest/build/CMakeFiles/24ctest.dir
+/home/binghao/cnn/24cnet/24ctest/build/CMakeFiles/24ctest.dir
