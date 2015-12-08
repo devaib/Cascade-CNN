@@ -194,7 +194,7 @@ float ConvLayer24(float img[][24], int height, int width, int channels){
     // convolution 2
     float output4[64];
     for (i = 0; i < 64; i++){
-        output4[i] = bias2[i] + MultiplyByElement10_24c(filter2[i], output2, 5);
+        output4[i] = bias2[i] + MultiplyByElement10_24c(filter2[i], output2, 10);
         if (output4[i] < 0){
             output4[i] = 0.0;
         }

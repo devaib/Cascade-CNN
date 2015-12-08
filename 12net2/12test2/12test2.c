@@ -5,9 +5,10 @@
 #include <string.h>
 #include <math.h>
 #include <unistd.h>
-//#include "/Users/wbh/cnn/12cnet/12ctest/firstLayer.c"
-#include "/Users/wbh/cnn/12net2/12test2/firstLayer.c"
-#include "/Users/wbh/cnn/12net2/12test2/12ConvLayer.c"
+#include "/home/binghao/cnn/12net2/12test2/firstLayer.c"
+#include "/home/binghao/cnn/12net2/12test2/12ConvLayer.c"
+// #include "/Users/wbh/cnn/12net2/12test2/firstLayer.c"
+// #include "/Users/wbh/cnn/12net2/12test2/12ConvLayer.c"
 
 #define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
 #define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
@@ -90,7 +91,8 @@ int main(void){
 
     // ----------------------------------------------------------
     // for testing
-    char file[] = "/Users/wbh/cnn/test/img/lena.jpg";
+    char file[] = "/home/binghao/cnn/test/img/lena.jpg";
+    // char file[] = "/Users/wbh/cnn/test/img/lena.jpg";
     // char file[] = "/Users/wbh/cnn/test/c_faces/pic00019.jpg";
     // char file[] = "/Users/wbh/cnn/test/1/31_1_111.jpg";
     printf("For testing: %s\n",file);

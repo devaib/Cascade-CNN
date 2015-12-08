@@ -5,9 +5,10 @@
 #include <string.h>
 #include <math.h>
 #include <unistd.h>
-//#include "/Users/wbh/cnn/12cnet/12ctest/firstLayer.c"
-#include "/Users/wbh/cnn/12cnet/12ctest/firstLayer.c"
-#include "/Users/wbh/cnn/12cnet/12ctest/12ConvLayer.c"
+#include "/home/binghao/cnn/12cnet/12ctest/firstLayer.c"
+#include "/home/binghao/cnn/12cnet/12ctest/12ConvLayer.c"
+// #include "/Users/wbh/cnn/12cnet/12ctest/firstLayer.c"
+// #include "/Users/wbh/cnn/12cnet/12ctest/12ConvLayer.c"
 
 #define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
 #define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
@@ -90,7 +91,8 @@ int main(void){
 
     // ----------------------------------------------------------
     // for testing
-    char file[] = "/Users/wbh/cnn/12cnet/img/lena.jpg";
+    // char file[] = "/Users/wbh/cnn/12cnet/img/lena.jpg";
+    char file[] = "/home/binghao/cnn/test/img/group.jpg";
     printf("For testing: %s\n",file);
     // ----------------------------------------------------------
 
@@ -209,7 +211,7 @@ int main(void){
 
                     // ----------- for testing -----------------
                     // skip the small windows
-                    if (width > 100)
+                    if (width > 200)
                         continue;
                     // -----------------------------------------
 
@@ -231,7 +233,7 @@ int main(void){
                     cvShowImage("12 calibration", origImg_cali);
                     
 
-                    cvWaitKey(700);
+                    cvWaitKey(0);
 
 
                 }
