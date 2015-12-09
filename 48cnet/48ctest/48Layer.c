@@ -55,8 +55,8 @@ float Layer48(float img[][48], int height, int width, int channels){
     int i, j, k, l;
     float img_segment[5][5];
 
-    // char path[] = "/home/binghao/cnn/48net/48net.bin";
-    char path[] = "/Users/wbh/cnn/48net/48net.bin";
+    char path[] = "/home/binghao/cnn/48net/48net.bin";
+    // char path[] = "/Users/wbh/cnn/48net/48net.bin";
 
     // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
     // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";

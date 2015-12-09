@@ -44,8 +44,8 @@ float Layer24(float img[][24], int height, int width, int channels){
     float filter2[128][64][10][10];
     float output1[64][20][20];
 
-    // char path[] = "/home/binghao/cnn/24net/24net.bin";
-    char path[] = "/Users/wbh/cnn/24net/24net.bin";
+    char path[] = "/home/binghao/cnn/24net/24net.bin";
+    // char path[] = "/Users/wbh/cnn/24net/24net.bin";
 
     // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
     // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";

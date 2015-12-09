@@ -14,7 +14,7 @@ float* CaliLayer12(float img[][12], int width, int height, int channels);
 float Layer24(float img[][24], int width, int height, int channels);
 float* CaliLayer24(float img[][24], int width, int height, int channels);
 float Layer48(float img[][48], int width, int height, int channels);
-// float* CaliLayer24(float img[][48], int width, int height, int channels);
+float* CaliLayer24(float img[][48], int width, int height, int channels);
 
 char* itos(int i, char b[]){
     char const digit[] = "0123456789";
@@ -95,8 +95,8 @@ int main(void){
 
     // ----------------------------------------------------------
     // for testing
-    char file[] = "/Users/wbh/cnn/test/img/group1.jpg";
-    // char file[] = "/home/binghao/cnn/test/img/group.jpg";
+    // char file[] = "/Users/wbh/cnn/test/img/group1.jpg";
+    char file[] = "/home/binghao/cnn/test/img/group1.jpg";
     printf("For testing: %s\n",file);
     // ----------------------------------------------------------
 
@@ -301,6 +301,7 @@ int main(void){
 
                     if (res > 0.5){
 
+                        // 24 calibration
                         float *out_24c;
                         out_24c = CaliLayer24(img24, 24, 24, input24Img->nChannels);
                         float s_24, x_24, y_24;
@@ -310,7 +311,6 @@ int main(void){
                         free(out_24c);
                         // printf("s: %f, x: %f, y: %f\n", s_24, x_24, y_24);
 
-                        // 24 calibration
                         int cali24_x, cali24_y, cali24_w, cali24_h;
 
                         cali24_x = (int)(cali_x - x_24 * cali_w / s_24);
@@ -371,12 +371,48 @@ int main(void){
                         res = Layer48(img48, 48, 48, input48Img->nChannels);
                         if (res > 0.5){
                             printf("\npass 48 layer with score: %f\n", res);
+
+
+
+                        // 48 calibration
+                        float *out_48c;
+                        out_48c = CaliLayer48(img48, 48, 48, input48Img->nChannels);
+                        float s_48, x_48, y_48;
+                        s_48= out_48[0];
+                        x_48= out_48[1];
+                        y_48= out_48[2];
+                        free(out_48);
+                        // printf("s: %f, x: %f, y: %f\n", s_24, x_24, y_24);
+
+                        int cali48, cali48, cali48_w, cali48_h;
+
+                        cali48_x = (int)(cali_x - x_48 * cali_w / s_48);
+                        cali48_y = (int)(cali_y - y_48 * cali_h / s_48);
+                        cali48_w = (int)(cali_w / s_48);
+                        cali48_h = (int)(cali_h / s_48);
+
+                        cvResetImageROI(originalImg);
+
+                        IplImage *origImg_cali48 = cvCloneImage(originalImg);
+                        cvNamedWindow("48 calibration", CV_WINDOW_AUTOSIZE);
+                        cvMoveWindow("48 calibration", 600, 350);
+                        cvRectangle(origImg_cali48, cvPoint(cali48_x, cali48_y), cvPoint(cali48_x + cali48_w, cali48_y + cali48_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+                        cvShowImage("48 calibration", origImg_cali48);
+                        
+
+
+
+
+
+
+
+
+
+
+                            cvWaitKey(2000);
                         } else {
                             printf("\ndoesn't pass 48 layer\n");
                         }
-
-                        
-
                         
                         
                     }
@@ -384,7 +420,7 @@ int main(void){
 
 
 
-                    cvWaitKey(0);
+                    cvWaitKey(500);
 
                     cvDestroyWindow("48 net");
                     cvDestroyWindow("24 calibration");
