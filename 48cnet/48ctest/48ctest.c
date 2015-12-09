@@ -14,7 +14,7 @@ float* CaliLayer12(float img[][12], int width, int height, int channels);
 float Layer24(float img[][24], int width, int height, int channels);
 float* CaliLayer24(float img[][24], int width, int height, int channels);
 float Layer48(float img[][48], int width, int height, int channels);
-float* CaliLayer24(float img[][48], int width, int height, int channels);
+float* CaliLayer48(float img[][48], int width, int height, int channels);
 
 char* itos(int i, char b[]){
     char const digit[] = "0123456789";
@@ -96,7 +96,7 @@ int main(void){
     // ----------------------------------------------------------
     // for testing
     // char file[] = "/Users/wbh/cnn/test/img/group1.jpg";
-    char file[] = "/home/binghao/cnn/test/img/group1.jpg";
+    char file[] = "/home/binghao/cnn/test/img/group3.jpg";
     printf("For testing: %s\n",file);
     // ----------------------------------------------------------
 
@@ -112,7 +112,11 @@ int main(void){
     originalImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
     int WIDTH = originalImg->width;
     int HEIGHT = originalImg->height;
-    
+
+    // detected objects image
+    IplImage *detectedImg = cvCloneImage(originalImg);
+    cvNamedWindow("detection result", CV_WINDOW_AUTOSIZE);
+    cvMoveWindow("detection result", 200, 350);
 
     // object coordinate information
     int object[10000][4];
@@ -328,6 +332,7 @@ int main(void){
                         cvRectangle(origImg_cali24, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
                         cvShowImage("24 calibration", origImg_cali24);
                         
+                        
 
                         // 48 net
                         float img48[48][48];
@@ -342,6 +347,8 @@ int main(void){
                         cvNamedWindow("48 net", CV_WINDOW_AUTOSIZE);
                         cvMoveWindow("48 net", 1150, 300);
                         cvShowImage("48 net", temp48Img);
+
+                        cvWaitKey(1000);
 
                         mean_x = 0.0;
                         mean_x2 = 0.0;
@@ -370,21 +377,29 @@ int main(void){
 
                         res = Layer48(img48, 48, 48, input48Img->nChannels);
                         if (res > 0.5){
-                            printf("\npass 48 layer with score: %f\n", res);
+                            printf("\n48 layer: PASS\n");
 
 
 
                         // 48 calibration
                         float *out_48c;
                         out_48c = CaliLayer48(img48, 48, 48, input48Img->nChannels);
-                        float s_48, x_48, y_48;
-                        s_48= out_48[0];
-                        x_48= out_48[1];
-                        y_48= out_48[2];
-                        free(out_48);
-                        // printf("s: %f, x: %f, y: %f\n", s_24, x_24, y_24);
 
-                        int cali48, cali48, cali48_w, cali48_h;
+                        float s_48, x_48, y_48;
+                        s_48 = out_48c[0];
+                        x_48 = out_48c[1];
+                        y_48 = out_48c[2];
+
+                        free(out_48c);
+
+                        /*
+                        // NAN values have odd property(comparison involving them are always false)
+                        if (s_48 != s_48 || x_48 != x_48 || y_48 != y_48)
+                            continue;
+                        // printf("s: %f, x: %f, y: %f\n", s_48, x_48, y_48);
+                        */
+
+                        int cali48_x, cali48_y, cali48_w, cali48_h;
 
                         cali48_x = (int)(cali_x - x_48 * cali_w / s_48);
                         cali48_y = (int)(cali_y - y_48 * cali_h / s_48);
@@ -396,9 +411,14 @@ int main(void){
                         IplImage *origImg_cali48 = cvCloneImage(originalImg);
                         cvNamedWindow("48 calibration", CV_WINDOW_AUTOSIZE);
                         cvMoveWindow("48 calibration", 600, 350);
-                        cvRectangle(origImg_cali48, cvPoint(cali48_x, cali48_y), cvPoint(cali48_x + cali48_w, cali48_y + cali48_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+
+                        // skip the 48 calibration 
+                        // cvRectangle(origImg_cali48, cvPoint(cali48_x, cali48_y), cvPoint(cali48_x + cali48_w, cali48_y + cali48_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+                        cvRectangle(origImg_cali48, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+
                         cvShowImage("48 calibration", origImg_cali48);
                         
+                        cvRectangle(detectedImg, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
 
 
 
@@ -409,9 +429,11 @@ int main(void){
 
 
 
-                            cvWaitKey(2000);
+                        cvWaitKey(1000);
+                        cvDestroyWindow("48 calibration");
+
                         } else {
-                            printf("\ndoesn't pass 48 layer\n");
+                            printf("\n48 layer: fail\n");
                         }
                         
                         
@@ -437,6 +459,10 @@ int main(void){
         srcImg = dstImg;
 
         } // image pyramid loop end
+        
+        cvShowImage("48 calibration", detectedImg);
+        cvWaitKey(0);
+        cvDestroyWindow("48 calibration");
 
         exit(0);
 

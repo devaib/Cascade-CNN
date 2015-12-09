@@ -6,7 +6,7 @@
 #define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
 #define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
 
-float MultiplyByElement5_48(float m1[][5], float m2[][5], int size){
+float MultiplyByElement5_48c(float m1[][5], float m2[][5], int size){
     int i,j;
     float result = 0.0;
 
@@ -21,7 +21,7 @@ float MultiplyByElement5_48(float m1[][5], float m2[][5], int size){
     return result;
 }
 
-float MultiplyByElement64_5_48(float m1[][5][5], float m2[][5][5], int size){
+float MultiplyByElement64_5_48c(float m1[][5][5], float m2[][5][5], int size){
     int i,j,k;
     float result = 0.0;
 
@@ -36,27 +36,29 @@ float MultiplyByElement64_5_48(float m1[][5][5], float m2[][5][5], int size){
     return result;
 }
 
-float MultiplyByElement9_48(float m1[][9][9], float m2[][9][9], int size){
+float MultiplyByElement18_48c(float *m1, float m2[][18][18], int size){
     int i,j,k;
     float result = 0.0;
 
     for (k = 0; k < 64; k++){
         for (i = 0; i < size; i++){
             for (j = 0; j < size; j++){
-                result = m1[k][i][j] * m2[k][i][j] + result;
+                result = m1[18*18*k+18*i+j] * m2[k][i][j] + result;
+                // printf("%f * %f = %f\n", m1[18*18*k+18*i+j], m2[k][i][j], (float)m1[18*18*k+18*i+j] * m2[k][i][j]);
             }
         }
     }
+    // printf("result: %f\n", result);
 
     return result;
 }
 
-float CaliLayer48(float img[][48], int height, int width, int channels){
+float* CaliLayer48(float img[][48], int height, int width, int channels){
     int i, j, k, l;
     float img_segment[5][5];
 
-    char path[] = "/home/binghao/cnn/48net/48net.bin";
-    // char path[] = "/Users/wbh/cnn/48net/48net.bin";
+    char path[] = "/home/binghao/cnn/48cnet/48cnet.bin";
+    // char path[] = "/Users/wbh/cnn/48cnet/48cnet.bin";
 
     // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
     // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
@@ -82,8 +84,8 @@ float CaliLayer48(float img[][48], int height, int width, int channels){
     const int Depth4 = 256;
     const int Filter = 25;
     const int Filter2 = 64*5*5;
-    const int Filter3 = 64*9*9;
-    const int Linear = 2;
+    const int Filter3 = 64*18*18;
+    const int Linear = 45;
 
     float *weight = malloc(Depth * Filter * sizeof(*weight));
     float *bias = malloc(Depth * sizeof(*bias));
@@ -147,23 +149,24 @@ float CaliLayer48(float img[][48], int height, int width, int channels){
         }
     }
 
-    float filter3[256][64][9][9];
+    float *filter3 = malloc(256*64*18*18*sizeof(float));
+    // float filter3[256][64][18][18];
     // output the filter3
     for (l = 0; l < 256; l++){
         for (k = 0; k < 64; k++){
-            for (i = 0; i < 9; i++){
-                for (j = 0; j < 9; j++){
+            for (i = 0; i < 18; i++){
+                for (j = 0; j < 18; j++){
                     // printf("filter2[%d][%d][%d][%d] =  %f\n", l, k, i, j, weight3[64*9*9*l + 81*k + 9*i + j]);
-                    filter3[l][k][i][j] = weight3[64*9*9*l + 81*k + 9*i + j];
+                    filter3[64*18*18*l + 18*18*k + 18*i + j] = weight3[64*18*18*l + 18*18*k + 18*i + j];
                 }
             }
         }
     }
 
 
-    float linear_para[2][256];
+    float linear_para[45][256];
     // output the linear weights
-    for (i = 0; i < 2; i++){
+    for (i = 0; i < 45; i++){
         for (j = 0; j < 256; j++){
             linear_para[i][j] = weight4[256*i + j];
             // printf("linear parameter[%d][%d] = %f\n", i, j, weight4[256*i + j]); 
@@ -183,7 +186,7 @@ float CaliLayer48(float img[][48], int height, int width, int channels){
                     }
                 }
 
-                res = MultiplyByElement5_48(filter[filter_num], img_segment, 5);
+                res = MultiplyByElement5_48c(filter[filter_num], img_segment, 5);
                 res += bias[filter_num];
 
                 output1[filter_num][row][col] = res;
@@ -240,7 +243,7 @@ float CaliLayer48(float img[][48], int height, int width, int channels){
                     }
                 }
 
-                res = MultiplyByElement64_5_48(filter2[filter_num], segment, 5);
+                res = MultiplyByElement64_5_48c(filter2[filter_num], segment, 5);
                 res += bias2[filter_num];
 
                 output3[filter_num][row][col] = res;
@@ -249,6 +252,7 @@ float CaliLayer48(float img[][48], int height, int width, int channels){
         }
     }
 
+    /*
     // padding
     float input4[64][20][20];
     for (k = 0; k < 64; k++){
@@ -281,21 +285,38 @@ float CaliLayer48(float img[][48], int height, int width, int channels){
             }
         }
     }
+    */
+
+    // RELU
+    for (k = 0; k < 64; k++){
+        for (row = 0; row < 18; row++){
+            for (col = 0; col < 18; col++){
+                if (output3[k][row][col] < 0)
+                    output3[k][row][col] = 0;
+            }
+        }
+    }
 
     // convolution 3
     float output6[256];
     for (i = 0; i < 256; i++){
-        output6[i] = bias3[i] + MultiplyByElement9_48(filter3[i], output5, 9);
+        output6[i] = bias3[i] + MultiplyByElement18_48c(&filter3[i*64*18*18], output3, 18);
         if (output6[i] < 0){
             output6[i] = 0.0;
         }
         // printf("output6[%d] = %f\n", i, output6[i]);
     }   
     
+    // RELU
+    for (i = 0; i < 256; i++){
+        if (output6[i] < 0)
+            output6[i] = 0;
+    }
+
 
     // linear
-    float output7[2];
-    for (i = 0; i < 2; i++){
+    float output7[45];
+    for (i = 0; i < 45; i++){
         output7[i] = 0;
         for (j = 0; j < 256; j++){
             output7[i] += output6[j] * linear_para[i][j];
@@ -305,20 +326,62 @@ float CaliLayer48(float img[][48], int height, int width, int channels){
     }
 
 
-    // softmax    
-    float output8[2];
-    float out[2], logsum;
-    float a, b, c, d;
-    a = output7[0];
-    b = output7[1];
-    c = a < b ? a : b;      // c = min(a, b)
-    d = a + b - c;          // d = max(a, b)
-    logsum = c + logf(1 + expf(d - c));
-    output8[0] = a - logsum;
-    output8[1] = b - logsum;
-    out[0] = expf(output8[0]);
-    out[1] = expf(output8[1]);
+    // softmax
+    float *out_48c = malloc(sizeof(*out_48c));
+    float out[45];
+    float minimum = output7[0];
+    float sum = 0;
+    float logsum;
+    float detect[45][3];
 
+
+    for (i = 0; i < 45; i++){
+        minimum = min(output7[i], minimum);
+    }
+    for (i = 0; i < 45; i++){
+        sum += expf(output7[i] - minimum);
+    }
+    logsum = minimum + logf(sum);
+
+    // different scales
+    float s[5] = {0.83, 0.91, 1.0, 1.10, 1.21};
+    float x[3] = {-0.17, 0.0, 0.17};
+    float y[3] = {-0.17, 0.0, 0.17};
+    float sn = 0;
+    float xn = 0;
+    float yn = 0;
+
+    // the threshold
+    float thres = 0.1;
+
+    int m = 0;
+    for (i = 0; i < 5; i++){
+        for (j = 0; j < 3; j++){
+            for (k = 0; k < 3; k++){
+                out[9*i+3*j+k] = expf(output7[9*i+3*j+k] - logsum);
+                    // printf("out[%d] = %f\n", 9*i+3*j+k, out[9*i+3*j+k]);
+                if (out[9*i+3*j+k] > thres){
+                    // printf("out[%d] = %f\n", 9*i+3*j+k, out[9*i+3*j+k]);
+                    // printf("i: %d, j: %d, k: %d\n", i, j, k);
+
+                    sn += s[i];
+                    xn += x[j];
+                    yn += y[k];
+                    m++;
+                }
+            }
+        }
+    }
+    
+    sn /= m;
+    xn /= m;
+    yn /= m;
+
+    out_48c[0] = sn;
+    out_48c[1] = xn;
+    out_48c[2] = yn;
+
+    return out_48c;
     /*
     printf("output 1: %f\n", output8[0]);
     printf("output 2: %f\n", output8[1]);
@@ -362,7 +425,6 @@ float CaliLayer48(float img[][48], int height, int width, int channels){
     
     */
 
-    return out[0];
 }
 
 
