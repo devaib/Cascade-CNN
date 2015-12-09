@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project(48ctest)
+find_package(OpenCV)
+include_directories(${OpenCV_INCLUDE_DIRS})
+add_executable(48ctest 48ctest.c 12Layer.c 12CLayer.c 24Layer.c 24CLayer.c 48Layer.c)
+target_link_libraries(48ctest ${OpenCV_LIBS})

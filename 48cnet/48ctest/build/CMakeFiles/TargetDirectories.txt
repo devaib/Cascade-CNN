@@ -1,0 +1,1 @@
+/home/binghao/cnn/48cnet/48ctest/build/CMakeFiles/48ctest.dir

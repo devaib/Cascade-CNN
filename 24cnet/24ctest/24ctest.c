@@ -181,6 +181,10 @@ int main(void){
                     y = out_12c[2];
 
                     free(out_12c);
+
+                    // NAN values have odd property(comparison involving them are always false)
+                    if (s != s || x != x || y != y)
+                        continue;
                     
                     // real position and size of the detected window in original image
                     int multiplicant;

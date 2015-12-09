@@ -23,8 +23,8 @@ int main(void){
     int i, j, k;
 
     // load the image
-    char file[] = "/Users/wbh/cnn/test/nonfaces/40015.jpg";
-    // char file[] = "/home/binghao/cnn/test/1/3_1_111.jpg";
+    // char file[] = "/Users/wbh/cnn/test/nonfaces/40015.jpg";
+    char file[] = "/home/binghao/cnn/test/nonfaces/40059.jpg";
     
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
     if (!srcImg){
@@ -66,7 +66,7 @@ int main(void){
         }
     }
      
-    res = ConvLayer48(img, height, width, channels);
+    res = Layer48(img, height, width, channels);
 
     cvNamedWindow("win1", CV_WINDOW_AUTOSIZE);
     cvShowImage("win1", dstImg);

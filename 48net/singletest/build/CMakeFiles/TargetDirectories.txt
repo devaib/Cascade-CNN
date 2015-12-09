@@ -1,1 +1,1 @@
-/Users/wbh/cnn/48net/singletest/build/CMakeFiles/singletest.dir
+/home/binghao/cnn/48net/singletest/build/CMakeFiles/singletest.dir
