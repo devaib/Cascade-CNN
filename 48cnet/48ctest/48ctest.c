@@ -348,7 +348,7 @@ int main(void){
                         cvMoveWindow("48 net", 1150, 300);
                         cvShowImage("48 net", temp48Img);
 
-                        cvWaitKey(1000);
+                        cvWaitKey(100);
 
                         mean_x = 0.0;
                         mean_x2 = 0.0;
@@ -429,7 +429,7 @@ int main(void){
 
 
 
-                        cvWaitKey(1000);
+                        cvWaitKey(300);
                         cvDestroyWindow("48 calibration");
 
                         } else {
@@ -442,7 +442,7 @@ int main(void){
 
 
 
-                    cvWaitKey(500);
+                    cvWaitKey(100);
 
                     cvDestroyWindow("48 net");
                     cvDestroyWindow("24 calibration");
@@ -460,9 +460,9 @@ int main(void){
 
         } // image pyramid loop end
         
-        cvShowImage("48 calibration", detectedImg);
+        cvShowImage("detection result", detectedImg);
         cvWaitKey(0);
-        cvDestroyWindow("48 calibration");
+        cvDestroyWindow("detection result");
 
         exit(0);
 
