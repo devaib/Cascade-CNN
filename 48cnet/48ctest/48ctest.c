@@ -13,6 +13,8 @@ float Layer12(float img[][12], int width, int height, int channels);
 float* CaliLayer12(float img[][12], int width, int height, int channels);
 float Layer24(float img[][24], int width, int height, int channels);
 float* CaliLayer24(float img[][24], int width, int height, int channels);
+float Layer48(float img[][48], int width, int height, int channels);
+// float* CaliLayer24(float img[][48], int width, int height, int channels);
 
 char* itos(int i, char b[]){
     char const digit[] = "0123456789";
@@ -93,7 +95,8 @@ int main(void){
 
     // ----------------------------------------------------------
     // for testing
-    char file[] = "/home/binghao/cnn/test/img/lena.jpg";
+    char file[] = "/Users/wbh/cnn/test/img/group1.jpg";
+    // char file[] = "/home/binghao/cnn/test/img/group.jpg";
     printf("For testing: %s\n",file);
     // ----------------------------------------------------------
 
@@ -166,11 +169,12 @@ int main(void){
                 // printf("%d%% tested, testing on image %s\n", (int)((float)loop*100/14266), file);
                 // printf("image size: %d, test on row: %d, col: %d\n", width, row, col);
                 
-                // send the 12 * 12 detection window to 12 calibration if it's detected as a face
                 res = Layer12(img, 12, 12, channels);
+
+                // 12 calibration
                 if (res > 0.5){
                     // printf("\n\n---------- face detected at row: %d, col: %d ------------\n\n", row, col);
-
+                    
                     float *out_12c;
                     out_12c = CaliLayer12(img, 12, 12, channels);
 
@@ -194,8 +198,8 @@ int main(void){
 
                     realWinSize_w = 12 * multiplicant;
                     realWinSize_h = 12 * multiplicant;
-                    realPos_w = row * multiplicant;
-                    realPos_h = col * multiplicant;
+                    realPos_w = col * multiplicant;
+                    realPos_h = row * multiplicant;
 
                     // calibration 
                     int cali_x, cali_y, cali_w, cali_h;
@@ -216,24 +220,39 @@ int main(void){
 
                     // ----------- for testing -----------------
                     // skip the small windows
-                    if (width > 100)
+                    if (width > 200)
                         continue;
                     // -----------------------------------------
 
+                    /*
                     printf("real window size: %d * %d,  position row: %d, col: %d\n", realWinSize_w, realWinSize_h, realPos_w, realPos_h);
                     printf("x: %f, y: %f, s: %f\n", x, y, s);
                     printf("cali window position: %d, %d,  cali position width: %d, height: %d\n", cali_x, cali_y, cali_w, cali_h);
+                    */
 
+                    
+                    // show the input of 12 net
+                    cvSetImageROI(originalImg, cvRect(realPos_w, realPos_h, realWinSize_w, realWinSize_h));
+                    IplImage *input12Img= cvCreateImage(cvSize(12, 12), IPL_DEPTH_8U, 1);
+                    cvResize(originalImg, input12Img, CV_INTER_AREA);
+
+                    IplImage *temp12Img = cvCreateImage(cvSize(100, 100), IPL_DEPTH_8U, 1);
+                    cvResize(input12Img, temp12Img, CV_INTER_AREA);
+                    cvNamedWindow("12net", CV_WINDOW_AUTOSIZE);
+                    cvMoveWindow("12net", 1150, 10);
+                    cvShowImage("12net", temp12Img);
+
+                    cvResetImageROI(originalImg);
                     
                     IplImage *origImg = cvCloneImage(originalImg);
                     cvNamedWindow("12 net", CV_WINDOW_AUTOSIZE);
-                    cvMoveWindow("12 net", 0, 100);
+                    cvMoveWindow("12 net", 0, 20);
                     cvRectangle(origImg, cvPoint(realPos_w, realPos_h), cvPoint(realPos_w + realWinSize_w, realPos_h + realWinSize_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
                     cvShowImage("12 net", origImg);
 
                     IplImage *origImg_cali = cvCloneImage(originalImg);
                     cvNamedWindow("12 calibration", CV_WINDOW_AUTOSIZE);
-                    cvMoveWindow("12 calibration", 550, 100);
+                    cvMoveWindow("12 calibration", 550, 20);
                     cvRectangle(origImg_cali, cvPoint(cali_x, cali_y), cvPoint(cali_x + cali_w, cali_y + cali_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
                     cvShowImage("12 calibration", origImg_cali);
                     
@@ -244,12 +263,12 @@ int main(void){
                     // resize the detected window of original image after 12 calibration net
                     cvSetImageROI(originalImg, cvRect(cali_x, cali_y, cali_w, cali_h));
                     IplImage *input24Img = cvCreateImage(cvSize(24, 24), IPL_DEPTH_8U, 1);
-                    cvResize(originalImg, input24Img, CV_INTER_AREA);;
+                    cvResize(originalImg, input24Img, CV_INTER_AREA);
 
                     IplImage *tempImg = cvCreateImage(cvSize(100, 100), IPL_DEPTH_8U, 1);
-                    cvResize(input24Img, tempImg, CV_INTER_AREA);;
+                    cvResize(input24Img, tempImg, CV_INTER_AREA);
                     cvNamedWindow("24 net", CV_WINDOW_AUTOSIZE);
-                    cvMoveWindow("24 net", 1150, 100);
+                    cvMoveWindow("24 net", 1150, 165);
                     cvShowImage("24 net", tempImg);
 
                     mean_x = 0.0;
@@ -278,10 +297,9 @@ int main(void){
                     }
 
                     res = Layer24(img24, 24, 24, input24Img->nChannels);
-                    printf("\nres = %f\n", res);
+                    // printf("\nres = %f\n", res);
 
                     if (res > 0.5){
-                        printf("object detected\n\n");
 
                         float *out_24c;
                         out_24c = CaliLayer24(img24, 24, 24, input24Img->nChannels);
@@ -290,7 +308,7 @@ int main(void){
                         x_24 = out_24c[1];
                         y_24 = out_24c[2];
                         free(out_24c);
-                        printf("s: %f, x: %f, y: %f\n", s_24, x_24, y_24);
+                        // printf("s: %f, x: %f, y: %f\n", s_24, x_24, y_24);
 
                         // 24 calibration
                         int cali24_x, cali24_y, cali24_w, cali24_h;
@@ -300,13 +318,13 @@ int main(void){
                         cali24_w = (int)(cali_w / s_24);
                         cali24_h = (int)(cali_h / s_24);
 
-                        printf("24_x: %d, 24_y: %d, 24_w: %d, 24_h: %d\n", cali24_x, cali24_y, cali24_w, cali24_h);
+                        // printf("24_x: %d, 24_y: %d, 24_w: %d, 24_h: %d\n", cali24_x, cali24_y, cali24_w, cali24_h);
 
                         cvResetImageROI(originalImg);
 
                         IplImage *origImg_cali24 = cvCloneImage(originalImg);
                         cvNamedWindow("24 calibration", CV_WINDOW_AUTOSIZE);
-                        cvMoveWindow("24 calibration", 0, 300);
+                        cvMoveWindow("24 calibration", 0, 350);
                         cvRectangle(origImg_cali24, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
                         cvShowImage("24 calibration", origImg_cali24);
                         
@@ -351,7 +369,11 @@ int main(void){
                         }
 
                         res = Layer48(img48, 48, 48, input48Img->nChannels);
-                        printf("\nres = %f\n", res);
+                        if (res > 0.5){
+                            printf("\npass 48 layer with score: %f\n", res);
+                        } else {
+                            printf("\ndoesn't pass 48 layer\n");
+                        }
 
                         
 

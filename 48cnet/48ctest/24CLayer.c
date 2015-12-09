@@ -44,8 +44,8 @@ float* CaliLayer24(float img[][24], int height, int width, int channels){
     float filter2[64][32][10][10];
     float output1[32][20][20];
 
-    char path[] = "/home/binghao/cnn/24cnet/24cnet.bin";
-    // char path[] = "/Users/wbh/cnn/24cnet/24cnet.bin";
+    // char path[] = "/home/binghao/cnn/24cnet/24cnet.bin";
+    char path[] = "/Users/wbh/cnn/24cnet/24cnet.bin";
 
     // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
     // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";

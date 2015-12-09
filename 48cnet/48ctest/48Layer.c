@@ -17,7 +17,6 @@ float MultiplyByElement5_48(float m1[][5], float m2[][5], int size){
         }
     }
     // printf("result: %f\n", result);
-    //exit(0);
 
     return result;
 }
@@ -56,8 +55,8 @@ float Layer48(float img[][48], int height, int width, int channels){
     int i, j, k, l;
     float img_segment[5][5];
 
-    char path[] = "/home/binghao/cnn/48net/48net.bin";
-    // char path[] = "/Users/wbh/cnn/48net/48net.bin";
+    // char path[] = "/home/binghao/cnn/48net/48net.bin";
+    char path[] = "/Users/wbh/cnn/48net/48net.bin";
 
     // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
     // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
@@ -161,6 +160,7 @@ float Layer48(float img[][48], int height, int width, int channels){
         }
     }
 
+
     float linear_para[2][256];
     // output the linear weights
     for (i = 0; i < 2; i++){
@@ -244,7 +244,7 @@ float Layer48(float img[][48], int height, int width, int channels){
                 res += bias2[filter_num];
 
                 output3[filter_num][row][col] = res;
-                // printf("output1[%d][%d][%d] = %f\n", filter_num, row, col, res);
+                // printf("output3[%d][%d][%d] = %f\n", filter_num, row, col, res);
             }
         }
     }
@@ -257,7 +257,7 @@ float Layer48(float img[][48], int height, int width, int channels){
                 if (i == 0 || i == 19 || j == 0 || j == 19){
                     input4[k][i][j] = 0;
                 } else {
-                    input4[k][i][j] = output1[k][i-1][j-1]; 
+                    input4[k][i][j] = output3[k][i-1][j-1]; 
                 }
             }
         }
@@ -289,9 +289,10 @@ float Layer48(float img[][48], int height, int width, int channels){
         if (output6[i] < 0){
             output6[i] = 0.0;
         }
-        // printf("output4[%d] = %f\n", i, output4[i]);
+        // printf("output6[%d] = %f\n", i, output6[i]);
     }   
     
+
     // linear
     float output7[2];
     for (i = 0; i < 2; i++){
@@ -318,11 +319,14 @@ float Layer48(float img[][48], int height, int width, int channels){
     out[0] = expf(output8[0]);
     out[1] = expf(output8[1]);
 
+    /*
     printf("output 1: %f\n", output8[0]);
     printf("output 2: %f\n", output8[1]);
     printf("out: %f\n", out[0]); 
     printf("out: %f\n", out[1]); 
+    */
     
+
     /*
     FILE *ffp = fopen(pooling_output_path,"w");
     for (k = 0; k < 16; k++){
