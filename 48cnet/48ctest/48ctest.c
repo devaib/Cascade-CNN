@@ -9,6 +9,10 @@
 #define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
 #define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
 
+typedef int bool;
+#define true 1
+#define false 0
+
 float Layer12(float img[][12], int width, int height, int channels);
 float* CaliLayer12(float img[][12], int width, int height, int channels);
 float Layer24(float img[][24], int width, int height, int channels);
@@ -98,6 +102,8 @@ int main(void){
     // char file[] = "/Users/wbh/cnn/test/img/group1.jpg";
     char file[] = "/home/binghao/cnn/test/img/group3.jpg";
     printf("For testing: %s\n",file);
+
+    bool flagPrinting = false;
     // ----------------------------------------------------------
 
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
@@ -115,8 +121,6 @@ int main(void){
 
     // detected objects image
     IplImage *detectedImg = cvCloneImage(originalImg);
-    cvNamedWindow("detection result", CV_WINDOW_AUTOSIZE);
-    cvMoveWindow("detection result", 200, 350);
 
     // object coordinate information
     int object[10000][4];
@@ -236,6 +240,7 @@ int main(void){
 
                     
                     // show the input of 12 net
+                    if (flagPrinting){
                     cvSetImageROI(originalImg, cvRect(realPos_w, realPos_h, realWinSize_w, realWinSize_h));
                     IplImage *input12Img= cvCreateImage(cvSize(12, 12), IPL_DEPTH_8U, 1);
                     cvResize(originalImg, input12Img, CV_INTER_AREA);
@@ -247,18 +252,23 @@ int main(void){
                     cvShowImage("12net", temp12Img);
 
                     cvResetImageROI(originalImg);
+                    }
                     
+                    /*
                     IplImage *origImg = cvCloneImage(originalImg);
                     cvNamedWindow("12 net", CV_WINDOW_AUTOSIZE);
                     cvMoveWindow("12 net", 0, 20);
                     cvRectangle(origImg, cvPoint(realPos_w, realPos_h), cvPoint(realPos_w + realWinSize_w, realPos_h + realWinSize_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
                     cvShowImage("12 net", origImg);
+                    */
 
+                    if (flagPrinting){
                     IplImage *origImg_cali = cvCloneImage(originalImg);
                     cvNamedWindow("12 calibration", CV_WINDOW_AUTOSIZE);
-                    cvMoveWindow("12 calibration", 550, 20);
+                    cvMoveWindow("12 calibration", 350, 20);
                     cvRectangle(origImg_cali, cvPoint(cali_x, cali_y), cvPoint(cali_x + cali_w, cali_y + cali_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
                     cvShowImage("12 calibration", origImg_cali);
+                    }
                     
 
                     float img24[24][24];
@@ -269,11 +279,13 @@ int main(void){
                     IplImage *input24Img = cvCreateImage(cvSize(24, 24), IPL_DEPTH_8U, 1);
                     cvResize(originalImg, input24Img, CV_INTER_AREA);
 
+                    if (flagPrinting){
                     IplImage *tempImg = cvCreateImage(cvSize(100, 100), IPL_DEPTH_8U, 1);
                     cvResize(input24Img, tempImg, CV_INTER_AREA);
                     cvNamedWindow("24 net", CV_WINDOW_AUTOSIZE);
                     cvMoveWindow("24 net", 1150, 165);
                     cvShowImage("24 net", tempImg);
+                    }
 
                     mean_x = 0.0;
                     mean_x2 = 0.0;
@@ -324,6 +336,7 @@ int main(void){
 
                         // printf("24_x: %d, 24_y: %d, 24_w: %d, 24_h: %d\n", cali24_x, cali24_y, cali24_w, cali24_h);
 
+                        if (flagPrinting){
                         cvResetImageROI(originalImg);
 
                         IplImage *origImg_cali24 = cvCloneImage(originalImg);
@@ -331,6 +344,7 @@ int main(void){
                         cvMoveWindow("24 calibration", 0, 350);
                         cvRectangle(origImg_cali24, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
                         cvShowImage("24 calibration", origImg_cali24);
+                        }
                         
                         
 
@@ -342,6 +356,7 @@ int main(void){
                         IplImage *input48Img = cvCreateImage(cvSize(48, 48), IPL_DEPTH_8U, 1);
                         cvResize(originalImg, input48Img, CV_INTER_AREA);;
 
+                    if (flagPrinting){
                         IplImage *temp48Img = cvCreateImage(cvSize(100, 100), IPL_DEPTH_8U, 1);
                         cvResize(input48Img, temp48Img, CV_INTER_AREA);;
                         cvNamedWindow("48 net", CV_WINDOW_AUTOSIZE);
@@ -349,6 +364,7 @@ int main(void){
                         cvShowImage("48 net", temp48Img);
 
                         cvWaitKey(100);
+                    }
 
                         mean_x = 0.0;
                         mean_x2 = 0.0;
@@ -408,16 +424,19 @@ int main(void){
 
                         cvResetImageROI(originalImg);
 
+                        if (flagPrinting){
                         IplImage *origImg_cali48 = cvCloneImage(originalImg);
                         cvNamedWindow("48 calibration", CV_WINDOW_AUTOSIZE);
                         cvMoveWindow("48 calibration", 600, 350);
+                        cvShowImage("48 calibration", origImg_cali48);
+                        cvRectangle(origImg_cali48, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+
+                        cvWaitKey(300);
+                        cvDestroyWindow("48 calibration");
+                        }
 
                         // skip the 48 calibration 
                         // cvRectangle(origImg_cali48, cvPoint(cali48_x, cali48_y), cvPoint(cali48_x + cali48_w, cali48_y + cali48_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
-                        cvRectangle(origImg_cali48, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
-
-                        cvShowImage("48 calibration", origImg_cali48);
-                        
                         cvRectangle(detectedImg, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
 
 
@@ -429,8 +448,7 @@ int main(void){
 
 
 
-                        cvWaitKey(300);
-                        cvDestroyWindow("48 calibration");
+
 
                         } else {
                             printf("\n48 layer: fail\n");
@@ -442,6 +460,8 @@ int main(void){
 
 
 
+
+                    if (flagPrinting){
                     cvWaitKey(100);
 
                     cvDestroyWindow("48 net");
@@ -449,6 +469,7 @@ int main(void){
 
                     // reset to original image
                     cvResetImageROI(originalImg);
+                    }
                 }
                 
             }
@@ -460,6 +481,12 @@ int main(void){
 
         } // image pyramid loop end
         
+        cvDestroyWindow("24 calibration");
+        cvDestroyWindow("12net");
+        cvDestroyWindow("24net");
+
+        cvNamedWindow("detection result", CV_WINDOW_AUTOSIZE);
+        cvMoveWindow("detection result", 200, 350);
         cvShowImage("detection result", detectedImg);
         cvWaitKey(0);
         cvDestroyWindow("detection result");
