@@ -6,6 +6,16 @@
 
 #IncludeRegexTransform: 
 
+/home/binghao/cnn/48cnet/singletest/48CLayer.c
+stdio.h
+-
+stdlib.h
+-
+assert.h
+-
+math.h
+-
+
 /home/binghao/cnn/48cnet/singletest/singletest.c
 stdlib.h
 -

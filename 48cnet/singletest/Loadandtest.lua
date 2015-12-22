@@ -29,9 +29,9 @@ net12:add(network1.modules[5])
 net12:add(network1.modules[6])
 net12:add(network1.modules[7])
 net12:add(network1.modules[8])
-
 net12:add(network1.modules[9])
 net12:add(network1.modules[10])
+
 --net12:add(network1.modules[11])
 --net12:add(network1.modules[12])
 --net12:add(network1.modules[13])

@@ -29,9 +29,11 @@ float MultiplyByElement64_5_48c(float m1[][5][5], float m2[][5][5], int size){
         for (i = 0; i < size; i++){
             for (j = 0; j < size; j++){
                 result = m1[k][i][j] * m2[k][i][j] + result;
+                // printf("%f * %f = %f\n", m1[k][i][j], m2[k][i][j], m1[k][i][j] * m2[k][i][j]);
             }
         }
     }
+    // printf("result: %f\n", result);
 
     return result;
 }
@@ -156,8 +158,12 @@ float* CaliLayer48(float img[][48], int height, int width, int channels){
         for (k = 0; k < 64; k++){
             for (i = 0; i < 18; i++){
                 for (j = 0; j < 18; j++){
-                    // printf("filter2[%d][%d][%d][%d] =  %f\n", l, k, i, j, weight3[64*9*9*l + 81*k + 9*i + j]);
+                    // printf("filter3[%d][%d][%d][%d] =  %f\n", l, k, i, j, weight3[64*9*9*l + 81*k + 9*i + j]);
                     filter3[64*18*18*l + 18*18*k + 18*i + j] = weight3[64*18*18*l + 18*18*k + 18*i + j];
+                    /*
+                    if (k == 0 && i == 0 && j==0)
+                        printf("filter3[%d][%d][%d][%d] = %f\n", l, k, i, j, filter3[64*18*18*l + 18*18*k + 18*i + j] = weight3[64*18*18*l + 18*18*k + 18*i + j]);
+                    */
                 }
             }
         }
@@ -297,7 +303,7 @@ float* CaliLayer48(float img[][48], int height, int width, int channels){
         }
     }
 
-    // convolution 3
+    // convolution 3 & RELU
     float output6[256];
     for (i = 0; i < 256; i++){
         output6[i] = bias3[i] + MultiplyByElement18_48c(&filter3[i*64*18*18], output3, 18);
@@ -307,11 +313,13 @@ float* CaliLayer48(float img[][48], int height, int width, int channels){
         // printf("output6[%d] = %f\n", i, output6[i]);
     }   
     
+    /*
     // RELU
     for (i = 0; i < 256; i++){
         if (output6[i] < 0)
             output6[i] = 0;
     }
+    */
 
 
     // linear
@@ -324,7 +332,6 @@ float* CaliLayer48(float img[][48], int height, int width, int channels){
         output7[i] += bias4[i];
         // printf("output7[%d] = %f\n", i, output7[i]);
     }
-
 
     // softmax
     float *out_48c = malloc(sizeof(*out_48c));
@@ -358,8 +365,9 @@ float* CaliLayer48(float img[][48], int height, int width, int channels){
     for (i = 0; i < 5; i++){
         for (j = 0; j < 3; j++){
             for (k = 0; k < 3; k++){
+                // printf("output7 - logsum = %f\n", output7[9*i+3*j+k] - logsum);
                 out[9*i+3*j+k] = expf(output7[9*i+3*j+k] - logsum);
-                    printf("out[%d] = %f\n", 9*i+3*j+k, out[9*i+3*j+k]);
+                // printf("out[%d] = %f\n", 9*i+3*j+k, out[9*i+3*j+k]);
                 if (out[9*i+3*j+k] > thres){
                     // printf("out[%d] = %f\n", 9*i+3*j+k, out[9*i+3*j+k]);
                     // printf("i: %d, j: %d, k: %d\n", i, j, k);

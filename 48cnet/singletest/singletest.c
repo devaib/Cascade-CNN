@@ -27,7 +27,7 @@ int main(void){
     // load the image
     // char file[] = "/Users/wbh/cnn/test/c_faces/pic00008.jpg";
     // char file[] = "/home/binghao/cnn/48cnet/singletest/test.jpg";
-    char file[] = "/home/binghao/cnn/test/1/45_1_111.jpg";
+    char file[] = "/home/binghao/cnn/48cnet/singletest/test.jpg";
     
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
     if (!srcImg){
