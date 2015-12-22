@@ -100,10 +100,10 @@ int main(void){
     // ----------------------------------------------------------
     // for testing
     // char file[] = "/Users/wbh/cnn/test/img/group1.jpg";
-    char file[] = "/home/binghao/cnn/test/img/group3.jpg";
+    char file[] = "/home/binghao/cnn/test/img/group1.jpg";
     printf("For testing: %s\n",file);
 
-    bool flagPrinting = false;
+    bool flagPrinting = true;
     // ----------------------------------------------------------
 
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
@@ -428,8 +428,8 @@ int main(void){
                         IplImage *origImg_cali48 = cvCloneImage(originalImg);
                         cvNamedWindow("48 calibration", CV_WINDOW_AUTOSIZE);
                         cvMoveWindow("48 calibration", 600, 350);
-                        cvShowImage("48 calibration", origImg_cali48);
                         cvRectangle(origImg_cali48, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+                        cvShowImage("48 calibration", origImg_cali48);
 
                         cvWaitKey(300);
                         cvDestroyWindow("48 calibration");

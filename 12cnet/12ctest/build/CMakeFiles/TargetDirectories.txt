@@ -1,1 +1,0 @@
-/home/binghao/cnn/12cnet/12ctest/build/CMakeFiles/12ctest.dir
