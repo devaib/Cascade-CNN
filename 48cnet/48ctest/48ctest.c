@@ -412,8 +412,8 @@ int main(void){
                         // NAN values have odd property(comparison involving them are always false)
                         if (s_48 != s_48 || x_48 != x_48 || y_48 != y_48)
                             continue;
-                        // printf("s: %f, x: %f, y: %f\n", s_48, x_48, y_48);
                         */
+                        printf("s: %f, x: %f, y: %f\n", s_48, x_48, y_48);
 
                         int cali48_x, cali48_y, cali48_w, cali48_h;
 
@@ -435,9 +435,13 @@ int main(void){
                         cvDestroyWindow("48 calibration");
                         }
 
-                        // skip the 48 calibration 
+                        // 48 calibration 
                         // cvRectangle(origImg_cali48, cvPoint(cali48_x, cali48_y), cvPoint(cali48_x + cali48_w, cali48_y + cali48_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+
+                        // detection result
                         cvRectangle(detectedImg, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+
+                        
 
 
 

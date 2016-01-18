@@ -367,7 +367,7 @@ float* CaliLayer48(float img[][48], int height, int width, int channels){
             for (k = 0; k < 3; k++){
                 // printf("output7 - logsum = %f\n", output7[9*i+3*j+k] - logsum);
                 out[9*i+3*j+k] = expf(output7[9*i+3*j+k] - logsum);
-                // printf("out[%d] = %f\n", 9*i+3*j+k, out[9*i+3*j+k]);
+                printf("out[%d] = %f\n", 9*i+3*j+k, out[9*i+3*j+k]);
                 if (out[9*i+3*j+k] > thres){
                     // printf("out[%d] = %f\n", 9*i+3*j+k, out[9*i+3*j+k]);
                     // printf("i: %d, j: %d, k: %d\n", i, j, k);
