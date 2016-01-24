@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include <math.h>
 
 #define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
+
+extern char FILE_PATH[];
 
 float MultiplyByElement3(float m1[][3], float m2[][3], int size){
     int i,j;
@@ -43,8 +46,13 @@ float Layer12(float img[][12], int height, int width, int channels){
     float filter2[16][16][5][5];
     float output1[16][10][10];
 
-    char path[] = "/home/binghao/cnn/12net/module1.bin";
+    //char path[] = "/home/binghao/cnn/12net/module1.bin";
     // char path[] = "/Users/wbh/cnn/12net/module1.bin";
+    char path[50];
+    strcpy(path, "");
+    strcat(path, FILE_PATH);
+    strcat(path, "cnn/12net/module1.bin");
+
 
     // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
     // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";

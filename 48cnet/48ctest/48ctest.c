@@ -13,6 +13,9 @@ typedef int bool;
 #define true 1
 #define false 0
 
+extern char FILE_PATH[];
+char FILE_PATH[] = "/Users/wbh/";
+
 float Layer12(float img[][12], int width, int height, int channels);
 float* CaliLayer12(float img[][12], int width, int height, int channels);
 float Layer24(float img[][24], int width, int height, int channels);
@@ -57,8 +60,8 @@ int main(void){
 
     char path[50];
     char file[50];
-    // strcpy(path, "/Users/wbh/cnn/test/c_faces/pic");
-    strcpy(path, "/home/binghao/cnn/test/c_faces/pic");
+    strcpy(path, "/Users/wbh/cnn/test/c_faces/pic");
+    // strcpy(path, "/home/binghao/cnn/test/c_faces/pic");
     // strcpy(path, "/Users/wbh/cnn/test/nonfaces/4");
 
     char *suffix = ".jpg";
@@ -100,7 +103,9 @@ int main(void){
     // ----------------------------------------------------------
     // for testing
     // char file[] = "/Users/wbh/cnn/test/img/group1.jpg";
-    char file[] = "/home/binghao/cnn/test/img/group1.jpg";
+    // char file[] = "/home/binghao/cnn/test/img/group1.jpg";
+    strcpy(file, FILE_PATH);
+    strcat(file, "cnn/test/img/group1.jpg");
     printf("For testing: %s\n",file);
 
     bool flagPrinting = true;
