@@ -1,1 +1,1 @@
-/Users/wbh/cnn/48cnet/48ctest/build/CMakeFiles/test.dir
+/home/binghao/cnn/48cnet/48ctest/build/CMakeFiles/test.dir

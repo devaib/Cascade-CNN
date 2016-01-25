@@ -1,13 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
-#include <math.h>
-
-#define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
-#define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
-
-extern char FILE_PATH[];
+#include "global.h"
 
 float MultiplyByElement5_48(float m1[][5], float m2[][5], int size){
     int i,j;
@@ -104,7 +95,7 @@ float Layer48(float img[][48], int height, int width, int channels){
 
     float *weight4 = malloc(Depth4 * Linear * sizeof(*weight4));
     float *bias4 = malloc(Depth4 * sizeof(*bias4));
-    
+
     FILE *f = fopen(path, "rb");
     assert(fread(weight, sizeof(*weight), Depth*Filter, f) == Depth*Filter);
     assert(fread(bias, sizeof(*bias), Depth, f) == Depth);
@@ -174,7 +165,7 @@ float Layer48(float img[][48], int height, int width, int channels){
     for (i = 0; i < 2; i++){
         for (j = 0; j < 256; j++){
             linear_para[i][j] = weight4[256*i + j];
-            // printf("linear parameter[%d][%d] = %f\n", i, j, weight4[256*i + j]); 
+            // printf("linear parameter[%d][%d] = %f\n", i, j, weight4[256*i + j]);
         }
     }
 
@@ -208,7 +199,7 @@ float Layer48(float img[][48], int height, int width, int channels){
                 if (i == 0 || i == 45 || j == 0 || j == 45){
                     input2[k][i][j] = 0;
                 } else {
-                    input2[k][i][j] = output1[k][i-1][j-1]; 
+                    input2[k][i][j] = output1[k][i-1][j-1];
                 }
             }
         }
@@ -229,7 +220,7 @@ float Layer48(float img[][48], int height, int width, int channels){
                     }
                 }
                 output2[k][row][col] = maxpool;
-                // printf("result: %f, filter: %d, row: %d, col: %d\n", maxpool, k, row, col);  
+                // printf("result: %f, filter: %d, row: %d, col: %d\n", maxpool, k, row, col);
             }
         }
     }
@@ -265,7 +256,7 @@ float Layer48(float img[][48], int height, int width, int channels){
                 if (i == 0 || i == 19 || j == 0 || j == 19){
                     input4[k][i][j] = 0;
                 } else {
-                    input4[k][i][j] = output3[k][i-1][j-1]; 
+                    input4[k][i][j] = output3[k][i-1][j-1];
                 }
             }
         }
@@ -285,7 +276,7 @@ float Layer48(float img[][48], int height, int width, int channels){
                     }
                 }
                 output5[k][row][col] = maxpool;
-                // printf("result: %f, filter: %d, row: %d, col: %d\n", maxpool, k, row, col);  
+                // printf("result: %f, filter: %d, row: %d, col: %d\n", maxpool, k, row, col);
             }
         }
     }
@@ -298,8 +289,8 @@ float Layer48(float img[][48], int height, int width, int channels){
             output6[i] = 0.0;
         }
         // printf("output6[%d] = %f\n", i, output6[i]);
-    }   
-    
+    }
+
 
     // linear
     float output7[2];
@@ -313,7 +304,7 @@ float Layer48(float img[][48], int height, int width, int channels){
     }
 
 
-    // softmax    
+    // softmax
     float output8[2];
     float out[2], logsum;
     float a, b, c, d;
@@ -330,10 +321,10 @@ float Layer48(float img[][48], int height, int width, int channels){
     /*
     printf("output 1: %f\n", output8[0]);
     printf("output 2: %f\n", output8[1]);
-    printf("out: %f\n", out[0]); 
-    printf("out: %f\n", out[1]); 
+    printf("out: %f\n", out[0]);
+    printf("out: %f\n", out[1]);
     */
-    
+
 
     /*
     FILE *ffp = fopen(pooling_output_path,"w");
@@ -367,10 +358,8 @@ float Layer48(float img[][48], int height, int width, int channels){
     printf("output size: %d * %d *%d", row, col, filter_num);
 
     fclose(fp);
-    
+
     */
 
     return out[0];
 }
-
-

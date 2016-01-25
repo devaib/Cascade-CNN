@@ -1,13 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
-#include <math.h>
-
-#define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
-#define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
-
-extern char FILE_PATH[];
+#include "global.h"
 
 float MultiplyByElement3_12c(float m1[][3], float m2[][3], int size){
     int i,j;
@@ -86,7 +77,7 @@ float* CaliLayer12(float img[][12], int height, int width, int channels){
 
     float *weight3 = malloc(Depth2 * 45 * sizeof(*weight3));
     float *bias3 = malloc(Depth2 * sizeof(*bias3));
-    
+
     FILE *f = fopen(path, "rb");
     assert(fread(weight, sizeof(*weight), Depth*Filter, f) == Depth*Filter );
     assert(fread(bias, sizeof(*bias), Depth, f) == Depth);
@@ -137,7 +128,7 @@ float* CaliLayer12(float img[][12], int height, int width, int channels){
     for (i = 0; i < 45; i++){
         for (j = 0; j < 128; j++){
             linear_para[i][j] = weight3[128*i + j];
-            // printf("linear parameter[%d][%d] = %f\n", i, j, weight3[128*i + j]); 
+            // printf("linear parameter[%d][%d] = %f\n", i, j, weight3[128*i + j]);
         }
     }
 
@@ -171,7 +162,7 @@ float* CaliLayer12(float img[][12], int height, int width, int channels){
                 if (i == 0 || i == 11 || j == 0 || j == 11){
                     input2[k][i][j] = 0;
                 } else {
-                    input2[k][i][j] = output1[k][i-1][j-1]; 
+                    input2[k][i][j] = output1[k][i-1][j-1];
                 }
             }
         }
@@ -192,7 +183,7 @@ float* CaliLayer12(float img[][12], int height, int width, int channels){
                     }
                 }
                 output2[k][row][col] = maxpool;
-                // printf("result: %f, filter: %d, row: %d, col: %d\n", maxpool, k, row, col);  
+                // printf("result: %f, filter: %d, row: %d, col: %d\n", maxpool, k, row, col);
             }
         }
     }
@@ -205,8 +196,8 @@ float* CaliLayer12(float img[][12], int height, int width, int channels){
             output4[i] = 0.0;
         }
         // printf("output4[%d] = %f\n", i, output4[i]);
-    }   
-    
+    }
+
     // linear
     float output7[45];
     for (i = 0; i < 45; i++){
@@ -264,7 +255,7 @@ float* CaliLayer12(float img[][12], int height, int width, int channels){
             }
         }
     }
-    
+
     sn /= m;
     xn /= m;
     yn /= m;
@@ -279,8 +270,8 @@ float* CaliLayer12(float img[][12], int height, int width, int channels){
     /*
     printf("output 1: %f\n", output8[0]);
     printf("output 2: %f\n", output8[1]);
-    printf("out: %f\n", out[0]); 
-    printf("out: %f\n", out[1]); 
+    printf("out: %f\n", out[0]);
+    printf("out: %f\n", out[1]);
     */
 
     /*
@@ -315,10 +306,8 @@ float* CaliLayer12(float img[][12], int height, int width, int channels){
     printf("output size: %d * %d *%d", row, col, filter_num);
 
     fclose(fp);
-    
+
     */
 
     return out_12c;
 }
-
-

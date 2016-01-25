@@ -1,21 +1,25 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <cv.h>
-#include <highgui.h>
-#include <string.h>
-#include <math.h>
-#include <unistd.h>
+#include "global.h"
 
-#define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
-#define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
+// ***************** parameters settings start *************************
+// home folder
+const char FILE_PATH[] = "/home/binghao/";
 
-typedef int bool;
-#define true 1
-#define false 0
+// test image path
+const char TEST_IMAGE[] = "cnn/test/img/group1.jpg";
 
-extern char FILE_PATH[];
-char FILE_PATH[] = "/Users/wbh/";
+// minimum size(pixels) of detection object
+const int MinImageSize = 16;
 
+// number of test images(test on images in specific folder)
+const int loopSize = 14266;
+
+// demostration mode on(true)/ off(false)
+const bool flagPrinting = true;
+
+// ***************** parameters settings end ***************************
+
+// function declarations
+// layers
 float Layer12(float img[][12], int width, int height, int channels);
 float* CaliLayer12(float img[][12], int width, int height, int channels);
 float Layer24(float img[][24], int width, int height, int channels);
@@ -23,29 +27,11 @@ float* CaliLayer24(float img[][24], int width, int height, int channels);
 float Layer48(float img[][48], int width, int height, int channels);
 float* CaliLayer48(float img[][48], int width, int height, int channels);
 
-char* itos(int i, char b[]){
-    char const digit[] = "0123456789";
-    char* p = b;
-    int shifter = i;
-    do{ //Move to where representation ends
-        ++p;
-        shifter = shifter/10;
-    }while(shifter);
-    *p = '\0';
-    do{ //Move back and insert digits
-        *--p = digit[i%10];
-        i = i/10;
-    }while(i);
-    return b;
-}
+// convert numbers from int to char[]
+char* itos(int i, char b[]);
 
-// image pyramid
-IplImage* doPyrDown(IplImage *src){
-    IplImage* result = cvCreateImage(cvSize(src -> width / 2, src -> height / 2), src -> depth, src -> nChannels);
-    cvPyrDown(src, result, CV_GAUSSIAN_5x5);
-
-    return result;
-}
+// image pyramid down by rate
+IplImage* doPyrDown(IplImage *src, int rate);
 
 int main(void){
     IplImage *srcImg;
@@ -58,11 +44,11 @@ int main(void){
     float std = 0.0;
     float res;
 
+    // initialize file path
     char path[50];
     char file[50];
-    strcpy(path, "/Users/wbh/cnn/test/c_faces/pic");
-    // strcpy(path, "/home/binghao/cnn/test/c_faces/pic");
-    // strcpy(path, "/Users/wbh/cnn/test/nonfaces/4");
+    strcpy(path, FILE_PATH);
+    strcat(path, "cnn/test/c_faces/pic");
 
     char *suffix = ".jpg";
     char imgNum[10];
@@ -72,47 +58,40 @@ int main(void){
     int loop;
     int digits;
 
-    // image test loop starts
-    for (loop = 1; loop < 14266; loop++){           // c_faces
-    // for (loop = 1; loop < 8620; loop++){         // nonfaces
-        strcpy(file, path);
-        digits = (int)log10f((float)loop);
-        
-        // add the zeros in the filename(for c_faces)
-        while (digits < 5 - 1){
-            num = itos(0, imgNum);
-            strcat(file, num);
-            digits++;
-        }
+// image test loop starts
+for (loop = 1; loop < loopSize; loop++){
+    strcpy(file, path);
+    digits = (int)log10f((float)loop);
 
-        // add zeros in the filename(for nonfaces)
-        /*
-        while (digits < 4 - 1){
-            num = itos(0, imgNum);
-            strcat(file, num);
-            digits++;
-        }
-        */
+    // add the zeros in the filename(for c_faces)
+    while (digits < 5 - 1){
+        num = itos(0, imgNum);
+        strcat(file, num);
+        digits++;
+    }
 
-        num = itos(loop, imgNum);
-        strcat(file, num); 
-        strcat(file, suffix); 
-        printf("%s\n",file);
-    
+    // add zeros in the filename(for nonfaces)
+    /*
+    while (digits < 4 - 1){
+        num = itos(0, imgNum);
+        strcat(file, num);
+        digits++;
+    }
+    */
+
+    num = itos(loop, imgNum);
+    strcat(file, num);
+    strcat(file, suffix);
 
     // ----------------------------------------------------------
     // for testing
-    // char file[] = "/Users/wbh/cnn/test/img/group1.jpg";
-    // char file[] = "/home/binghao/cnn/test/img/group1.jpg";
     strcpy(file, FILE_PATH);
-    strcat(file, "cnn/test/img/group1.jpg");
-    printf("For testing: %s\n",file);
-
-    bool flagPrinting = true;
+    strcat(file, TEST_IMAGE);
     // ----------------------------------------------------------
 
+    printf("Testing on: %s\n", file);
+
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
-    // dstImg = cvCreateImage(cvSize(12, 12), IPL_DEPTH_8U, 1);
     if (!srcImg){
         printf("Could not load image file: %s\n", file);
         continue;
@@ -130,18 +109,10 @@ int main(void){
     // object coordinate information
     int object[10000][4];
     int num_object = 0;
-    
+
     // image pyramid loop starts
-    const int MinImageSize = 16;
-    
-    // ----------------------------------------------------------
-    // for testing
-    // const int MinImageSize = 12;
-    // ----------------------------------------------------------
+    while (srcImg -> height >= MinImageSize){
 
-    while (srcImg -> height >= MinImageSize){     
-
-        
         // get the image data
         width = srcImg -> width;
         height = srcImg -> height;
@@ -152,7 +123,7 @@ int main(void){
         const int Stride = 4;
         int row, col;
         float img[12][12];
-        
+
         // window sliding loop starts
         for (row = 0; row + 12 <= height; row += Stride){
             for (col = 0; col + 12 <= width; col += Stride){
@@ -180,14 +151,14 @@ int main(void){
                 }
 
                 // printf("%d%% tested, testing on image %s\n", (int)((float)loop*100/14266), file);
-                // printf("image size: %d, test on row: %d, col: %d\n", width, row, col);
-                
+
+                // 12 net
                 res = Layer12(img, 12, 12, channels);
 
                 // 12 calibration
                 if (res > 0.5){
                     // printf("\n\n---------- face detected at row: %d, col: %d ------------\n\n", row, col);
-                    
+
                     float *out_12c;
                     out_12c = CaliLayer12(img, 12, 12, channels);
 
@@ -202,26 +173,26 @@ int main(void){
                     // NAN values have odd property(comparison involving them are always false)
                     if (s != s || x != x || y != y)
                         continue;
-                    
+
                     // real position and size of the detected window in original image
                     int multiplicant;
                     int realPos_w, realPos_h , realWinSize_w, realWinSize_h;
 
-                    multiplicant = WIDTH / width; 
+                    multiplicant = WIDTH / width;
 
                     realWinSize_w = 12 * multiplicant;
                     realWinSize_h = 12 * multiplicant;
                     realPos_w = col * multiplicant;
                     realPos_h = row * multiplicant;
 
-                    // calibration 
+                    // calibration
                     int cali_x, cali_y, cali_w, cali_h;
- 
+
                     cali_x = (int)(realPos_w - x * realWinSize_w / s);
                     cali_y = (int)(realPos_h - y * realWinSize_h / s);
                     cali_w = (int)(realWinSize_w / s);
                     cali_h = (int)(realWinSize_h / s);
-                    
+
                     // make sure the calibration image not beyond the boundary
                     if (cali_x >= WIDTH || cali_y >= HEIGHT){
                         continue;
@@ -243,7 +214,7 @@ int main(void){
                     printf("cali window position: %d, %d,  cali position width: %d, height: %d\n", cali_x, cali_y, cali_w, cali_h);
                     */
 
-                    
+
                     // show the input of 12 net
                     if (flagPrinting){
                     cvSetImageROI(originalImg, cvRect(realPos_w, realPos_h, realWinSize_w, realWinSize_h));
@@ -258,7 +229,7 @@ int main(void){
 
                     cvResetImageROI(originalImg);
                     }
-                    
+
                     /*
                     IplImage *origImg = cvCloneImage(originalImg);
                     cvNamedWindow("12 net", CV_WINDOW_AUTOSIZE);
@@ -274,10 +245,10 @@ int main(void){
                     cvRectangle(origImg_cali, cvPoint(cali_x, cali_y), cvPoint(cali_x + cali_w, cali_y + cali_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
                     cvShowImage("12 calibration", origImg_cali);
                     }
-                    
+
 
                     float img24[24][24];
-                    
+
                     // 24 net
                     // resize the detected window of original image after 12 calibration net
                     cvSetImageROI(originalImg, cvRect(cali_x, cali_y, cali_w, cali_h));
@@ -350,8 +321,8 @@ int main(void){
                         cvRectangle(origImg_cali24, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
                         cvShowImage("24 calibration", origImg_cali24);
                         }
-                        
-                        
+
+
 
                         // 48 net
                         float img48[48][48];
@@ -440,13 +411,13 @@ int main(void){
                         cvDestroyWindow("48 calibration");
                         }
 
-                        // 48 calibration 
+                        // 48 calibration
                         // cvRectangle(origImg_cali48, cvPoint(cali48_x, cali48_y), cvPoint(cali48_x + cali48_w, cali48_y + cali48_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
 
                         // detection result
                         cvRectangle(detectedImg, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
 
-                        
+
 
 
 
@@ -462,13 +433,9 @@ int main(void){
                         } else {
                             printf("\n48 layer: fail\n");
                         }
-                        
-                        
+
+
                     }
-
-
-
-
 
                     if (flagPrinting){
                     cvWaitKey(100);
@@ -480,16 +447,16 @@ int main(void){
                     cvResetImageROI(originalImg);
                     }
                 }
-                
             }
-        }   // window sliding loop ends
+        }
+        // window sliding loop ends
 
         // down pyramid
-        dstImg = doPyrDown(srcImg);
+        dstImg = doPyrDown(srcImg, 2);
         srcImg = dstImg;
 
         } // image pyramid loop end
-        
+
         cvDestroyWindow("24 calibration");
         cvDestroyWindow("12net");
         cvDestroyWindow("24net");
@@ -501,9 +468,8 @@ int main(void){
         cvDestroyWindow("detection result");
 
         exit(0);
-
-    } // image testset loop ends
+    }
+    // image test loop ends
 
     return 0;
 }
-
