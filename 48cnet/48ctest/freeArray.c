@@ -1,3 +1,4 @@
+// free the second dimensional array
 #include <stdlib.h>
 
 void freeArray(float **img, int n) {

@@ -14,6 +14,7 @@ set(CMAKE_DEPENDS_CHECK_C
   "/Users/wbh/cnn/48cnet/48ctest/doPyrDown.c" "/Users/wbh/cnn/48cnet/48ctest/build/CMakeFiles/test.dir/doPyrDown.c.o"
   "/Users/wbh/cnn/48cnet/48ctest/freeArray.c" "/Users/wbh/cnn/48cnet/48ctest/build/CMakeFiles/test.dir/freeArray.c.o"
   "/Users/wbh/cnn/48cnet/48ctest/itos.c" "/Users/wbh/cnn/48cnet/48ctest/build/CMakeFiles/test.dir/itos.c.o"
+  "/Users/wbh/cnn/48cnet/48ctest/multiplyByElement.c" "/Users/wbh/cnn/48cnet/48ctest/build/CMakeFiles/test.dir/multiplyByElement.c.o"
   "/Users/wbh/cnn/48cnet/48ctest/preprocess.c" "/Users/wbh/cnn/48cnet/48ctest/build/CMakeFiles/test.dir/preprocess.c.o"
   )
 set(CMAKE_C_COMPILER_ID "Clang")

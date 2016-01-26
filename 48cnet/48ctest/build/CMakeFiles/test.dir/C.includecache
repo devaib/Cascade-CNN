@@ -60,6 +60,8 @@ unistd.h
 
 /Users/wbh/cnn/48cnet/48ctest/itos.c
 
+/Users/wbh/cnn/48cnet/48ctest/multiplyByElement.c
+
 /Users/wbh/cnn/48cnet/48ctest/preprocess.c
 math.h
 -

@@ -1,78 +1,18 @@
 #include "global.h"
 
-float MultiplyByElement5_48(float m1[][5], float m2[][5], int size){
-    int i,j;
-    float result = 0.0;
+float MultiplyByElement5_(float m1[][5], float m2[][5]);
 
-    for (i = 0; i < size; i++){
-        for (j = 0; j < size; j++){
-            result = m1[i][j] * m2[i][j] + result;
-            // printf("%f * %f = %f\n", m1[i][j], m2[i][j], m1[i][j] * m2[i][j]);
-        }
-    }
-    // printf("result: %f\n", result);
+float MultiplyByElement5(float m1[][5][5], float m2[][5][5], int outer_loop);
 
-    return result;
-}
-
-float MultiplyByElement64_5_48(float m1[][5][5], float m2[][5][5], int size){
-    int i,j,k;
-    float result = 0.0;
-
-    for (k = 0; k < 64; k++){
-        for (i = 0; i < size; i++){
-            for (j = 0; j < size; j++){
-                result = m1[k][i][j] * m2[k][i][j] + result;
-            }
-        }
-    }
-
-    return result;
-}
-
-float MultiplyByElement9_48(float m1[][9][9], float m2[][9][9], int size){
-    int i,j,k;
-    float result = 0.0;
-
-    for (k = 0; k < 64; k++){
-        for (i = 0; i < size; i++){
-            for (j = 0; j < size; j++){
-                result = m1[k][i][j] * m2[k][i][j] + result;
-            }
-        }
-    }
-
-    return result;
-}
+float MultiplyByElement9(float m1[][9][9], float m2[][9][9], int outer_loop);
 
 float Layer48(float **img, int height, int width, int channels){
     int i, j, k, l;
     float img_segment[5][5];
-
-    //char path[] = "/home/binghao/cnn/48net/48net.bin";
-    // char path[] = "/Users/wbh/cnn/48net/48net.bin";
     char path[50];
     strcpy(path, "");
     strcat(path, FILE_PATH);
     strcat(path, "cnn/48net/48net.bin");
-
-
-    // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
-    // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
-
-    // char pooling_output_path[] = "/home/binghao/cnn/pooling_ouput.txt";
-    // char pooling_output_path[] = "/Users/wbh/cnn/pooling_ouput.txt";
-
-    /*
-    // output the image data
-    printf("image data start");
-    for (i = 0; i < height; i++){
-        for (j = 0; j < width; j++){
-            printf("img[%d][%d] = %f\n", i, j, img[i][j]);
-        }
-    }
-    printf("image data end");
-    */
 
     // read the weight and bias
     const int Depth = 64;
@@ -110,17 +50,6 @@ float Layer48(float **img, int height, int width, int channels){
     assert(fread(bias4, sizeof(*bias4), Depth4, f) == Depth3);
 
     fclose(f);
-
-    /*
-    // output the weight and bias of module
-    for (i = 0; i < Depth; i++){
-        for (j = 0; j < Filter; j++){
-            printf("weight[%d, %d] = %f\n", i, j, weight[Filter * i + j]);
-        }
-        printf("bias[%d] = %f\n", i, bias[i]);
-    }
-    exit(0);
-    */
 
     float filter[64][5][5];
     // output the filter
@@ -182,7 +111,7 @@ float Layer48(float **img, int height, int width, int channels){
                     }
                 }
 
-                res = MultiplyByElement5_48(filter[filter_num], img_segment, 5);
+                res = MultiplyByElement5_(filter[filter_num], img_segment);
                 res += bias[filter_num];
 
                 output1[filter_num][row][col] = res;
@@ -239,7 +168,7 @@ float Layer48(float **img, int height, int width, int channels){
                     }
                 }
 
-                res = MultiplyByElement64_5_48(filter2[filter_num], segment, 5);
+                res = MultiplyByElement5(filter2[filter_num], segment, 64);
                 res += bias2[filter_num];
 
                 output3[filter_num][row][col] = res;
@@ -284,7 +213,7 @@ float Layer48(float **img, int height, int width, int channels){
     // convolution 3
     float output6[256];
     for (i = 0; i < 256; i++){
-        output6[i] = bias3[i] + MultiplyByElement9_48(filter3[i], output5, 9);
+        output6[i] = bias3[i] + MultiplyByElement9(filter3[i], output5, 64);
         if (output6[i] < 0){
             output6[i] = 0.0;
         }

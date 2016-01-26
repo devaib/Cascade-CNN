@@ -10,6 +10,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/test.dir/doPyrDown.c.o"
   "CMakeFiles/test.dir/preprocess.c.o"
   "CMakeFiles/test.dir/freeArray.c.o"
+  "CMakeFiles/test.dir/multiplyByElement.c.o"
   "test.pdb"
   "test"
 )

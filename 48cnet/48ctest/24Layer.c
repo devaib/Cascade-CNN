@@ -1,35 +1,8 @@
 #include "global.h"
 
-float MultiplyByElement5_24(float m1[][5], float m2[][5], int size){
-    int i,j;
-    float result = 0.0;
+float MultiplyByElement5_(float m1[][5], float m2[][5]);
 
-    for (i = 0; i < size; i++){
-        for (j = 0; j < size; j++){
-            result = m1[i][j] * m2[i][j] + result;
-            // printf("%f * %f = %f\n", m1[i][j], m2[i][j], m1[i][j] * m2[i][j]);
-        }
-    }
-    // printf("result: %f\n", result);
-    //exit(0);
-
-    return result;
-}
-
-float MultiplyByElement10_24(float m1[][10][10], float m2[][10][10], int size){
-    int i,j,k;
-    float result = 0.0;
-
-    for (k = 0; k < 64; k++){
-        for (i = 0; i < size; i++){
-            for (j = 0; j < size; j++){
-                result = m1[k][i][j] * m2[k][i][j] + result;
-            }
-        }
-    }
-
-    return result;
-}
+float MultiplyByElement10(float m1[][10][10], float m2[][10][10], int outer_loop);
 
 float Layer24(float **img, int height, int width, int channels){
     int i, j, k, l;
@@ -148,7 +121,7 @@ float Layer24(float **img, int height, int width, int channels){
                     }
                 }
 
-                res = MultiplyByElement5_24(filter[filter_num], img_segment, 5);
+                res = MultiplyByElement5_(filter[filter_num], img_segment);
                 res += bias[filter_num];
 
                 output1[filter_num][row][col] = res;
@@ -194,7 +167,7 @@ float Layer24(float **img, int height, int width, int channels){
     // convolution 2
     float output4[128];
     for (i = 0; i < 128; i++){
-        output4[i] = bias2[i] + MultiplyByElement10_24(filter2[i], output2, 10);
+        output4[i] = bias2[i] + MultiplyByElement10(filter2[i], output2, 64);
         if (output4[i] < 0){
             output4[i] = 0.0;
         }

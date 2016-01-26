@@ -256,5 +256,7 @@ CMakeFiles/test.dir/freeArray.c.o: ../freeArray.c
 
 CMakeFiles/test.dir/itos.c.o: ../itos.c
 
+CMakeFiles/test.dir/multiplyByElement.c.o: ../multiplyByElement.c
+
 CMakeFiles/test.dir/preprocess.c.o: ../preprocess.c
 

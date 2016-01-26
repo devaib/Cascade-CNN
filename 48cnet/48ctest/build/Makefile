@@ -393,6 +393,33 @@ itos.c.s:
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/itos.c.s
 .PHONY : itos.c.s
 
+multiplyByElement.o: multiplyByElement.c.o
+
+.PHONY : multiplyByElement.o
+
+# target to build an object file
+multiplyByElement.c.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/multiplyByElement.c.o
+.PHONY : multiplyByElement.c.o
+
+multiplyByElement.i: multiplyByElement.c.i
+
+.PHONY : multiplyByElement.i
+
+# target to preprocess a source file
+multiplyByElement.c.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/multiplyByElement.c.i
+.PHONY : multiplyByElement.c.i
+
+multiplyByElement.s: multiplyByElement.c.s
+
+.PHONY : multiplyByElement.s
+
+# target to generate assembly for a file
+multiplyByElement.c.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/multiplyByElement.c.s
+.PHONY : multiplyByElement.c.s
+
 preprocess.o: preprocess.c.o
 
 .PHONY : preprocess.o
@@ -459,6 +486,9 @@ help:
 	@echo "... itos.o"
 	@echo "... itos.i"
 	@echo "... itos.s"
+	@echo "... multiplyByElement.o"
+	@echo "... multiplyByElement.i"
+	@echo "... multiplyByElement.s"
 	@echo "... preprocess.o"
 	@echo "... preprocess.i"
 	@echo "... preprocess.s"

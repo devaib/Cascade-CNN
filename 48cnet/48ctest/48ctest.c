@@ -213,9 +213,9 @@ for (loop = 1; loop < loopSize; loop++){
 
                     IplImage *temp12Img = cvCreateImage(cvSize(100, 100), IPL_DEPTH_8U, 1);
                     cvResize(input12Img, temp12Img, CV_INTER_AREA);
-                    cvNamedWindow("12net", CV_WINDOW_AUTOSIZE);
-                    cvMoveWindow("12net", 1150, 10);
-                    cvShowImage("12net", temp12Img);
+                    cvNamedWindow("12 net", CV_WINDOW_AUTOSIZE);
+                    cvMoveWindow("12 net", 1150, 10);
+                    cvShowImage("12 net", temp12Img);
 
                     cvResetImageROI(originalImg);
                     }
@@ -408,9 +408,9 @@ for (loop = 1; loop < loopSize; loop++){
 
         } // image pyramid loop end
 
-        cvDestroyWindow("24 calibration");
-        cvDestroyWindow("12net");
-        cvDestroyWindow("24net");
+        cvDestroyWindow("12 calibration");
+        cvDestroyWindow("12 net");
+        cvDestroyWindow("24 net");
 
         cvNamedWindow("detection result", CV_WINDOW_AUTOSIZE);
         cvMoveWindow("detection result", 200, 350);

@@ -1,35 +1,8 @@
 #include "global.h"
 
-float MultiplyByElement3(float m1[][3], float m2[][3], int size){
-    int i,j;
-    float result = 0.0;
+float MultiplyByElement3(float m1[][3], float m2[][3]);
 
-    for (i = 0; i < size; i++){
-        for (j = 0; j < size; j++){
-            result = m1[i][j] * m2[i][j] + result;
-            // printf("%f * %f = %f\n", m1[i][j], m2[i][j], m1[i][j] * m2[i][j]);
-        }
-    }
-    // printf("result: %f\n", result);
-    //exit(0);
-
-    return result;
-}
-
-float MultiplyByElement5(float m1[][5][5], float m2[][5][5], int size){
-    int i,j,k;
-    float result = 0.0;
-
-    for (k = 0; k < 16; k++){
-        for (i = 0; i < size; i++){
-            for (j = 0; j < size; j++){
-                result = m1[k][i][j] * m2[k][i][j] + result;
-            }
-        }
-    }
-
-    return result;
-}
+float MultiplyByElement5(float m1[][5][5], float m2[][5][5], int outer_loop);
 
 float Layer12(float **img, int height, int width, int channels){
     int i, j, k, l;
@@ -44,24 +17,6 @@ float Layer12(float **img, int height, int width, int channels){
     strcpy(path, "");
     strcat(path, FILE_PATH);
     strcat(path, "cnn/12net/module1.bin");
-
-
-    // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
-    // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
-
-    // char pooling_output_path[] = "/home/binghao/cnn/pooling_ouput.txt";
-    // char pooling_output_path[] = "/Users/wbh/cnn/pooling_ouput.txt";
-
-    /*
-    // output the image data
-    printf("image data start");
-    for (i = 0; i < height; i++){
-        for (j = 0; j < width; j++){
-            printf("img[%d][%d] = %d\n", i, j, img[i][j]);
-        }
-    }
-    printf("image data end");
-    */
 
     // read the weight and bias
     const int Depth = 16;
@@ -88,17 +43,6 @@ float Layer12(float **img, int height, int width, int channels){
     assert(fread(bias3, sizeof(*bias3), Depth, f) == Depth);
 
     fclose(f);
-
-    /*
-    // output the weight and bias of module4
-    for (i = 0; i < Depth; i++){
-        for (j = 0; j < Filter2; j++){
-            printf("weight[%d, %d] = %f\n", i, j, weight2[Filter2 * i + j]);
-        }
-        printf("bias[%d] = %f\n", i, bias2[i]);
-    }
-    exit(0);
-    */
 
     // output the filter
     for (k = 0; k < 16; k++){
@@ -143,7 +87,7 @@ float Layer12(float **img, int height, int width, int channels){
                     }
                 }
 
-                res = MultiplyByElement3(filter[filter_num], img_segment, 3);
+                res = MultiplyByElement3(filter[filter_num], img_segment);
                 res += bias[filter_num];
 
                 output1[filter_num][row][col] = res;
@@ -190,7 +134,7 @@ float Layer12(float **img, int height, int width, int channels){
     // convolution 2
     float output4[16];
     for (i = 0; i < 16; i++){
-        output4[i] = bias2[i] + MultiplyByElement5(filter2[i], output2, 5);
+        output4[i] = bias2[i] + MultiplyByElement5(filter2[i], output2, 16);
         if (output4[i] < 0){
             output4[i] = 0.0;
         }
@@ -222,14 +166,7 @@ float Layer12(float **img, int height, int width, int channels){
     out[0] = expf(output8[0]);
     out[1] = expf(output8[1]);
 
-    /*
-    printf("output 1: %f\n", output8[0]);
-    printf("output 2: %f\n", output8[1]);
-    printf("out: %f\n", out[0]);
-    printf("out: %f\n", out[1]);
-    */
-
-    /*
+    /* write results into a file
     FILE *ffp = fopen(pooling_output_path,"w");
     for (k = 0; k < 16; k++){
         for (i = 0; i < 5; i++){

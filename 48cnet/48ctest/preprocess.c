@@ -1,3 +1,4 @@
+// preprocess image data
 #include <math.h>
 
 void preprocess(float **img, unsigned char *data, int row, int col, int step, int channels, int size){

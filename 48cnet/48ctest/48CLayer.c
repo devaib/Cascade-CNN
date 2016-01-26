@@ -1,82 +1,19 @@
 #include "global.h"
 
-float MultiplyByElement5_48c(float m1[][5], float m2[][5], int size){
-    int i,j;
-    float result = 0.0;
+float MultiplyByElement5_(float m1[][5], float m2[][5]);
 
-    for (i = 0; i < size; i++){
-        for (j = 0; j < size; j++){
-            result = m1[i][j] * m2[i][j] + result;
-            // printf("%f * %f = %f\n", m1[i][j], m2[i][j], m1[i][j] * m2[i][j]);
-        }
-    }
-    // printf("result: %f\n", result);
+float MultiplyByElement5(float m1[][5][5], float m2[][5][5], int outer_loop);
 
-    return result;
-}
-
-float MultiplyByElement64_5_48c(float m1[][5][5], float m2[][5][5], int size){
-    int i,j,k;
-    float result = 0.0;
-
-    for (k = 0; k < 64; k++){
-        for (i = 0; i < size; i++){
-            for (j = 0; j < size; j++){
-                result = m1[k][i][j] * m2[k][i][j] + result;
-                // printf("%f * %f = %f\n", m1[k][i][j], m2[k][i][j], m1[k][i][j] * m2[k][i][j]);
-            }
-        }
-    }
-    // printf("result: %f\n", result);
-
-    return result;
-}
-
-float MultiplyByElement18_48c(float *m1, float m2[][18][18], int size){
-    int i,j,k;
-    float result = 0.0;
-
-    for (k = 0; k < 64; k++){
-        for (i = 0; i < size; i++){
-            for (j = 0; j < size; j++){
-                result = m1[18*18*k+18*i+j] * m2[k][i][j] + result;
-                // printf("%f * %f = %f\n", m1[18*18*k+18*i+j], m2[k][i][j], (float)m1[18*18*k+18*i+j] * m2[k][i][j]);
-            }
-        }
-    }
-    // printf("result: %f\n", result);
-
-    return result;
-}
+float MultiplyByElement18(float *m1, float m2[][18][18], int size);
 
 float* CaliLayer48(float **img, int height, int width, int channels){
     int i, j, k, l;
     float img_segment[5][5];
 
-    //char path[] = "/home/binghao/cnn/48cnet/48cnet.bin";
-    // char path[] = "/Users/wbh/cnn/48cnet/48cnet.bin";
     char path[50];
     strcpy(path, "");
     strcat(path, FILE_PATH);
     strcat(path, "cnn/48cnet/48cnet.bin");
-
-
-    // char conv_layer_output_path[] = "/home/binghao/cnn/conv_layer_output.txt";
-    // char conv_layer_output_path[] = "/Users/wbh/cnn/conv_layer_output.txt";
-
-    // char pooling_output_path[] = "/home/binghao/cnn/pooling_ouput.txt";
-    // char pooling_output_path[] = "/Users/wbh/cnn/pooling_ouput.txt";
-
-    /*
-    // output the image data
-    printf("image data start");
-    for (i = 0; i < height; i++){
-        for (j = 0; j < width; j++){
-            printf("img[%d][%d] = %f\n", i, j, img[i][j]);
-        }
-    }
-    printf("image data end");
-    */
 
     // read the weight and bias
     const int Depth = 64;
@@ -115,23 +52,11 @@ float* CaliLayer48(float **img, int height, int width, int channels){
 
     fclose(f);
 
-    /*
-    // output the weight and bias of module
-    for (i = 0; i < Depth; i++){
-        for (j = 0; j < Filter; j++){
-            printf("weight[%d, %d] = %f\n", i, j, weight[Filter * i + j]);
-        }
-        printf("bias[%d] = %f\n", i, bias[i]);
-    }
-    exit(0);
-    */
-
     float filter[64][5][5];
-    // output the filter
+
     for (k = 0; k < 64; k++){
         for (i = 0; i < 5; i++){
             for (j = 0; j < 5; j++){
-                // printf("filter[%d][%d][%d] =  %f\n", k, i, j, weight[25*k + 5*i + j]);
                 filter[k][i][j] = weight[25*k + 5*i + j];
             }
         }
@@ -143,7 +68,6 @@ float* CaliLayer48(float **img, int height, int width, int channels){
         for (k = 0; k < 64; k++){
             for (i = 0; i < 5; i++){
                 for (j = 0; j < 5; j++){
-                    // printf("filter2[%d][%d][%d][%d] =  %f\n", l, k, i, j, weight2[64*5*5*l + 25*k + 5*i + j]);
                     filter2[l][k][i][j] = weight2[64*5*5*l + 25*k + 5*i + j];
                 }
             }
@@ -151,13 +75,10 @@ float* CaliLayer48(float **img, int height, int width, int channels){
     }
 
     float *filter3 = malloc(256*64*18*18*sizeof(float));
-    // float filter3[256][64][18][18];
-    // output the filter3
     for (l = 0; l < 256; l++){
         for (k = 0; k < 64; k++){
             for (i = 0; i < 18; i++){
                 for (j = 0; j < 18; j++){
-                    // printf("filter3[%d][%d][%d][%d] =  %f\n", l, k, i, j, weight3[64*9*9*l + 81*k + 9*i + j]);
                     filter3[64*18*18*l + 18*18*k + 18*i + j] = weight3[64*18*18*l + 18*18*k + 18*i + j];
                     /*
                     if (k == 0 && i == 0 && j==0)
@@ -170,6 +91,7 @@ float* CaliLayer48(float **img, int height, int width, int channels){
 
 
     float linear_para[45][256];
+
     // output the linear weights
     for (i = 0; i < 45; i++){
         for (j = 0; j < 256; j++){
@@ -179,6 +101,7 @@ float* CaliLayer48(float **img, int height, int width, int channels){
     }
 
     float output1[64][44][44];
+
     // convolution
     int row, col, filter_num;
     float res;
@@ -191,7 +114,7 @@ float* CaliLayer48(float **img, int height, int width, int channels){
                     }
                 }
 
-                res = MultiplyByElement5_48c(filter[filter_num], img_segment, 5);
+                res = MultiplyByElement5_(filter[filter_num], img_segment);
                 res += bias[filter_num];
 
                 output1[filter_num][row][col] = res;
@@ -248,7 +171,7 @@ float* CaliLayer48(float **img, int height, int width, int channels){
                     }
                 }
 
-                res = MultiplyByElement64_5_48c(filter2[filter_num], segment, 5);
+                res = MultiplyByElement5(filter2[filter_num], segment, 64);
                 res += bias2[filter_num];
 
                 output3[filter_num][row][col] = res;
@@ -305,7 +228,7 @@ float* CaliLayer48(float **img, int height, int width, int channels){
     // convolution 3 & RELU
     float output6[256];
     for (i = 0; i < 256; i++){
-        output6[i] = bias3[i] + MultiplyByElement18_48c(&filter3[i*64*18*18], output3, 18);
+        output6[i] = bias3[i] + MultiplyByElement18(&filter3[i*64*18*18], output3, 64);
         if (output6[i] < 0){
             output6[i] = 0.0;
         }
