@@ -45,7 +45,7 @@ float MultiplyByElement9_48(float m1[][9][9], float m2[][9][9], int size){
     return result;
 }
 
-float Layer48(float img[][48], int height, int width, int channels){
+float Layer48(float **img, int height, int width, int channels){
     int i, j, k, l;
     float img_segment[5][5];
 

@@ -31,7 +31,7 @@ float MultiplyByElement10_24c(float m1[][10][10], float m2[][10][10], int size){
     return result;
 }
 
-float* CaliLayer24(float img[][24], int height, int width, int channels){
+float* CaliLayer24(float **img, int height, int width, int channels){
     int i, j, k, l;
     float img_segment[5][5];
     float filter[32][5][5];

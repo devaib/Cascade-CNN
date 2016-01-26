@@ -1,4 +1,4 @@
-FILE(REMOVE_RECURSE
+file(REMOVE_RECURSE
   "CMakeFiles/test.dir/48ctest.c.o"
   "CMakeFiles/test.dir/12Layer.c.o"
   "CMakeFiles/test.dir/12CLayer.c.o"
@@ -8,11 +8,13 @@ FILE(REMOVE_RECURSE
   "CMakeFiles/test.dir/48CLayer.c.o"
   "CMakeFiles/test.dir/itos.c.o"
   "CMakeFiles/test.dir/doPyrDown.c.o"
+  "CMakeFiles/test.dir/preprocess.c.o"
+  "CMakeFiles/test.dir/freeArray.c.o"
   "test.pdb"
   "test"
 )
 
 # Per-language clean rules from dependency scanning.
-FOREACH(lang C)
-  INCLUDE(CMakeFiles/test.dir/cmake_clean_${lang}.cmake OPTIONAL)
-ENDFOREACH(lang)
+foreach(lang C)
+  include(CMakeFiles/test.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

@@ -49,7 +49,7 @@ float MultiplyByElement18_48c(float *m1, float m2[][18][18], int size){
     return result;
 }
 
-float* CaliLayer48(float img[][48], int height, int width, int channels){
+float* CaliLayer48(float **img, int height, int width, int channels){
     int i, j, k, l;
     float img_segment[5][5];
 

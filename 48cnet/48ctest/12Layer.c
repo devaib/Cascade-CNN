@@ -31,7 +31,7 @@ float MultiplyByElement5(float m1[][5][5], float m2[][5][5], int size){
     return result;
 }
 
-float Layer12(float img[][12], int height, int width, int channels){
+float Layer12(float **img, int height, int width, int channels){
     int i, j, k, l;
     float img_segment[3][3];
     float filter[16][3][3];

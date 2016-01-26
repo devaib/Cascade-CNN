@@ -2,7 +2,7 @@
 
 // ***************** parameters settings start *************************
 // home folder
-const char FILE_PATH[] = "/home/binghao/";
+const char FILE_PATH[] = "/Users/wbh/";
 
 // test image path
 const char TEST_IMAGE[] = "cnn/test/img/group1.jpg";
@@ -20,18 +20,24 @@ const bool flagPrinting = true;
 
 // function declarations
 // layers
-float Layer12(float img[][12], int width, int height, int channels);
-float* CaliLayer12(float img[][12], int width, int height, int channels);
-float Layer24(float img[][24], int width, int height, int channels);
-float* CaliLayer24(float img[][24], int width, int height, int channels);
-float Layer48(float img[][48], int width, int height, int channels);
-float* CaliLayer48(float img[][48], int width, int height, int channels);
+float Layer12(float **img, int width, int height, int channels);
+float* CaliLayer12(float **img, int width, int height, int channels);
+float Layer24(float **img, int width, int height, int channels);
+float* CaliLayer24(float **img, int width, int height, int channels);
+float Layer48(float **img, int width, int height, int channels);
+float* CaliLayer48(float **img, int width, int height, int channels);
 
 // convert numbers from int to char[]
 char* itos(int i, char b[]);
 
 // image pyramid down by rate
 IplImage* doPyrDown(IplImage *src, int rate);
+
+// preprocess image data
+void preprocess(float **img, unsigned char *data, int row, int col, int step, int channels, int size);
+
+// free two-dimensonal array with n rows
+void freeArray(float **img, int n);
 
 int main(void){
     IplImage *srcImg;
@@ -118,42 +124,26 @@ for (loop = 1; loop < loopSize; loop++){
         height = srcImg -> height;
         step = srcImg -> widthStep;
         channels = srcImg -> nChannels;
-        data = (uchar*) srcImg -> imageData;
+        data = (uchar*)srcImg -> imageData;
 
         const int Stride = 4;
         int row, col;
-        float img[12][12];
+        float **img = malloc(12 * sizeof(float*));
+        for (i = 0; i < 12; i++){
+            img[i] = malloc(12 * sizeof(float));
+        }
 
         // window sliding loop starts
         for (row = 0; row + 12 <= height; row += Stride){
             for (col = 0; col + 12 <= width; col += Stride){
 
-                mean_x = 0.0;
-                mean_x2 = 0.0;
-
-                for (i = 0; i < 12; i++){
-                    for (j = 0; j < 12; j++){
-                        img[i][j] = data[(i+row)*step + (j+col)*channels] / 255.0;
-                        mean_x += img[i][j];
-                        mean_x2 += pow(img[i][j], 2);
-                    }
-                }
-
-                mean_x /= 144.0;
-                mean_x2 /= 144.0;
-                std = sqrt(mean_x2 - pow(mean_x, 2));
-                for (i = 0; i < 12; i++){
-                    for (j = 0; j < 12; j++){
-                        img[i][j] -= mean_x;
-                        img[i][j] /= std;
-                        //printf("img[%d][%d] = %f\n", i, j, img[i][j]);
-                    }
-                }
+                preprocess(img, data, row, col, step, channels, 12);
 
                 // printf("%d%% tested, testing on image %s\n", (int)((float)loop*100/14266), file);
 
                 // 12 net
                 res = Layer12(img, 12, 12, channels);
+
 
                 // 12 calibration
                 if (res > 0.5){
@@ -230,24 +220,19 @@ for (loop = 1; loop < loopSize; loop++){
                     cvResetImageROI(originalImg);
                     }
 
-                    /*
-                    IplImage *origImg = cvCloneImage(originalImg);
-                    cvNamedWindow("12 net", CV_WINDOW_AUTOSIZE);
-                    cvMoveWindow("12 net", 0, 20);
-                    cvRectangle(origImg, cvPoint(realPos_w, realPos_h), cvPoint(realPos_w + realWinSize_w, realPos_h + realWinSize_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
-                    cvShowImage("12 net", origImg);
-                    */
-
                     if (flagPrinting){
-                    IplImage *origImg_cali = cvCloneImage(originalImg);
-                    cvNamedWindow("12 calibration", CV_WINDOW_AUTOSIZE);
-                    cvMoveWindow("12 calibration", 350, 20);
-                    cvRectangle(origImg_cali, cvPoint(cali_x, cali_y), cvPoint(cali_x + cali_w, cali_y + cali_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
-                    cvShowImage("12 calibration", origImg_cali);
+                        IplImage *origImg_cali = cvCloneImage(originalImg);
+                        cvNamedWindow("12 calibration", CV_WINDOW_AUTOSIZE);
+                        cvMoveWindow("12 calibration", 350, 20);
+                        cvRectangle(origImg_cali, cvPoint(cali_x, cali_y), cvPoint(cali_x + cali_w, cali_y + cali_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+                        cvShowImage("12 calibration", origImg_cali);
                     }
 
 
-                    float img24[24][24];
+                    float **img24 = malloc(24 * sizeof(float*));
+                    for (i = 0; i < 24; i++){
+                        img24[i] = malloc(24 * sizeof(float));
+                    }
 
                     // 24 net
                     // resize the detected window of original image after 12 calibration net
@@ -256,40 +241,18 @@ for (loop = 1; loop < loopSize; loop++){
                     cvResize(originalImg, input24Img, CV_INTER_AREA);
 
                     if (flagPrinting){
-                    IplImage *tempImg = cvCreateImage(cvSize(100, 100), IPL_DEPTH_8U, 1);
-                    cvResize(input24Img, tempImg, CV_INTER_AREA);
-                    cvNamedWindow("24 net", CV_WINDOW_AUTOSIZE);
-                    cvMoveWindow("24 net", 1150, 165);
-                    cvShowImage("24 net", tempImg);
+                        IplImage *tempImg = cvCreateImage(cvSize(100, 100), IPL_DEPTH_8U, 1);
+                        cvResize(input24Img, tempImg, CV_INTER_AREA);
+                        cvNamedWindow("24 net", CV_WINDOW_AUTOSIZE);
+                        cvMoveWindow("24 net", 1150, 165);
+                        cvShowImage("24 net", tempImg);
                     }
-
-                    mean_x = 0.0;
-                    mean_x2 = 0.0;
-
                     uchar *data24;
                     data24 = (uchar*) input24Img -> imageData;
 
-                    for (i = 0; i < 24; i++){
-                        for (j = 0; j < 24; j++){
-                            img24[i][j] = data24[i * input24Img->widthStep+ j * input24Img->nChannels] / 255.0;
-                            mean_x += img24[i][j];
-                            mean_x2 += pow(img24[i][j], 2);
-                        }
-                    }
-
-                    mean_x /= 576.0;
-                    mean_x2 /= 576.0;
-                    std = sqrt(mean_x2 - pow(mean_x, 2));
-                    for (i = 0; i < 24; i++){
-                        for (j = 0; j < 24; j++){
-                            img24[i][j] -= mean_x;
-                            img24[i][j] /= std;
-                            // printf("img[%d][%d] = %f\n", i, j, img24[i][j]);
-                        }
-                    }
+                    preprocess(img24, data24, 0, 0, input24Img->widthStep, input24Img->nChannels, 24);
 
                     res = Layer24(img24, 24, 24, input24Img->nChannels);
-                    // printf("\nres = %f\n", res);
 
                     if (res > 0.5){
 
@@ -325,7 +288,10 @@ for (loop = 1; loop < loopSize; loop++){
 
 
                         // 48 net
-                        float img48[48][48];
+                        float **img48= malloc(48 * sizeof(float*));
+                        for (i = 0; i < 48; i++){
+                            img48[i] = malloc(48 * sizeof(float));
+                        }
 
                         // resize the detected window of original image after 12 calibration net
                         cvSetImageROI(originalImg, cvRect(cali24_x, cali24_y, cali24_w, cali24_h));
@@ -342,30 +308,10 @@ for (loop = 1; loop < loopSize; loop++){
                         cvWaitKey(100);
                     }
 
-                        mean_x = 0.0;
-                        mean_x2 = 0.0;
-
                         uchar *data48;
                         data48 = (uchar*) input48Img -> imageData;
 
-                        for (i = 0; i < 48; i++){
-                            for (j = 0; j < 48; j++){
-                                img48[i][j] = data48[i * input48Img->widthStep+ j * input48Img->nChannels] / 255.0;
-                                mean_x += img48[i][j];
-                                mean_x2 += pow(img48[i][j], 2);
-                            }
-                        }
-
-                        mean_x /= 2304.0;
-                        mean_x2 /= 2304.0;
-                        std = sqrt(mean_x2 - pow(mean_x, 2));
-                        for (i = 0; i < 48; i++){
-                            for (j = 0; j < 48; j++){
-                                img48[i][j] -= mean_x;
-                                img48[i][j] /= std;
-                                // printf("img[%d][%d] = %f\n", i, j, img48[i][j]);
-                            }
-                        }
+                        preprocess(img48, data48, 0, 0, input48Img->widthStep, input48Img->nChannels, 48);
 
                         res = Layer48(img48, 48, 48, input48Img->nChannels);
                         if (res > 0.5){
@@ -434,7 +380,7 @@ for (loop = 1; loop < loopSize; loop++){
                             printf("\n48 layer: fail\n");
                         }
 
-
+                        freeArray(img48, 48);
                     }
 
                     if (flagPrinting){
@@ -446,10 +392,15 @@ for (loop = 1; loop < loopSize; loop++){
                     // reset to original image
                     cvResetImageROI(originalImg);
                     }
+
+                    freeArray(img24, 24);
                 }
+
             }
         }
         // window sliding loop ends
+
+        freeArray(img, 12);
 
         // down pyramid
         dstImg = doPyrDown(srcImg, 2);
