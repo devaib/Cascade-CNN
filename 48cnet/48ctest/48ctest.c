@@ -5,7 +5,7 @@
 const char FILE_PATH[] = "/Users/wbh/";
 
 // test image path
-const char TEST_IMAGE[] = "cnn/test/img/group1.jpg";
+const char TEST_IMAGE[] = "cnn/test/img/faces3.jpg";
 
 // minimum size(pixels) of detection object
 const int MinImageSize = 16;
