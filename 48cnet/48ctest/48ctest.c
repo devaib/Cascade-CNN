@@ -2,10 +2,10 @@
 
 // ***************** parameters settings start *************************
 // home folder
-const char FILE_PATH[] = "/Users/wbh/";
+const char FILE_PATH[] = "/home/binghao/";
 
 // test image path
-const char TEST_IMAGE[] = "cnn/test/img/faces3.jpg";
+const char TEST_IMAGE[] = "cnn/test/img/faces6.jpg";
 
 // minimum size(pixels) of detection object
 const int MinImageSize = 16;
@@ -111,6 +111,8 @@ for (loop = 1; loop < loopSize; loop++){
 
     // detected objects image
     IplImage *detectedImg = cvCloneImage(originalImg);
+    IplImage *detectedImg12 = cvCloneImage(originalImg);
+    IplImage *detectedImg24 = cvCloneImage(originalImg);
 
     // object coordinate information
     int object[10000][4];
@@ -225,6 +227,7 @@ for (loop = 1; loop < loopSize; loop++){
                         cvNamedWindow("12 calibration", CV_WINDOW_AUTOSIZE);
                         cvMoveWindow("12 calibration", 350, 20);
                         cvRectangle(origImg_cali, cvPoint(cali_x, cali_y), cvPoint(cali_x + cali_w, cali_y + cali_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+                        cvRectangle(detectedImg12, cvPoint(cali_x, cali_y), cvPoint(cali_x + cali_w, cali_y + cali_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
                         cvShowImage("12 calibration", origImg_cali);
                     }
 
@@ -282,6 +285,7 @@ for (loop = 1; loop < loopSize; loop++){
                         cvNamedWindow("24 calibration", CV_WINDOW_AUTOSIZE);
                         cvMoveWindow("24 calibration", 0, 350);
                         cvRectangle(origImg_cali24, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
+                        cvRectangle(detectedImg24, cvPoint(cali24_x, cali24_y), cvPoint(cali24_x + cali24_w, cali24_y + cali24_h), cvScalar(255, 0, 0, 0), 2, 4, 0);
                         cvShowImage("24 calibration", origImg_cali24);
                         }
 
@@ -412,10 +416,22 @@ for (loop = 1; loop < loopSize; loop++){
         cvDestroyWindow("12 net");
         cvDestroyWindow("24 net");
 
+
+        cvNamedWindow("12 result", CV_WINDOW_AUTOSIZE);
+        cvMoveWindow("12 result", 100, 50);
+        cvShowImage("12 result", detectedImg12);
+
+        cvNamedWindow("24 result", CV_WINDOW_AUTOSIZE);
+        cvMoveWindow("24 result", 300, 50);
+        cvShowImage("24 result", detectedImg24);
+
+
         cvNamedWindow("detection result", CV_WINDOW_AUTOSIZE);
         cvMoveWindow("detection result", 200, 350);
         cvShowImage("detection result", detectedImg);
         cvWaitKey(0);
+        cvDestroyWindow("12 result");
+        cvDestroyWindow("24 result");
         cvDestroyWindow("detection result");
 
         exit(0);
