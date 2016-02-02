@@ -5,7 +5,7 @@
 const char FILE_PATH[] = "/home/binghao/";
 
 // test image path
-const char TEST_IMAGE[] = "cnn/test/img/faces6.jpg";
+const char TEST_IMAGE[] = "cnn/test/img/group1.jpg";
 
 // minimum size(pixels) of detection object
 const int MinImageSize = 16;
@@ -147,8 +147,13 @@ for (loop = 1; loop < loopSize; loop++){
                 res = Layer12(img, 12, 12, channels);
 
 
+                int static counter = 0;
                 // 12 calibration
                 if (res > 0.5){
+                    printf("%f, #%d\n", res, counter);
+                    counter++;
+                    continue;
+
                     // printf("\n\n---------- face detected at row: %d, col: %d ------------\n\n", row, col);
 
                     float *out_12c;
