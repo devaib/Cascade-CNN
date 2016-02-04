@@ -16,3 +16,10 @@ typedef int bool;
 #define false 0
 
 extern const char FILE_PATH[];
+
+struct Windows{
+    int x1, y1, x2, y2;         // image coordinates
+    float score;                // 12 layer score
+    float iou;                  // iou ratio
+    bool dropped;               // if this window is dropped
+};

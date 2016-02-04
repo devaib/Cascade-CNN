@@ -2,13 +2,21 @@
 
 // ***************** parameters settings start *************************
 // home folder
-const char FILE_PATH[] = "/home/binghao/";
+const char FILE_PATH[] = "/Users/wbh/";
 
 // test image path
-const char TEST_IMAGE[] = "cnn/test/img/faces3.jpg";
+const char TEST_IMAGE[] = "cnn/test/img/group1.jpg";
 
-// minimum size(pixels) of detection object
-const int MinFaceSize = 108;
+// minimum size(pixels) of detection object (multiple of 12)
+const int MinFaceSize = 72;
+
+// thresholds
+const float Threshold_12Layer = 0.5;
+const float Threshold_24Layer = 0.5;
+const float Threshold_48Layer = 0.5;
+const float Threshold_12NMS = 0.3;
+const float Threshold_24NMS = 0.3;
+const float Threshold_48NMS = 0.3;
 
 // ***************** parameters settings end ***************************
 
@@ -27,27 +35,43 @@ IplImage* doPyrDown(IplImage *src, int rate);
 // preprocess image data
 void preprocess(float **img, unsigned char *data, int row, int col, int step, int channels, int size);
 
+// sort function
+void mergeSort(struct Windows* window, int lo, int hi);
+
 // free two-dimensonal array with n rows
 void freeArray(float **img, int n);
 
+// NMS
+void nms(struct Windows window[], int counter, float NMS_threshold);
+
 int main(void){
+    // detection windows
+    struct Windows window[500];
+
     // loop counter
     int i, j, k;
     int row, col;
-    int counter = 0;
+    int counter = 0;    // detection window counter
 
     // image information
     int height, width, step, channels;
-    uchar *data;
+    uchar *data, *data24, *data48;
+
+    // size, x, y for calibration
+    float *out_12c, *out_24c, *out_48c;     // vector carrying s,x,y
+    float s, x, y;
+    int cali_x, cali_y, cali_w, cali_h;
 
     // scores of the 12 layer
     float res_12Layer;
+    float res_24Layer;
+    float res_48Layer;
 
     // window sliding stride
     const int Stride = 4;
 
     // image pyramid rate
-    const int pyr_rate = MinFaceSize / 12;
+    int pyr_rate = MinFaceSize / 12;
 
     // file path
     char file[50];
@@ -60,29 +84,44 @@ int main(void){
         img[i] = malloc(12 * sizeof(float));
     }
 
+    // alloc memory for 24x24 image
+    float **img24 = malloc(24 * sizeof(float*));
+    for (i = 0; i < 24; i++){
+        img24[i] = malloc(24 * sizeof(float));
+    }
 
-    printf("Testing on: %s\n", file);
+    // alloc memory for 48x48 image
+    float **img48 = malloc(48 * sizeof(float*));
+    for (i = 0; i < 48; i++){
+        img48[i] = malloc(48 * sizeof(float));
+    }
 
     // load image
     IplImage *srcImg, *dstImg;
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
+
+    // original size of the image
+    const int WIDTH = srcImg->width;
+    const int HEIGHT = srcImg->height;
+
+    IplImage *originImg = cvCloneImage(srcImg);
+    IplImage *originImg1 = cvCloneImage(srcImg);
+    IplImage *originImg2 = cvCloneImage(srcImg);
+    IplImage *originImg3 = cvCloneImage(srcImg);
+    IplImage *input24Img = cvCreateImage(cvSize(24, 24), IPL_DEPTH_8U, 1);
+    IplImage *input48Img = cvCreateImage(cvSize(48, 48), IPL_DEPTH_8U, 1);
 
     if (!srcImg){
         printf("Could not load image file: %s\n", file);
         exit(1);
     }
 
+
     // image pyramid loop starts
     while (1){
-        // struct of information windows
-        struct Windows{
-            int x1, y1, x2, y2;
-            float score;
-        }window[300];
 
         // image pyramid down
-        dstImg = cvCreateImage(cvSize(srcImg->width/pyr_rate, srcImg->height/pyr_rate), IPL_DEPTH_8U, 1);
-        cvResize(srcImg, dstImg, CV_INTER_AREA);;
+        dstImg = doPyrDown(srcImg, pyr_rate);
 
         // get the image data
         width = dstImg -> width;
@@ -93,64 +132,222 @@ int main(void){
 
         IplImage *detectedImg_12Layer = cvCloneImage(dstImg);
 
-        IplImage *origin = cvCloneImage(dstImg);
-
         // window sliding loop starts
         for (row = 0; row + 12 <= height; row += Stride){
             for (col = 0; col + 12 <= width; col += Stride){
+                // 12 layer, 12 calibration, NMS
                 preprocess(img, data, row, col, step, channels, 12);
 
-                // 12 layer start
                 res_12Layer = Layer12(img, 12, 12, channels);
 
-                if (res_12Layer > 0.5){
-                    /*
-                    int static counter = 0;
-                    printf("%f, #%d\n", res_12Layer, counter);
-                    counter++;
-                    */
-                    window[counter].x1 = col;            // x
-                    window[counter].y1 = row;            // y
-                    window[counter].x2 = col + 12;            //
-                    window[counter].y2 = row + 12;            //
-                    window[counter].score = res_12Layer;    // 12 layer score
+                // 12 layer passed
+                if (res_12Layer > Threshold_12Layer){
+                    // 12 calibration layer
+                    out_12c = CaliLayer12(img, 12, 12, channels);
 
-                    printf("[#%d] x1: %d, y1: %d, x2: %d, y2: %d, score: %f\n", counter, window[counter].x1, window[counter].y1, window[counter].x2, window[counter].y2, window[counter].score);
-                    counter++;
-                    /*
-                    cvNamedWindow("12 layer", CV_WINDOW_AUTOSIZE);
-                    cvRectangle(detectedImg_12Layer, cvPoint(col, row), cvPoint(col+12, row+12), cvScalar(255,0,0,0), 2, 4, 0);
-                    cvShowImage("12 layer", detectedImg_12Layer);
-                    cvMoveWindow("12 layer", 10, 10);
+                    s = out_12c[0]; x = out_12c[1]; y = out_12c[2];
+                    free(out_12c);      // memory allocated in CaliLayer12
 
-                    cvSetImageROI(origin, cvRect(col, row, 12, 12));
-                    IplImage *output12Img= cvCreateImage(cvSize(50, 50), IPL_DEPTH_8U, 1);
-                    cvResize(origin, output12Img, CV_INTER_AREA);
-                    cvNamedWindow("12", CV_WINDOW_AUTOSIZE);
-                    cvShowImage("12", output12Img);
-                    cvMoveWindow("12", 400, 10);
-                    cvResetImageROI(origin);
-                    */
+                    // ignoring returned NAN values(comparison involving them are always false)
+                    if (s != s || x != x || y != y) continue;
+
+                    // calibration
+                    cali_x = col * pyr_rate - x * 12 * pyr_rate / s;
+                    cali_y = row * pyr_rate - y * 12 * pyr_rate / s;
+                    cali_w = 12 * pyr_rate / s;
+                    cali_h = 12 * pyr_rate / s;
+
+                    // make sure the calibrated window not beyond the image boundary
+                    if (cali_x >= WIDTH || cali_y >= HEIGHT){
+                        continue;
+                    }
+                    cali_x = max(cali_x, 0);
+                    cali_y = max(cali_y, 0);
+                    cali_w = min(cali_w, WIDTH - cali_x);
+                    cali_h = min(cali_h, HEIGHT - cali_y);
+
+                    window[counter].x1 = cali_x;                    // x1
+                    window[counter].y1 = cali_y;                    // y1
+                    window[counter].x2 = cali_x + cali_w;           // x2
+                    window[counter].y2 = cali_y + cali_h;           // y2
+                    window[counter].score = res_12Layer;            // 12 layer score
+                    window[counter].iou = 0.0;                      // iou ratio
+                    window[counter].dropped= false;                 // if it's dropped
+                    counter++;
+                    // end of 12 layer, 12 calibration
+
                 }
-                // 12 layer end
             }
         }
         // window sliding loop ends
 
-        // display survivors after 12 layer
+        // sort the detection windows by score in descending order
+        mergeSort(window, 0, counter);
+
+        // display sorted windows surviving 12 layer
+        cvNamedWindow("12 layer", CV_WINDOW_AUTOSIZE);
         for (i = 0; i < counter; i++){
-            cvNamedWindow("12 layer", CV_WINDOW_AUTOSIZE);
-            cvRectangle(detectedImg_12Layer, cvPoint(window[i].x1, window[i].y1), cvPoint(window[i].x2, window[i].y2), cvScalar(255,0,0,0), 2, 4, 0);
+            cvRectangle(originImg, cvPoint(window[i].x1, window[i].y1), cvPoint(window[i].x2, window[i].y2), cvScalar(255,0,0,0), 2, 4, 0);
+            // printf("[#%d] x1: %d, y1: %d, x2: %d, y2: %d, score: %f, iou: %f, dropped: %s\n", i, window[i].x1, window[i].y1, window[i].x2, window[i].y2, window[i].score, window[i].iou, window[i].dropped ? "true" : "false");
         }
-        cvShowImage("12 layer", detectedImg_12Layer);
+        cvShowImage("12 layer", originImg);
         cvMoveWindow("12 layer", 10, 10);
-        
+
+        // NMS after 12 calibration
+        nms(window, counter, Threshold_12NMS);
+
+        // display sorted windows surviving 12 layer
+        cvNamedWindow("12 layer after NMS", CV_WINDOW_AUTOSIZE);
+        for (i = 0; i < counter; i++){
+            if (window[i].dropped == false)
+                cvRectangle(originImg1, cvPoint(window[i].x1, window[i].y1), cvPoint(window[i].x2, window[i].y2), cvScalar(255,0,0,0), 2, 4, 0);
+        }
+        cvShowImage("12 layer after NMS", originImg1);
+        cvMoveWindow("12 layer after NMS", 500, 10);
+
+        // 24 layer, 24 calibration, NMS
+        for (i = 0; i< counter; i++){
+            if (window[i].dropped == true)
+                continue;
+
+            cvSetImageROI(srcImg, cvRect(window[i].x1, window[i].y1, window[i].x2 - window[i].x1, window[i].y2 - window[i].y1));
+            cvResize(srcImg, input24Img, CV_INTER_AREA);
+
+            data24 = (uchar*) input24Img->imageData;
+
+            preprocess(img24, data24, 0, 0, input24Img->widthStep, input24Img->nChannels, 24);
+            res_24Layer = Layer24(img24, 24, 24, input24Img->nChannels);
+
+            // 24 layer passed
+            if (res_24Layer > Threshold_24Layer){
+                // 24 calibration
+                out_24c = CaliLayer24(img24, 24, 24, input24Img->nChannels);
+                s = out_24c[0];
+                x = out_24c[1];
+                y = out_24c[2];
+                free(out_24c);
+
+                cali_x = window[i].x1 - x * (window[i].x2 - window[i].x1) / s;
+                cali_y = window[i].x1 - y * (window[i].y2 - window[i].y1) / s;
+                cali_w = (window[i].x2 - window[i].x1) / s;
+                cali_h = (window[i].y2 - window[i].y1) / s;
+
+                // make sure the calibrated window not beyond the image boundary
+                if (cali_x >= WIDTH || cali_y >= HEIGHT){
+                    continue;
+                }
+
+                cali_x = max(cali_x, 0);
+                cali_y = max(cali_y, 0);
+                cali_w = min(cali_w, WIDTH - cali_x);
+                cali_h = min(cali_h, HEIGHT - cali_y);
+
+                window[i].x1 = cali_x;                    // x1
+                window[i].y1 = cali_y;                    // y1
+                window[i].x2 = cali_x + cali_w;           // x2
+                window[i].y2 = cali_y + cali_h;           // y2
+                window[i].score = res_24Layer;            // 12 layer score
+                window[i].iou = 0.0;                      // iou ratio
+                window[i].dropped= false;                 // if it's dropped
+
+            }
+
+            cvResetImageROI(srcImg);
+        }
+
+        // NMS after 24 calibration
+        nms(window, counter, Threshold_24NMS);
+
+        // display sorted windows surviving 24 layer
+        cvNamedWindow("24 layer", CV_WINDOW_AUTOSIZE);
+        for (i = 0; i < counter; i++){
+            if (window[i].dropped == false){
+                cvRectangle(originImg2, cvPoint(window[i].x1, window[i].y1), cvPoint(window[i].x2, window[i].y2), cvScalar(255,0,0,0), 2, 4, 0);
+            }
+        }
+        cvShowImage("24 layer", originImg2);
+        cvMoveWindow("24 layer", 10, 400);
+        // end of 24 layer, 24 calibration, NMS
+
+
+        // 48 layer, 48 calibration, NMS
+        for (i = 0; i< counter; i++){
+            if (window[i].dropped == true)
+                continue;
+
+            cvSetImageROI(srcImg, cvRect(window[i].x1, window[i].y1, window[i].x2 - window[i].x1, window[i].y2 - window[i].y1));
+            cvResize(srcImg, input48Img, CV_INTER_AREA);
+
+            data48 = (uchar*) input48Img->imageData;
+
+            preprocess(img48, data48, 0, 0, input48Img->widthStep, input48Img->nChannels, 48);
+            res_48Layer = Layer48(img48, 48, 48, input48Img->nChannels);
+
+            // 48 layer passed
+            if (res_48Layer > Threshold_48Layer){
+                // 48 calibration
+                out_48c = CaliLayer48(img48, 48, 48, input48Img->nChannels);
+                s = out_48c[0];
+                x = out_48c[1];
+                y = out_48c[2];
+                free(out_48c);
+
+                cali_x = window[i].x1 - x * (window[i].x2 - window[i].x1) / s;
+                cali_y = window[i].x1 - y * (window[i].y2 - window[i].y1) / s;
+                cali_w = (window[i].x2 - window[i].x1) / s;
+                cali_h = (window[i].y2 - window[i].y1) / s;
+
+                // make sure the calibrated window not beyond the image boundary
+                if (cali_x >= WIDTH || cali_y >= HEIGHT){
+                    continue;
+                }
+
+                cali_x = max(cali_x, 0);
+                cali_y = max(cali_y, 0);
+                cali_w = min(cali_w, WIDTH - cali_x);
+                cali_h = min(cali_h, HEIGHT - cali_y);
+
+                window[i].x1 = cali_x;                    // x1
+                window[i].y1 = cali_y;                    // y1
+                window[i].x2 = cali_x + cali_w;           // x2
+                window[i].y2 = cali_y + cali_h;           // y2
+                window[i].score = res_48Layer;            // 12 layer score
+                window[i].iou = 0.0;                      // iou ratio
+                window[i].dropped= false;                 // if it's dropped
+
+            }
+
+            cvResetImageROI(srcImg);
+        }
+
+        // NMS after 48 calibration
+        nms(window, counter, Threshold_48NMS);
+
+        // display sorted windows surviving 48 layer
+        cvNamedWindow("48 layer", CV_WINDOW_AUTOSIZE);
+        for (i = 0; i < counter; i++){
+            if (window[i].dropped == false){
+                cvRectangle(originImg3, cvPoint(window[i].x1, window[i].y1), cvPoint(window[i].x2, window[i].y2), cvScalar(255,0,0,0), 2, 4, 0);
+            }
+        }
+        cvShowImage("48 layer", originImg3);
+        cvMoveWindow("48 layer", 500, 400);
+        // end of 48 layer, 48 calibration, NMS
+
+
+
+
+
+
+
+
         cvWaitKey(0);
-        exit(0);
     }
     // image pyramid loop ends
 
     freeArray(img, 12);
+    freeArray(img24, 12);
+    freeArray(img48, 12);
 
     return 0;
 }
