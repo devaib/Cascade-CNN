@@ -1,4 +1,4 @@
-file(REMOVE_RECURSE
+FILE(REMOVE_RECURSE
   "CMakeFiles/run.dir/model.c.o"
   "CMakeFiles/run.dir/12Layer.c.o"
   "CMakeFiles/run.dir/12CLayer.c.o"
@@ -19,6 +19,6 @@ file(REMOVE_RECURSE
 )
 
 # Per-language clean rules from dependency scanning.
-foreach(lang C)
-  include(CMakeFiles/run.dir/cmake_clean_${lang}.cmake OPTIONAL)
-endforeach()
+FOREACH(lang C)
+  INCLUDE(CMakeFiles/run.dir/cmake_clean_${lang}.cmake OPTIONAL)
+ENDFOREACH(lang)

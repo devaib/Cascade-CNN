@@ -1,8 +1,8 @@
 #include "global.h"
 
 // ***************** parameters settings start *************************
-// home folder
-const char FILE_PATH[] = "/Users/wbh/";
+// home folder(path of cnn folder)
+const char FILE_PATH[] = "/home/binghao/";
 
 // test image path
 const char TEST_IMAGE[] = "cnn/test/img/group1.jpg";
@@ -96,6 +96,11 @@ int main(void){
         img48[i] = malloc(48 * sizeof(float));
     }
 
+    // for printing scores
+    CvFont font;
+    cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.3, 0.3, 0, 1, 8);
+    char word[5];
+
     // load image
     IplImage *srcImg, *dstImg;
     srcImg = cvLoadImage(file, CV_LOAD_IMAGE_GRAYSCALE);
@@ -158,9 +163,8 @@ int main(void){
                     cali_h = 12 * pyr_rate / s;
 
                     // make sure the calibrated window not beyond the image boundary
-                    if (cali_x >= WIDTH || cali_y >= HEIGHT){
-                        continue;
-                    }
+                    if (cali_x >= WIDTH || cali_y >= HEIGHT) continue;
+
                     cali_x = max(cali_x, 0);
                     cali_y = max(cali_y, 0);
                     cali_w = min(cali_w, WIDTH - cali_x);
@@ -176,6 +180,7 @@ int main(void){
                     counter++;
                     // end of 12 layer, 12 calibration
 
+
                 }
             }
         }
@@ -189,9 +194,16 @@ int main(void){
         for (i = 0; i < counter; i++){
             cvRectangle(originImg, cvPoint(window[i].x1, window[i].y1), cvPoint(window[i].x2, window[i].y2), cvScalar(255,0,0,0), 2, 4, 0);
             // printf("[#%d] x1: %d, y1: %d, x2: %d, y2: %d, score: %f, iou: %f, dropped: %s\n", i, window[i].x1, window[i].y1, window[i].x2, window[i].y2, window[i].score, window[i].iou, window[i].dropped ? "true" : "false");
+
+            if (window[i].dropped == false){
+                sprintf(word, "%.2f", window[i].score);
+                cvPutText(originImg, word, cvPoint(window[i].x1, window[i].y1), &font, cvScalar(255, 255, 255, 0));
+            }
         }
         cvShowImage("12 layer", originImg);
         cvMoveWindow("12 layer", 10, 10);
+
+        printf("12 layer: x1: %d, y1: %d, x2: %d, y2: %d\n", window[15].x1, window[15].y1, window[15].x2, window[15].y2);
 
         // NMS after 12 calibration
         nms(window, counter, Threshold_12NMS);
@@ -199,16 +211,19 @@ int main(void){
         // display sorted windows surviving 12 layer
         cvNamedWindow("12 layer after NMS", CV_WINDOW_AUTOSIZE);
         for (i = 0; i < counter; i++){
-            if (window[i].dropped == false)
+            if (window[i].dropped == false){
                 cvRectangle(originImg1, cvPoint(window[i].x1, window[i].y1), cvPoint(window[i].x2, window[i].y2), cvScalar(255,0,0,0), 2, 4, 0);
+
+                sprintf(word, "%.2f", window[i].score);
+                cvPutText(originImg1, word, cvPoint(window[i].x1, window[i].y1), &font, cvScalar(255, 255, 255, 0));
+            }
         }
         cvShowImage("12 layer after NMS", originImg1);
         cvMoveWindow("12 layer after NMS", 500, 10);
 
         // 24 layer, 24 calibration, NMS
         for (i = 0; i< counter; i++){
-            if (window[i].dropped == true)
-                continue;
+            if (window[i].dropped == true) continue;
 
             cvSetImageROI(srcImg, cvRect(window[i].x1, window[i].y1, window[i].x2 - window[i].x1, window[i].y2 - window[i].y1));
             cvResize(srcImg, input24Img, CV_INTER_AREA);
@@ -227,15 +242,20 @@ int main(void){
                 y = out_24c[2];
                 free(out_24c);
 
+                if (i == 15)
+                    printf("s: %f, x: %f, y: %f\n", s, x, y);
+
                 cali_x = window[i].x1 - x * (window[i].x2 - window[i].x1) / s;
-                cali_y = window[i].x1 - y * (window[i].y2 - window[i].y1) / s;
+                cali_y = window[i].y1 - y * (window[i].y2 - window[i].y1) / s;
                 cali_w = (window[i].x2 - window[i].x1) / s;
                 cali_h = (window[i].y2 - window[i].y1) / s;
 
+
+                if (i == 15)
+                    printf("cali_x: %d, cali_y: %d, cali_w: %d, cali_h: %d\n", cali_x, cali_y, cali_w, cali_h);
+
                 // make sure the calibrated window not beyond the image boundary
-                if (cali_x >= WIDTH || cali_y >= HEIGHT){
-                    continue;
-                }
+                if (cali_x >= WIDTH || cali_y >= HEIGHT) continue;
 
                 cali_x = max(cali_x, 0);
                 cali_y = max(cali_y, 0);
@@ -255,6 +275,8 @@ int main(void){
             cvResetImageROI(srcImg);
         }
 
+        printf("24 layer: x1: %d, y1: %d, x2: %d, y2: %d\n", window[15].x1, window[15].y1, window[15].x2, window[15].y2);
+
         // NMS after 24 calibration
         nms(window, counter, Threshold_24NMS);
 
@@ -263,6 +285,9 @@ int main(void){
         for (i = 0; i < counter; i++){
             if (window[i].dropped == false){
                 cvRectangle(originImg2, cvPoint(window[i].x1, window[i].y1), cvPoint(window[i].x2, window[i].y2), cvScalar(255,0,0,0), 2, 4, 0);
+
+                sprintf(word, "%.2f", window[i].score);
+                cvPutText(originImg2, word, cvPoint(window[i].x1, window[i].y1), &font, cvScalar(255, 255, 255, 0));
             }
         }
         cvShowImage("24 layer", originImg2);
@@ -272,8 +297,7 @@ int main(void){
 
         // 48 layer, 48 calibration, NMS
         for (i = 0; i< counter; i++){
-            if (window[i].dropped == true)
-                continue;
+            if (window[i].dropped == true) continue;
 
             cvSetImageROI(srcImg, cvRect(window[i].x1, window[i].y1, window[i].x2 - window[i].x1, window[i].y2 - window[i].y1));
             cvResize(srcImg, input48Img, CV_INTER_AREA);
@@ -293,14 +317,12 @@ int main(void){
                 free(out_48c);
 
                 cali_x = window[i].x1 - x * (window[i].x2 - window[i].x1) / s;
-                cali_y = window[i].x1 - y * (window[i].y2 - window[i].y1) / s;
+                cali_y = window[i].y1 - y * (window[i].y2 - window[i].y1) / s;
                 cali_w = (window[i].x2 - window[i].x1) / s;
                 cali_h = (window[i].y2 - window[i].y1) / s;
 
                 // make sure the calibrated window not beyond the image boundary
-                if (cali_x >= WIDTH || cali_y >= HEIGHT){
-                    continue;
-                }
+                if (cali_x >= WIDTH || cali_y >= HEIGHT) continue;
 
                 cali_x = max(cali_x, 0);
                 cali_y = max(cali_y, 0);
@@ -314,7 +336,6 @@ int main(void){
                 window[i].score = res_48Layer;            // 12 layer score
                 window[i].iou = 0.0;                      // iou ratio
                 window[i].dropped= false;                 // if it's dropped
-
             }
 
             cvResetImageROI(srcImg);
@@ -328,12 +349,16 @@ int main(void){
         for (i = 0; i < counter; i++){
             if (window[i].dropped == false){
                 cvRectangle(originImg3, cvPoint(window[i].x1, window[i].y1), cvPoint(window[i].x2, window[i].y2), cvScalar(255,0,0,0), 2, 4, 0);
+
+                sprintf(word, "%.2f", window[i].score);
+                cvPutText(originImg3, word, cvPoint(window[i].x1, window[i].y1), &font, cvScalar(255, 255, 255, 0));
             }
         }
         cvShowImage("48 layer", originImg3);
         cvMoveWindow("48 layer", 500, 400);
         // end of 48 layer, 48 calibration, NMS
 
+        printf("48 layer: x1: %d, y1: %d, x2: %d, y2: %d, dropped: %s\n", window[15].x1, window[15].y1, window[15].x2, window[15].y2, window[15].dropped?"true":"false");
 
 
 
@@ -342,6 +367,7 @@ int main(void){
 
 
         cvWaitKey(0);
+        break;
     }
     // image pyramid loop ends
 
