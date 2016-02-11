@@ -1,1 +1,0 @@
-/home/binghao/cnn/12net/src/build/CMakeFiles/cnn.dir

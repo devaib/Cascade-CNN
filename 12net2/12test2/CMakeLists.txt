@@ -1,6 +1,0 @@
-cmake_minimum_required(VERSION 2.8)
-project(12test2)
-find_package(OpenCV)
-include_directories(${OpenCV_INCLUDE_DIRS})
-add_executable(12test2 12test2.c)
-target_link_libraries(12test2 ${OpenCV_LIBS})

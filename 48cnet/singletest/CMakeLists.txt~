@@ -1,6 +1,0 @@
-cmake_minimum_required(VERSION 2.8)
-project(singletest)
-find_package(OpenCV)
-include_directories(${OpenCV_INCLUDE_DIRS})
-add_executable(singletest singletest.c 24CLayer.c)
-target_link_libraries(singletest ${OpenCV_LIBS})
