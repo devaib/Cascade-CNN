@@ -1,7 +1,7 @@
 #include "global.h"
 
 // ***************** parameters settings start *************************
-// home folder(path of cnn folder)
+// path of cnn folder
 const char FILE_PATH[] = "/home/binghao/cnn/";
 
 // test image path
