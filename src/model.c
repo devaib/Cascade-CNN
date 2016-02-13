@@ -2,7 +2,7 @@
 
 // ***************** parameters settings start *************************
 // path of cnn folder
-const char FILE_PATH[] = "/home/binghao/cnn/";
+const char FILE_PATH[] = "/home/binghao/faceClassifier/";
 
 // test image path
 const char TEST_IMAGE[] = "test/img/group1.jpg";
@@ -73,8 +73,11 @@ int main(void){
     // image pyramid rate
     int pyr_rate = MinFaceSize / 12;
 
+    // image pyrimid stopping
+    bool flagStop = false;
+
     // file path
-    char file[50];
+    char file[150];
     strcpy(file, FILE_PATH);
     strcat(file, TEST_IMAGE);
 
@@ -123,7 +126,8 @@ int main(void){
 
 
     // image pyramid loop starts
-    while (1){
+    while (!flagStop){
+        counter = 0;
 
         // image pyramid down
         dstImg = doPyrDown(srcImg, pyr_rate);
@@ -367,7 +371,13 @@ int main(void){
 
 
         cvWaitKey(0);
-        break;
+        cvDestroyWindow("12 layer");
+        cvDestroyWindow("12 layer after NMS");
+        cvDestroyWindow("24 layer");
+        cvDestroyWindow("48 layer");
+
+        pyr_rate *= 2;
+        if (dstImg->height / 2 < 12) flagStop = true;
     }
     // image pyramid loop ends
 

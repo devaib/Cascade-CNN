@@ -6,6 +6,38 @@
 
 #IncludeRegexTransform: 
 
+/home/binghao/cnn/demo/12CLayer.c
+global.h
+/home/binghao/cnn/demo/global.h
+
+/home/binghao/cnn/demo/12Layer.c
+global.h
+/home/binghao/cnn/demo/global.h
+
+/home/binghao/cnn/demo/24CLayer.c
+global.h
+/home/binghao/cnn/demo/global.h
+
+/home/binghao/cnn/demo/24Layer.c
+global.h
+/home/binghao/cnn/demo/global.h
+
+/home/binghao/cnn/demo/48CLayer.c
+global.h
+/home/binghao/cnn/demo/global.h
+
+/home/binghao/cnn/demo/48Layer.c
+global.h
+/home/binghao/cnn/demo/global.h
+
+/home/binghao/cnn/demo/doPyrDown.c
+cv.h
+-
+
+/home/binghao/cnn/demo/freeArray.c
+stdlib.h
+-
+
 /home/binghao/cnn/demo/global.h
 stdlib.h
 -
@@ -22,9 +54,17 @@ math.h
 unistd.h
 -
 
+/home/binghao/cnn/demo/itos.c
+
 /home/binghao/cnn/demo/model.c
 global.h
 /home/binghao/cnn/demo/global.h
+
+/home/binghao/cnn/demo/multiplyByElement.c
+
+/home/binghao/cnn/demo/preprocess.c
+math.h
+-
 
 /usr/local/include/opencv/cv.h
 opencv2/core/core_c.h
@@ -65,6 +105,12 @@ opencv2/core/core.hpp
 /usr/local/include/opencv2/calib3d/opencv2/core/core.hpp
 opencv2/features2d/features2d.hpp
 /usr/local/include/opencv2/calib3d/opencv2/features2d/features2d.hpp
+opencv2/core/affine.hpp
+/usr/local/include/opencv2/calib3d/opencv2/core/affine.hpp
+
+/usr/local/include/opencv2/core/affine.hpp
+opencv2/core/core.hpp
+-
 
 /usr/local/include/opencv2/core/core.hpp
 opencv2/core/types_c.h
@@ -126,6 +172,8 @@ tmmintrin.h
 smmintrin.h
 -
 nmmintrin.h
+-
+immintrin.h
 -
 immintrin.h
 -
