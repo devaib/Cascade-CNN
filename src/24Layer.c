@@ -3,7 +3,7 @@
 float MultiplyByElement5_(float m1[][5], float m2[][5]);
 float MultiplyByElement10(float m1[][10][10], float m2[][10][10], int outer_loop);
 
-float Layer24(float **img, int height, int width, int channels, char *path){
+float Layer24(float **img, int height, int width, int channels){
     int i, j, k, l;
     float img_segment[5][5];
     float filter[64][5][5];
@@ -12,10 +12,10 @@ float Layer24(float **img, int height, int width, int channels, char *path){
 
     // char path[] = "/home/binghao/cnn/24net/24net.bin";
     // char path[] = "/Users/wbh/cnn/24net/24net.bin";
-    // char path[250];
-//     strcpy(path, "");
-//     strcat(path, FILE_PATH);
-//     strcat(path, "weights/24net.bin");
+char path[250];
+strcpy(path, "");
+strcat(path, FILE_PATH);
+strcat(path, "weights/24net.bin");
 
 
 

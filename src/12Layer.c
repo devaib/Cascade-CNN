@@ -3,7 +3,7 @@
 float MultiplyByElement3(float m1[][3], float m2[][3]);
 float MultiplyByElement5(float m1[][5][5], float m2[][5][5], int outer_loop);
 
-float Layer12(float **img, int height, int width, int channels, char *path){
+float Layer12(float **img, int height, int width, int channels){
     int i, j, k, l;
     float img_segment[3][3];
     float filter[16][3][3];
@@ -12,10 +12,10 @@ float Layer12(float **img, int height, int width, int channels, char *path){
 
     //char path[] = "/home/binghao/cnn/12net/module1.bin";
     // char path[] = "/Users/wbh/cnn/12net/module1.bin";
-//     char path[250];
-//     strcpy(path, "");
-//     strcat(path, FILE_PATH);
-//     strcat(path, "weights/12net.bin");
+char path[250];
+strcpy(path, "");
+strcat(path, FILE_PATH);
+strcat(path, "weights/12net.bin");
 
     // read the weight and bias
     const int Depth = 16;
@@ -164,8 +164,6 @@ float Layer12(float **img, int height, int width, int channels, char *path){
     output8[1] = b - logsum;
     out[0] = expf(output8[0]);
     out[1] = expf(output8[1]);
-    printf("%f\n", out[0]);
-    exit(0);
 
     /* write results into a file
     FILE *ffp = fopen(pooling_output_path,"w");
