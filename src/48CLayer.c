@@ -281,7 +281,7 @@ strcat(path, "weights/48cnet.bin");
     float yn = 0;
 
     // the threshold
-    float thres = 0.0;
+    float thres = 0.1;
 
     int m = 0;
     for (i = 0; i < 5; i++){
@@ -303,13 +303,22 @@ strcat(path, "weights/48cnet.bin");
         }
     }
 
-    sn /= m;
-    xn /= m;
-    yn /= m;
+    if (m == 0)
+    {
+        out_48c[0] = 1;
+        out_48c[1] = 0;
+        out_48c[2] = 0;
+    }
+    else
+    {
+        sn /= m;
+        xn /= m;
+        yn /= m;
 
-    out_48c[0] = sn;
-    out_48c[1] = xn;
-    out_48c[2] = yn;
+        out_48c[0] = sn;
+        out_48c[1] = xn;
+        out_48c[2] = yn;
+    }
 
     return out_48c;
     /*

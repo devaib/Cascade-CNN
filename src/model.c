@@ -52,8 +52,8 @@ int main(void){
 
     // thresholds
     const float Threshold_12Layer = 0.5;
-    const float Threshold_24Layer = 0.5;
-    const float Threshold_48Layer = 0.5;
+    const float Threshold_24Layer = 0.01;
+    const float Threshold_48Layer = 0.0;
     const float Threshold_12NMS = 0.3;
     const float Threshold_24NMS = 0.3;
     const float Threshold_48NMS = 0.3;
@@ -259,17 +259,10 @@ int main(void){
                 y = out_24c[2];
                 free(out_24c);
 
-                if (i == 15)
-                    printf("s: %f, x: %f, y: %f\n", s, x, y);
-
                 cali_x = window[i].x1 - x * (window[i].x2 - window[i].x1) / s;
                 cali_y = window[i].y1 - y * (window[i].y2 - window[i].y1) / s;
                 cali_w = (window[i].x2 - window[i].x1) / s;
                 cali_h = (window[i].y2 - window[i].y1) / s;
-
-
-                if (i == 15)
-                    printf("cali_x: %d, cali_y: %d, cali_w: %d, cali_h: %d\n", cali_x, cali_y, cali_w, cali_h);
 
                 // make sure the calibrated window not beyond the image boundary
                 if (cali_x >= WIDTH || cali_y >= HEIGHT) continue;
@@ -283,10 +276,14 @@ int main(void){
                 window[i].y1 = cali_y;                    // y1
                 window[i].x2 = cali_x + cali_w;           // x2
                 window[i].y2 = cali_y + cali_h;           // y2
-                window[i].score = res_24Layer;            // 12 layer score
+                window[i].score = res_24Layer;            // 24 layer score
                 window[i].iou = 0.0;                      // iou ratio
                 window[i].dropped= false;                 // if it's dropped
 
+            }
+            else
+            {
+                window[i].dropped = true;
             }
 
             cvResetImageROI(srcImg);
@@ -326,8 +323,10 @@ int main(void){
 
             // 48 layer passed
             if (res_48Layer > Threshold_48Layer){
+                printf("res_48: %f\n", res_48Layer);
                 // 48 calibration
                 out_48c = CaliLayer48(img48, 48, 48, input48Img->nChannels);
+
                 s = out_48c[0];
                 x = out_48c[1];
                 y = out_48c[2];
@@ -339,7 +338,7 @@ int main(void){
                 cali_h = (window[i].y2 - window[i].y1) / s;
 
                 // make sure the calibrated window not beyond the image boundary
-                if (cali_x >= WIDTH || cali_y >= HEIGHT) continue;
+                if (cali_x >= WIDTH || cali_y >= HEIGHT) window[i].dropped = true;
 
                 cali_x = max(cali_x, 0);
                 cali_y = max(cali_y, 0);
@@ -350,9 +349,13 @@ int main(void){
                 window[i].y1 = cali_y;                    // y1
                 window[i].x2 = cali_x + cali_w;           // x2
                 window[i].y2 = cali_y + cali_h;           // y2
-                window[i].score = res_48Layer;            // 12 layer score
+                window[i].score = res_48Layer;            // 48 layer score
                 window[i].iou = 0.0;                      // iou ratio
                 window[i].dropped= false;                 // if it's dropped
+            }
+            else
+            {
+                window[i].dropped = true;
             }
 
             cvResetImageROI(srcImg);

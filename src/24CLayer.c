@@ -230,13 +230,22 @@ strcat(path, "weights/24cnet.bin");
         }
     }
 
-    sn /= m;
-    xn /= m;
-    yn /= m;
+    if (m == 0)
+    {
+        out_24c[0] = 1;
+        out_24c[1] = 0;
+        out_24c[2] = 0;
+    }
+    else
+    {
+        sn /= m;
+        xn /= m;
+        yn /= m;
 
-    out_24c[0] = sn;
-    out_24c[1] = xn;
-    out_24c[2] = yn;
+        out_24c[0] = sn;
+        out_24c[1] = xn;
+        out_24c[2] = yn;
+    }
 
     /*
     FILE *ffp = fopen(pooling_output_path,"w");

@@ -6,10 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/home/binghao/cnn/src/12Layer.c
-global.h
-/home/binghao/cnn/src/global.h
-
 /home/binghao/cnn/src/global.h
 stdlib.h
 -
@@ -25,6 +21,10 @@ math.h
 -
 unistd.h
 -
+
+/home/binghao/cnn/src/model.c
+global.h
+/home/binghao/cnn/src/global.h
 
 /usr/local/include/opencv/cv.h
 opencv2/core/core_c.h
