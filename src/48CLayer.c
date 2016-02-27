@@ -6,7 +6,7 @@ float MultiplyByElement5(float m1[][5][5], float m2[][5][5], int outer_loop);
 
 float MultiplyByElement18(float *m1, float m2[][18][18], int size);
 
-float* CaliLayer48(float **img, int height, int width, int channels){
+float* CaliLayer48(float **img, int height, int width, int channels, float Threshold_48CalibrationLayer ){
     int i, j, k, l;
     float img_segment[5][5];
 
@@ -280,9 +280,6 @@ strcat(path, "weights/48cnet.bin");
     float xn = 0;
     float yn = 0;
 
-    // the threshold
-    float thres = 0.1;
-
     int m = 0;
     for (i = 0; i < 5; i++){
         for (j = 0; j < 3; j++){
@@ -290,7 +287,7 @@ strcat(path, "weights/48cnet.bin");
                 // printf("output7 - logsum = %f\n", output7[9*i+3*j+k] - logsum);
                 out[9*i+3*j+k] = expf(output7[9*i+3*j+k] - logsum);
                 // printf("out[%d] = %f\n", 9*i+3*j+k, out[9*i+3*j+k]);
-                if (out[9*i+3*j+k] > thres){
+                if (out[9*i+3*j+k] > Threshold_48CalibrationLayer){
                     // printf("out[%d] = %f\n", 9*i+3*j+k, out[9*i+3*j+k]);
                     // printf("i: %d, j: %d, k: %d\n", i, j, k);
 

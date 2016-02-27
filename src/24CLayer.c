@@ -3,7 +3,7 @@
 float MultiplyByElement5_(float m1[][5], float m2[][5]);
 float MultiplyByElement10(float m1[][10][10], float m2[][10][10], int outer_loop);
 
-float* CaliLayer24(float **img, int height, int width, int channels){
+float* CaliLayer24(float **img, int height, int width, int channels, float Threshold_24CalibrationLayer){
     int i, j, k, l;
     float img_segment[5][5];
     float filter[32][5][5];
@@ -209,15 +209,12 @@ strcat(path, "weights/24cnet.bin");
     float xn = 0;
     float yn = 0;
 
-    // the threshold
-    float thres = 0.1;
-
     int m = 0;
     for (i = 0; i < 5; i++){
         for (j = 0; j < 3; j++){
             for (k = 0; k < 3; k++){
                 out[9*i+3*j+k] = expf(output7[9*i+3*j+k] - logsum);
-                if (out[9*i+3*j+k] > thres){
+                if (out[9*i+3*j+k] > Threshold_24CalibrationLayer){
                     // printf("out[%d] = %f\n", 9*i+3*j+k, out[9*i+3*j+k]);
                     // printf("i: %d, j: %d, k: %d\n", i, j, k);
 

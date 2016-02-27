@@ -2,20 +2,11 @@
 
 // ***************** parameters settings start *************************
 // path of cnn folder
-const char FILE_PATH[] = "/home/binghao/cnn/";
+const char FILE_PATH[] = "/Users/wbh/cnn/";
 
 // test image path
+// const char TEST_IMAGE[] = "test/img/faces6.jpg";
 const char TEST_IMAGE[] = "test/img/group1.jpg";
-/*
-const char path_12[] = "/Users/andres/Documents/Programming/github/faceClassifier/weights/12net.bin";
-const char path_C12[]= "/Users/andres/Documents/Programming/github/faceClassifier/weights/12cnet.bin";
-const char path_24[] = "/Users/andres/Documents/Programming/github/faceClassifier/weights/24net.bin";
-const char path_C24[]= "/Users/andres/Documents/Programming/github/faceClassifier/weights/24cnet.bin";
-const char path_48[] = "/Users/andres/Documents/Programming/github/faceClassifier/weights/48net.bin";
-const char path_C48[]= "/Users/andres/Documents/Programming/github/faceClassifier/weights/48cnet.bin";
-*/
-
-
 
 
 
@@ -24,11 +15,11 @@ const char path_C48[]= "/Users/andres/Documents/Programming/github/faceClassifie
 // function declarations
 // layers
 float Layer12(float **img, int width, int height, int channels);
-float* CaliLayer12(float **img, int width, int height, int channels);
+float* CaliLayer12(float **img, int width, int height, int channels, float Threshold_12CalibrationLayer);
 float Layer24(float **img, int width, int height, int channels);
-float* CaliLayer24(float **img, int width, int height, int channels);
+float* CaliLayer24(float **img, int width, int height, int channels, float Threshold_24CalibrationLayer);
 float Layer48(float **img, int width, int height, int channels);
-float* CaliLayer48(float **img, int width, int height, int channels);
+float* CaliLayer48(float **img, int width, int height, int channels, float Threshold_48CalibrationLayer);
 
 // image pyramid down by rate
 IplImage* doPyrDown(IplImage *src, int rate);
@@ -51,12 +42,15 @@ int main(void){
     const int MinFaceSize = 72;
 
     // thresholds
-    const float Threshold_12Layer = 0.5;
-    const float Threshold_24Layer = 0.01;
-    const float Threshold_48Layer = 0.0;
-    const float Threshold_12NMS = 0.3;
-    const float Threshold_24NMS = 0.3;
-    const float Threshold_48NMS = 0.3;
+    const float Threshold_12Layer = .5;
+    const float Threshold_24Layer = .01;
+    const float Threshold_48Layer = -.01;
+    const float Threshold_12CalibrationLayer = .1;
+    const float Threshold_24CalibrationLayer = .1;
+    const float Threshold_48CalibrationLayer = .1;
+    const float Threshold_12NMS = .3;
+    const float Threshold_24NMS = .3;
+    const float Threshold_48NMS = .3;
 
     // detection windows
     struct Windows window[500];
@@ -165,7 +159,7 @@ int main(void){
                 // 12 layer passed
                 if (res_12Layer > Threshold_12Layer){
                     // 12 calibration layer
-                    out_12c = CaliLayer12(img, 12, 12, channels);
+                    out_12c = CaliLayer12(img, 12, 12, channels, Threshold_12CalibrationLayer);
 
                     s = out_12c[0]; x = out_12c[1]; y = out_12c[2];
                     free(out_12c);      // memory allocated in CaliLayer12
@@ -253,7 +247,7 @@ int main(void){
             // 24 layer passed
             if (res_24Layer > Threshold_24Layer){
                 // 24 calibration
-                out_24c = CaliLayer24(img24, 24, 24, input24Img->nChannels);
+                out_24c = CaliLayer24(img24, 24, 24, input24Img->nChannels, Threshold_24CalibrationLayer);
                 s = out_24c[0];
                 x = out_24c[1];
                 y = out_24c[2];
@@ -323,9 +317,8 @@ int main(void){
 
             // 48 layer passed
             if (res_48Layer > Threshold_48Layer){
-                printf("res_48: %f\n", res_48Layer);
                 // 48 calibration
-                out_48c = CaliLayer48(img48, 48, 48, input48Img->nChannels);
+                out_48c = CaliLayer48(img48, 48, 48, input48Img->nChannels, Threshold_48CalibrationLayer);
 
                 s = out_48c[0];
                 x = out_48c[1];
