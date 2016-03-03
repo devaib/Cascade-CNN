@@ -48,9 +48,9 @@ int main(void){
     const float Threshold_12CalibrationLayer = .1;
     const float Threshold_24CalibrationLayer = .1;
     const float Threshold_48CalibrationLayer = .1;
-    const float Threshold_12NMS = .3;
-    const float Threshold_24NMS = .3;
-    const float Threshold_48NMS = .3;
+    const float Threshold_12NMS = .3f;
+    const float Threshold_24NMS = .3f;
+    const float Threshold_48NMS = 1.0f;
 
     // detection windows
     struct Windows window[500];
@@ -138,6 +138,7 @@ int main(void){
 
         // image pyramid down
         dstImg = doPyrDown(srcImg, pyr_rate);
+
 
         // get the image data
         width = dstImg -> width;

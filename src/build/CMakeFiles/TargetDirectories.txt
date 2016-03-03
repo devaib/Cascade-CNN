@@ -1,1 +1,1 @@
-/home/binghao/cnn/src/build/CMakeFiles/run.dir
+/Users/wbh/cnn/src/build/CMakeFiles/run.dir
