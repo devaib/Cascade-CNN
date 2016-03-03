@@ -3,37 +3,38 @@ require 'nnx'
 require 'image'
 require 'torch'
 
--- load image
-local filename = '/Users/wbh/cnn/test/img/group1.jpg'
-local im =  image.load(filename):float()
-im = image.rgb2y(im)
-im = image.scale(im, 75, 50)
+path = '/home/binghao'
 
--- preprocess
-local imean=im:mean()
-local istd=im:std()
-im:add(-imean)
-im:div(istd)
+-- load image
+filename = path .. '/cnn/test/img/group1.jpg'
+im =  image.load(filename):float()
+im = image.rgb2y(im)
+-- im = image.scale(im, 75, 50)
 print(im)
 
-torch.setdefaulttensortype('torch.FloatTensor')
-model = torch.load('/Users/wbh/faceClassifier/weights/model.net')
+--[[
+-- preprocess
+imean=im:mean()
+istd=im:std()
+im:add(-imean)
+im:div(istd)
 
+torch.setdefaulttensortype('torch.FloatTensor')
+model = torch.load(path .. '/cnn/debug/model.net')
 
 net12 = nn.Sequential()
-net12:add(network1.modules[1])
-net12:add(network1.modules[2])
-net12:add(network1.modules[3])
-net12:add(network1.modules[4])
-net12:add(network1.modules[5])
-net12:add(network1.modules[6])
-net12:add(network1.modules[7])
-net12:add(network1.modules[8])
+net12:add(model.modules[1])
+net12:add(model.modules[2])
+net12:add(model.modules[3])
+net12:add(model.modules[4])
+net12:add(model.modules[5])
+net12:add(model.modules[6])
+net12:add(model.modules[7])
+net12:add(model.modules[8])
 
---y=net12:forward(im)
+y=net12:forward(im)
 --print(y)
 
---[[
 network1:float()
 net12 = nn.Sequential()
 net12:add(network1.modules[1])
