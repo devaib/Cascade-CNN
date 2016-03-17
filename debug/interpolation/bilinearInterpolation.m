@@ -57,3 +57,4 @@ function [out] = bilinearInterpolation(im, outputDims_width_height)
                        chan(in4_ind).*(delta_R).*(delta_C);
         out(:,:,idx) = cast(tmp, 'like', im);
     end
+endfunction
