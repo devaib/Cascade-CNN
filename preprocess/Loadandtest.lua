@@ -8,14 +8,14 @@ local filename = '/home/binghao/faceClassifier/test/1/0_1_111.jpg'
 --local filename ='/Users/wbh/cnn/test/nonfaces/40009.jpg'
 --local filename = '/Users/wbh/cnn/src/3.jpg'
 local im =  image.load(filename):float()
-im=image.scale(im,12,12)
+im=image.scale(im,48,48)
 --image.save('/home/binghao/cnn/24net/singletest/test.jpg', im)
 local imean=im:mean()
 local istd=im:std()
 im:add(-imean)
 im:div(istd)
 torch.setdefaulttensortype('torch.FloatTensor')
-network1 = torch.load('/home/binghao/faceClassifier/weights/12net.bin')
+network1 = torch.load('/home/binghao/faceClassifier/weights/48net.bin')
 -- network1 = torch.load('/Users/wbh/cnn/12cnet/model.net')
 
 network1:float()
