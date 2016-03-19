@@ -5,5 +5,5 @@ function contra = myContrast(im)
             summ = summ + (i-j).^2 * im(i, j);
         end
     end
-    contra = summ
-endfunction
+    contra = summ;
+

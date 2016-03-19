@@ -6,4 +6,3 @@ function homo = homogeneity(im)
         end
     end
     homo = summ;
-endfunction

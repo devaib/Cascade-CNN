@@ -1,15 +1,31 @@
 clear all; close all; clc;
-pkg load image;
+%load pkg image;
 
-img = imread('./2.png');
-img = rgb2gray(img);
-imshow(img)
-img = cast(img, 'double');
+srcFiles = dir('/Users/wbh/Desktop/img/*.jpg');
 
-eng = energy(img)
-entro = entropy(img)
-contra = myContrast(img)
-homo = homogeneity(img)
+engs = [];
+entros = [];
+contras = [];
+homos = [];
 
-pause
+for i = 1 : length(srcFiles)
+    filename = strcat('/Users/wbh/Desktop/img/', srcFiles(i).name);
+    
+    img = imread(filename);
+    img = rgb2gray(img);
+    imshow(img)
+    img = cast(img, 'double');
 
+    eng = energy(img);
+    entro = entropy(img);
+    contra = myContrast(img);
+    homo = homogeneity(img);
+    
+    engs = [engs eng];
+    entros = [entros entro];
+    contras = [contras contra];
+    homos = [homos homo];
+    
+end
+
+close all; 
