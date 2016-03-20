@@ -1,1 +1,0 @@
-/home/binghao/cnn/cvtest/interpolations/build/CMakeFiles/interpolations.dir
