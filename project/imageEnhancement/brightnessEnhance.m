@@ -4,4 +4,4 @@ function [dstImage] = brightnessEnhance (srcImage, enhancementVal)
 
     dstImage = srcImage + enhancementVal;
     dstImage = cast(dstImage, 'uint8');
-%endfunction
+endfunction

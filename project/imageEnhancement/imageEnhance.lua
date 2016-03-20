@@ -2,36 +2,56 @@ require 'torch'
 require 'image'
 
 function brightnessEnhance(inputImage, enhanceVal)
-    if type(inputImage) ~= "userdata"
-        then error("input argument 1: unexpected type")
-    end
-    if type(enhanceVal) ~= "number"
-        then error("input argument 2: unexpected type")
-    end
+    if type(inputImage) ~= "userdata" then error("input argument 1: unexpected type") end
+    if type(enhanceVal) ~= "number" then error("input argument 2: unexpected type") end
+    if math.abs(enhanceVal) > 1 then error("input argument 2: enhanceVal must range from -1 to 1") end
 
     local outputImage = inputImage + enhanceVal
+    
+    outputImage:apply(function(x)
+            if x < 0 then return 0 end
+            if x > 1 then return 1 end 
+        end)
+
     return outputImage
 end
 
-function contrastEnhance(inputImage, enhanceRate)
-    if type(inputImage) ~= "userdata"
-        then error("input argument 1: unexpected type")
-    end
-    if type(enhanceRate) ~= "number"
-        then error("input argument 2: unexpected type")
-    end
+function contrastEnhance(inputImage, enhanceVal)
+    if type(inputImage) ~= "userdata" then error("input argument 1: unexpected type") end
+    if type(enhanceVal) ~= "number" then error("input argument 2: unexpected type") end
+    if math.abs(enhanceVal) > 1 then error("input argument 2: enhanceVal must range from -1 to 1") end
 
-    local outputImage = inputImage * enhanceRate
+    local correctionFactor = 259 * (enhanceVal * 255 + 255) / 255 / (259 - enhanceVal * 255)
+    local outputImage = torch.mul((inputImage - 0.5), correctionFactor) + 0.5 
+
+    outputImage:apply(function(x)
+            if x < 0 then return 0 end
+            if x > 1 then return 1 end
+        end)
+
     return outputImage
 end
 
-local filename = '/home/binghao/Desktop/0.png'
+-- test
+local filename = './38.png'
 local srcImage = image.load(filename)
 
-local brightImage = brightnessEnhance(srcImage, .5)
-local contrastImage = contrastEnhance(srcImage, 3.5)
+local tBrightness = 0
+local tContrast = 0
 
-image.save('./0_1.png', brightImage)
-image.save('./0_2.png', contrastImage)
+local saveImage = true 
+t0 = os.time()
+for i = -100, 100 do
+    local brightImage = brightnessEnhance(srcImage, i/100)
+    local contrastImage = contrastEnhance(srcImage, i/100)
+
+    if (saveImage) then
+        image.save('./brightnessEnhanced/38#'..i..'.png', brightImage)
+        image.save('./contrastEnhanced/38#'..i..'.png', contrastImage)
+    end
+end
+
+print("time: "..os.difftime(os.time(), t0).."s")
+print("done")
 
 
