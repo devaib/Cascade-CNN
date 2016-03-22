@@ -17,6 +17,8 @@ title('Original Image')
 q = [satLevel/2 1-satLevel/2];
 
 imRGB_orig = reshape(im_orig, size(im_orig, 3), size(im_orig, 1) * size(im_orig, 2), 1);
+size(im_orig)
+size(imRGB_orig)
 imRGB = zeros(size(imRGB_orig));
 N = size(imRGB_orig,2);
 color = {'r','g','b'};
@@ -29,9 +31,11 @@ for ch = 1:3
         xlim([0 255])
         title('Original Histogram')
     end
-    tiles = quantile(imRGB_orig(ch,:),q);
-    [sum(imRGB_orig(ch,:)<tiles(1))/N,sum(imRGB_orig(ch,:)>tiles(2))/N] %check percentages are correct
+    tiles = quantile(imRGB_orig(ch,:),q)
+    %[sum(imRGB_orig(ch,:)<tiles(1))/N,sum(imRGB_orig(ch,:)>tiles(2))/N] %check percentages are correct
     %imRGB(ch,:) = saturate(imRGB_orig(ch,:),tiles); %saturate at the appropriate pts. in distribution
+    imRGB(ch, :) = min(tiles(2), imRGB(ch, :));
+    imRGB(ch, :) = max(tiles(1), imRGB(ch, :));
     bottom = min(imRGB(ch,:)); top = max(imRGB(ch,:));
     imRGB(ch,:) = (imRGB(ch,:)-bottom)/(top-bottom);
     
