@@ -39,7 +39,7 @@ local crdnlty=torch.Tensor(numblbls,2)-- to store training/test data lengths  re
 local labelstring={'Closed','Down','Left','Open','Right','Up'}
 ---------loop to load ALL data
 for lbl=1,numblbls do --labels
-imageslist, SizeImageList = loadDataFiles('/Users/wbh/Desktop/TrainingData/'..labelstring[lbl]..'/')
+imageslist, SizeImageList = loadDataFiles('/home/devai/TrainingData/'..labelstring[lbl]..'/')
 imageslist, imageslistt, crdnlty[{lbl,1}], crdnlty[{lbl,2}] = ShuffleAndDivideSets(imageslist,SizeImageList)
 
 	if lbl==1 then

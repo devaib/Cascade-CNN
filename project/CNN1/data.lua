@@ -83,7 +83,7 @@ tedata={}
 telabels={}
 
 for lbl=1,numblbls do --labels
-    imageslist, SizeImageList = loadDataFiles('/home/jblan016/Desktop/project/TrainingData/'..labelstring[lbl]..'/')
+    imageslist, SizeImageList = loadDataFiles('/home/devai/TrainingData/'..labelstring[lbl]..'/')
     imageslist, imageslistt, crdnlty[{lbl,1}], crdnlty[{lbl,2}] = ShuffleAndDivideSets(imageslist,SizeImageList)
 
     trdata[lbl] = {}
@@ -97,7 +97,7 @@ for lbl=1,numblbls do --labels
     tesize = crdnlty[{lbl,2}]
 	   
     for j,filename in ipairs(imageslist) do
-	print(filename)
+	--print(filename)
 	trdata[lbl][j] = loadscaleimage(filename,Height,Width)
 
     end
@@ -106,7 +106,7 @@ for lbl=1,numblbls do --labels
 
 
     for j,filename in ipairs(imageslistt) do
-        print(filename)
+        --print(filename)
         tedata[lbl][j] = loadscaleimage(filename,Height,Width)
     end
 trdatamiddle[lbl]=trmidtemp
@@ -189,17 +189,18 @@ trSize=trSize+trainData.labels[i]:size()[1]
 teSize=teSize+testData.labels[i]:size()[1]
 end
 -- Displaying the dataset architecture ---------------------------------------
+
 print(sys.COLORS.red ..  'Training Data:')
-print(trainData)
+--print(trainData)
 print()
 
 print(sys.COLORS.red ..  'Test Data:')
-print(testData)
+--print(testData)
 print()
 
 
 -- Preprocessing -------------------------------------------------------------
- dofile 'preprocessing.lua'
+dofile 'preprocessing.lua'
 print('preprocessing done')
 trdatamiddle = nil
 trainData.size = function() return trSize end  

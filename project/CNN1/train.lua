@@ -142,7 +142,7 @@ end
 function randlighting(imag,lbl)
   local r=torch.randn(3)*0.316227; -- r~N(0,sqrt(.1)I)
   imag= imag+torch.mul(P[lbl][1],r[1])+torch.mul(P[lbl][2],r[2])+torch.mul(P[lbl][3],r[3])
-return imag
+  return imag
 end
 
 function randcropscale(img,ich,mdlH,mdlW)
@@ -199,7 +199,8 @@ local function train(trainData)
       for i = t,t+opt.batchSize-1 do
          yt[idx] = indx[shuffle[i]][1]
          --x[idx] = randlighting( randBSC( randcropscale(trainData.data[yt[idx]][indx[shuffle[i]][2]],ich,mdlH,mdlW) ) ,indx[shuffle[i]][1])
-         x[idx] = randlighting( randBSC( trainData.data[yt[idx]][indx[shuffle[i]][2]] ) ,indx[shuffle[i]][1])
+		 x[idx] = trainData.data[yt[idx]][indx[shuffle[i]][2]] 
+         --x[idx] = randlighting( randBSC( trainData.data[yt[idx]][indx[shuffle[i]][2]] ) ,indx[shuffle[i]][1])
          --flipping
          
          if torch.rand(1)[1]>.5 then
