@@ -1,0 +1,186 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Title
+\end_layout
+
+\begin_layout Author
+Author
+\end_layout
+
+\begin_layout Date
+date
+\end_layout
+
+\begin_layout Section
+Feature Extration
+\end_layout
+
+\begin_layout Standard
+lda
+\end_layout
+
+\begin_layout Section
+Pre-training
+\end_layout
+
+\begin_layout Standard
+Resize & shuffle, Extract the principle components for 6 classes, 
+\end_layout
+
+\begin_layout Standard
+Parameter setting, Random brightness/saturation/contrast, Random lighting,
+\end_layout
+
+\begin_layout Section
+Model
+\end_layout
+
+\begin_layout Standard
+cnn introduction, model structure
+\end_layout
+
+\begin_layout Standard
+Input layer [45x37x3] will hold the raw pixel values of the image, in this
+ case an image of width 45, height 37, and with three color channels R,G,B;
+\end_layout
+
+\begin_layout Standard
+Convolutional layer will compute the output of neurons that are connected
+ to local regions in the input, each computing a dot product between their
+ weights and the region they are connected to in the input volume.
+ 
+\end_layout
+
+\begin_layout Standard
+ReLU layer will apply an elementwise activation function, such as the thresholdi
+ng at zero;
+\end_layout
+
+\begin_layout Standard
+Maxpooling layer will perform a downsampling operation along the spatial
+ dimensions (width, height);
+\end_layout
+
+\begin_layout Standard
+Fully connected layer will compute the class scores, resulting in volume
+ of size [1x1x6], where each of the 6 numbers correspond to a class score,
+ such as among the 6 categories of dataset.
+ As with ordinary Neural Networks and as the name implies, each neuron in
+ this layer will be connected to all the numbers in the previous volume;
+\end_layout
+
+\begin_layout Section
+Details of Learning
+\end_layout
+
+\begin_layout Standard
+hardware, sgd, batch size, epoch, time
+\end_layout
+
+\begin_layout Standard
+predicted accurary
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Standard
+with/without metalearning
+\end_layout
+
+\begin_layout Section
+Deconvolutional Neural Network
+\end_layout
+
+\begin_layout Standard
+pass
+\end_layout
+
+\begin_layout Section
+Discussion
+\end_layout
+
+\begin_layout Standard
+\begin_inset Quotes eld
+\end_inset
+
+Discuss how you would change your approach now that you have seen the other
+ approaches and now that you know how well you did.
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
