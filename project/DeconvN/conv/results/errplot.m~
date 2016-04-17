@@ -1,0 +1,50 @@
+close all
+clear all
+Tr_avg=zeros(401,10);
+Te_avg=zeros(401,10);
+Tr_tot=zeros(401,10);
+Te_tot=zeros(401,10);
+for i=1:10;
+ld=importdata(sprintf('train_%d.log',i));
+Tr_avg(:,i)=ld.data;
+ld=importdata(sprintf('test_%d.log',i));
+Te_avg(:,i)=ld.data;
+ld=importdata(sprintf('trainvld_%d.log',i));
+Tr_tot(:,i)=ld.data;
+ld=importdata(sprintf('testvld_%d.log',i));
+Te_tot(:,i)=ld.data;
+end
+t=(1:401);
+MTr_avg=mean(Tr_avg,2);
+MTe_avg=mean(Te_avg,2);
+MTr_tot=mean(Tr_tot,2);
+MTe_tot=mean(Te_tot,2);
+
+STr_avg=sqrt(mean((Tr_avg-repmat(MTr_avg,1,10)).^2,2));
+STe_avg=sqrt(mean((Te_avg-repmat(MTe_avg,1,10)).^2,2));
+STr_tot=sqrt(mean((Tr_tot-repmat(MTr_tot,1,10)).^2,2));
+STe_tot=sqrt(mean((Te_tot-repmat(MTe_tot,1,10)).^2,2));
+
+plot(t,MTr_av
+
+
+%{
+Eopt=zeros(size(Te.data));
+Epir=zeros(size(Te.data));
+idxmin=zeros(size(Te.data));
+T=100;
+for t=1:Lte;
+    [Eopt(t),idxmin(t)]=min(1-Te.data(1:t)/100);
+    Epir(t)=max(1-Te.data(max(1,t-T+1):t)/100);
+end
+figure
+subplot(1,1,1)
+plot((1:Lte),1-Te.data/100,(1:Ltr),1-Tr.data/100,(1:Lte),Eopt,'LineWidth',2), legend('test','train','Eopt')
+title('Test,Train, and minimal test error rate'),xlabel('epochs'),ylabel('error rate'),xlim([0,500]),ylim([0,.14])
+%subplot(2,1,2)
+%plot((1:Lte),1-Te.data/100,(1:Ltr),1-Tr.data/100,(1:Lte),Eopt,'LineWidth',2), legend('test','train','Eopt')
+%title('Test,Train, and minimal test error rate'),xlabel('epochs'),ylabel('error rate'),xlim([0,500]),ylim([0,.14])
+figure
+plot((1:Lte),idxmin), legend('idxmin'),title('Early stopping save point')
+xlabel('epochs'),ylabel('Early S. epoch')
+%}

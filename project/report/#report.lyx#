@@ -3,6 +3,9 @@
 \begin_document
 \begin_header
 \textclass article
+\begin_preamble
+\usepackage{multirow}
+\end_preamble
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -25,6 +28,7 @@
 \bibtex_command default
 \index_command default
 \paperfontsize default
+\spacing double
 \use_hyperref false
 \papersize default
 \use_geometry false
@@ -432,10 +436,6 @@ Maxpooling layer(image from http://cs231n.github.io/)
 
 \end_layout
 
-\begin_layout Plain Layout
-
-\end_layout
-
 \end_inset
 
 
@@ -449,8 +449,60 @@ Fully connected layer will compute the class scores, resulting in volume
  volume;
 \end_layout
 
+\begin_layout Standard
+Input(45 x 37 x 3) 
+\end_layout
+
+\begin_layout Standard
+Convolution(3 -> 64, 12 x 4) 
+\end_layout
+
+\begin_layout Standard
+Maxpool(3 x 3, 2, 2, 1, 1) 
+\end_layout
+
+\begin_layout Standard
+ReLU 
+\end_layout
+
+\begin_layout Standard
+Convolution(64 -> 64, 3 x 3, 1, 1, 1, 1) 
+\end_layout
+
+\begin_layout Standard
+ReLU 
+\end_layout
+
+\begin_layout Standard
+Convolution(64 -> 64, 3 x 3, 1, 1, 1, 1)
+\end_layout
+
+\begin_layout Standard
+Maxpool ReLU Convolution(64 -> 256, 9 x 9)
+\end_layout
+
+\begin_layout Standard
+Dropout(0.5)
+\end_layout
+
+\begin_layout Standard
+ReLU 
+\end_layout
+
+\begin_layout Standard
+Reshape(256) 
+\end_layout
+
+\begin_layout Standard
+Linear(256 -> 6) 
+\end_layout
+
+\begin_layout Standard
+Softmax
+\end_layout
+
 \begin_layout Section
-Details of Learning
+Details of training
 \end_layout
 
 \begin_layout Standard
@@ -463,6 +515,30 @@ hardware, sgd, batch size, epoch, time
 
 \begin_layout Standard
 predicted accurary
+\end_layout
+
+\begin_layout Standard
+When training, 
+\end_layout
+
+\begin_layout Standard
+By experience, we set the learning rate =
+\begin_inset Formula $10^{-3}$
+\end_inset
+
+, momentum =
+\begin_inset Formula $10^{-1}$
+\end_inset
+
+, weight decay =
+\begin_inset Formula $10^{-5}$
+\end_inset
+
+, learning rate decay =
+\begin_inset Formula $10{}^{-7}$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -627,210 +703,255 @@ overly optimistic prediction
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float table
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Confusion matrix over the blind test dataset
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
 \begin_inset ERT
 status open
 
 \begin_layout Plain Layout
 
 % Please add the following required packages to your document preamble:
- % 
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
-usepackage{multirow} 
+begin{table}[]
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
-begin{table}[] 
+caption{Confusion matrix over the blind test dataset}
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
 centering 
-\backslash
-caption{My caption} 
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
 label{my-label} 
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
-begin{tabular}{cccccccc}                                               
-           & 
+begin{tabular}{cccccccc}  
+\end_layout
+
+\begin_layout Plain Layout
+
+& 
 \backslash
 multicolumn{7}{c}{
 \backslash
-textbf{Actual}}                                                        
-                                                                       
-                             
+textbf{Actual}} 
 \backslash
 
 \backslash
  
 \backslash
 cline{2-8}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
 multicolumn{1}{c|}{
 \backslash
 multirow{7}{*}{
 \backslash
-textbf{Predicted}}} & 
+rotatebox[origin=c]{90}{
 \backslash
-multicolumn{1}{c|}{}  & 
+textbf{Predicted}}}} & 
 \backslash
-multicolumn{1}{c|}{C}    & 
+multicolumn{1}{c|}{} & 
 \backslash
-multicolumn{1}{c|}{O}    & 
+multicolumn{1}{c|}{C} & 
 \backslash
-multicolumn{1}{c|}{U}    & 
+multicolumn{1}{c|}{O} & 
 \backslash
-multicolumn{1}{c|}{D}    & 
+multicolumn{1}{c|}{U} & 
 \backslash
-multicolumn{1}{c|}{R}    & 
+multicolumn{1}{c|}{D} & 
 \backslash
-multicolumn{1}{c|}{L}    
+multicolumn{1}{c|}{R} & 
+\backslash
+multicolumn{1}{c|}{L} 
 \backslash
 
 \backslash
  
 \backslash
-cline{2-8}  
+cline{2-8} 
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
-multicolumn{1}{c|}{}                                    & 
+multicolumn{1}{c|}{} & 
 \backslash
 multicolumn{1}{c|}{C} & 
 \backslash
 multicolumn{1}{c|}{3337} & 
 \backslash
-multicolumn{1}{c|}{0}    & 
+multicolumn{1}{c|}{0} & 
 \backslash
-multicolumn{1}{c|}{23}   & 
+multicolumn{1}{c|}{23} & 
 \backslash
-multicolumn{1}{c|}{7}    & 
+multicolumn{1}{c|}{7} & 
 \backslash
-multicolumn{1}{c|}{0}    & 
+multicolumn{1}{c|}{0} & 
 \backslash
-multicolumn{1}{c|}{0}    
+multicolumn{1}{c|}{0} 
 \backslash
 
 \backslash
  
 \backslash
 cline{2-8}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
-multicolumn{1}{c|}{}                                    & 
+multicolumn{1}{c|}{} & 
 \backslash
 multicolumn{1}{c|}{O} & 
 \backslash
-multicolumn{1}{c|}{20}   & 
+multicolumn{1}{c|}{20} & 
 \backslash
 multicolumn{1}{c|}{2534} & 
 \backslash
-multicolumn{1}{c|}{0}    & 
+multicolumn{1}{c|}{0} & 
 \backslash
-multicolumn{1}{c|}{48}   & 
+multicolumn{1}{c|}{48} & 
 \backslash
-multicolumn{1}{c|}{21}   & 
+multicolumn{1}{c|}{21} & 
 \backslash
-multicolumn{1}{c|}{14}   
+multicolumn{1}{c|}{14} 
 \backslash
 
 \backslash
  
 \backslash
 cline{2-8}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
-multicolumn{1}{c|}{}                                    & 
+multicolumn{1}{c|}{} & 
 \backslash
 multicolumn{1}{c|}{U} & 
 \backslash
-multicolumn{1}{c|}{15}   & 
+multicolumn{1}{c|}{15} & 
 \backslash
-multicolumn{1}{c|}{97}   & 
+multicolumn{1}{c|}{97} & 
 \backslash
 multicolumn{1}{c|}{2913} & 
 \backslash
-multicolumn{1}{c|}{3}    & 
+multicolumn{1}{c|}{3} & 
 \backslash
-multicolumn{1}{c|}{11}   & 
+multicolumn{1}{c|}{11} & 
 \backslash
-multicolumn{1}{c|}{73}   
+multicolumn{1}{c|}{73} 
 \backslash
 
 \backslash
  
 \backslash
 cline{2-8}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
-multicolumn{1}{c|}{}                                    & 
+multicolumn{1}{c|}{} & 
 \backslash
 multicolumn{1}{c|}{D} & 
 \backslash
-multicolumn{1}{c|}{63}   & 
+multicolumn{1}{c|}{63} & 
 \backslash
-multicolumn{1}{c|}{9}    & 
+multicolumn{1}{c|}{9} & 
 \backslash
-multicolumn{1}{c|}{15}   & 
+multicolumn{1}{c|}{15} & 
 \backslash
 multicolumn{1}{c|}{3097} & 
 \backslash
-multicolumn{1}{c|}{181}  & 
+multicolumn{1}{c|}{181} & 
 \backslash
-multicolumn{1}{c|}{133}  
+multicolumn{1}{c|}{133} 
 \backslash
 
 \backslash
  
 \backslash
 cline{2-8}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
-multicolumn{1}{c|}{}                                    & 
+multicolumn{1}{c|}{} & 
 \backslash
 multicolumn{1}{c|}{R} & 
 \backslash
-multicolumn{1}{c|}{64}   & 
+multicolumn{1}{c|}{64} & 
 \backslash
-multicolumn{1}{c|}{24}   & 
+multicolumn{1}{c|}{24} & 
 \backslash
-multicolumn{1}{c|}{22}   & 
+multicolumn{1}{c|}{22} & 
 \backslash
-multicolumn{1}{c|}{13}   & 
+multicolumn{1}{c|}{13} & 
 \backslash
 multicolumn{1}{c|}{3447} & 
 \backslash
-multicolumn{1}{c|}{17}   
+multicolumn{1}{c|}{17} 
 \backslash
 
 \backslash
  
 \backslash
 cline{2-8}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
-multicolumn{1}{c|}{}                                    & 
+multicolumn{1}{c|}{} & 
 \backslash
 multicolumn{1}{c|}{L} & 
 \backslash
-multicolumn{1}{c|}{0}    & 
+multicolumn{1}{c|}{0} & 
 \backslash
-multicolumn{1}{c|}{1}    & 
+multicolumn{1}{c|}{1} & 
 \backslash
-multicolumn{1}{c|}{1}    & 
+multicolumn{1}{c|}{1} & 
 \backslash
-multicolumn{1}{c|}{23}   & 
+multicolumn{1}{c|}{23} & 
 \backslash
-multicolumn{1}{c|}{0}    & 
+multicolumn{1}{c|}{0} & 
 \backslash
 multicolumn{1}{c|}{2973} 
 \backslash
@@ -839,15 +960,20 @@ multicolumn{1}{c|}{2973}
  
 \backslash
 cline{2-8}  
-\backslash
-end{tabular} 
-\backslash
-end{table}
 \end_layout
 
-\end_inset
+\begin_layout Plain Layout
 
 
+\backslash
+end{tabular} 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{table}
 \end_layout
 
 \end_inset
