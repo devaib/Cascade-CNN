@@ -197,19 +197,11 @@ LDA for 6 classes(first row: close, down, left; second row: open, right,up)
 \end_layout
 
 \begin_layout Section
-Pre-training
-\end_layout
-
-\begin_layout Subsection
-Image Pre-processing
+Data Pre-processing
 \end_layout
 
 \begin_layout Standard
 Resize & shuffle, normalization 
-\end_layout
-
-\begin_layout Subsection
-Image Enhancement
 \end_layout
 
 \begin_layout Standard
@@ -297,7 +289,7 @@ centering
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Principle Component Extraction for 6 classes
+Principle Components Extraction for 6 classes
 \end_layout
 
 \end_inset
@@ -502,19 +494,37 @@ Softmax
 \end_layout
 
 \begin_layout Section
-Details of Learning
+Details of training
 \end_layout
 
 \begin_layout Standard
-Learning rate=1e-3 momentum= .1 weight decay=1e-5 learning rate decay=1e-7
+To get an estimation of the accuracy, we implemented 10-fold cross validation.
+ We randomly separate the dataset into 10 subsets and trained 10 models
+ on each subset one by one.
+ We trained the models with a batch size of 128 examples, momentum of 0.9,
+ weight decay of 0.00005, learning rate of 0.001 and learning rate decay of
+ 
+\begin_inset Formula $10{}^{-7}$
+\end_inset
+
+.
+ We found small amount of weight decay was important for the model to learn.
+ The results appear good enough after about 400 epochs and it took 4-5 hours.
+ After training, we test the 10 models on the test set simutaneouly to get
+ the mean and standard deviation of the accuracy.
+ 
 \end_layout
 
 \begin_layout Standard
-hardware, sgd, batch size, epoch, time
-\end_layout
-
-\begin_layout Standard
-predicted accurary
+After that, we trained our final model on the whole dataset.
+ We use 8 CPU threads to prepare the minibatches.
+ We use data augmentation with horizontal flipping and random brightness/saturat
+ion/contrast adjustment.
+ For each image, data augmentation could generate up to (# ???) different
+ situations.
+ We use stochastic gradient descent on NVidia TITAN X GPU to train the entire
+ network for about (# ???) hours.
+ (# more details here...)
 \end_layout
 
 \begin_layout Section
@@ -522,7 +532,14 @@ Results
 \end_layout
 
 \begin_layout Standard
-with/without metalearning
+Without meta-learning, the testing accurary was less than 90% while the
+ training accurary approaching 100%.
+ By using meta-learning, we achieved the average accuracy of 99.4% with standard
+ deviation less than 0.3% for the 10-fold cross validation models.
+ We found that meta-learning procedure really helped reduce overfitting
+ problem.
+ However, the result was extremly biased since we were only training on
+ 4 training subjects in six lighting conditions.
 \end_layout
 
 \begin_layout Standard
@@ -681,17 +698,6 @@ overly optimistic prediction
 \begin_layout Standard
 \begin_inset ERT
 status open
-
-\begin_layout Plain Layout
-
-% Please add the following required packages to your document preamble:
- 
-\end_layout
-
-\begin_layout Plain Layout
-
- 
-\end_layout
 
 \begin_layout Plain Layout
 
