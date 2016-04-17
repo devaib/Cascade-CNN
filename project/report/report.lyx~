@@ -3,6 +3,9 @@
 \begin_document
 \begin_header
 \textclass article
+\begin_preamble
+\usepackage{multirow}
+\end_preamble
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -25,6 +28,7 @@
 \bibtex_command default
 \index_command default
 \paperfontsize default
+\spacing double
 \use_hyperref false
 \papersize default
 \use_geometry false
@@ -88,16 +92,226 @@ Feature Extration
 lda
 \end_layout
 
+\begin_layout Standard
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/lda.png
+	lyxscale 40
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+LDA for tongue protruding down
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/ldas.png
+	lyxscale 40
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+LDA for 6 classes(first row: close, down, left; second row: open, right,up)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Pre-training
 \end_layout
 
+\begin_layout Subsection
+Image Pre-processing
+\end_layout
+
 \begin_layout Standard
-Resize & shuffle, Extract the principle components for 6 classes, 
+Resize & shuffle, normalization 
+\end_layout
+
+\begin_layout Subsection
+Image Enhancement
 \end_layout
 
 \begin_layout Standard
 Parameter setting, Random brightness/saturation/contrast, Random lighting,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/imageenhancement.png
+	lyxscale 20
+	scale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Randomly enhanced images
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/pca.png
+	lyxscale 60
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Principle Component Extraction for 6 classes
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -117,12 +331,62 @@ Input layer [45x37x3] will hold the raw pixel values of the image, in this
 Convolutional layer will compute the output of neurons that are connected
  to local regions in the input, each computing a dot product between their
  weights and the region they are connected to in the input volume.
- 
 \end_layout
 
 \begin_layout Standard
-ReLU layer will apply an elementwise activation function, such as the thresholdi
-ng at zero;
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/convlayer.png
+	lyxscale 50
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Convolutional layer(image from http://cs231n.github.io/)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+ReLU layer will apply an elementwise activation function with the threshold
+ of zero;
 \end_layout
 
 \begin_layout Standard
@@ -131,15 +395,70 @@ Maxpooling layer will perform a downsampling operation along the spatial
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/maxpool.png
+	lyxscale 40
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Maxpooling layer(image from http://cs231n.github.io/)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Fully connected layer will compute the class scores, resulting in volume
  of size [1x1x6], where each of the 6 numbers correspond to a class score,
  such as among the 6 categories of dataset.
- As with ordinary Neural Networks and as the name implies, each neuron in
- this layer will be connected to all the numbers in the previous volume;
+ Each neuron in this layer will be connected to all the numbers in the previous
+ volume;
 \end_layout
 
 \begin_layout Section
 Details of Learning
+\end_layout
+
+\begin_layout Standard
+Learning rate=1e-3 momentum= .1 weight decay=1e-5 learning rate decay=1e-7
 \end_layout
 
 \begin_layout Standard
@@ -158,12 +477,492 @@ Results
 with/without metalearning
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/total_accuracy_without_metalearning.png
+	lyxscale 25
+	scale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+total accuracy without meta learning
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/total_accuracy_with_metalearning1.png
+	lyxscale 20
+	scale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+total accuracy with meta learning
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/total_accuracy_with_metalearning2.png
+	lyxscale 40
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+overly optimistic prediction
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+% Please add the following required packages to your document preamble:
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{table}[]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+caption{Confusion matrix over the blind test dataset}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+label{my-label} 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tabular}{cccccccc}  
+\end_layout
+
+\begin_layout Plain Layout
+
+& 
+\backslash
+multicolumn{7}{c}{
+\backslash
+textbf{Actual}} 
+\backslash
+
+\backslash
+ 
+\backslash
+cline{2-8}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+multicolumn{1}{c|}{
+\backslash
+multirow{7}{*}{
+\backslash
+rotatebox[origin=c]{90}{
+\backslash
+textbf{Predicted}}}} & 
+\backslash
+multicolumn{1}{c|}{} & 
+\backslash
+multicolumn{1}{c|}{C} & 
+\backslash
+multicolumn{1}{c|}{O} & 
+\backslash
+multicolumn{1}{c|}{U} & 
+\backslash
+multicolumn{1}{c|}{D} & 
+\backslash
+multicolumn{1}{c|}{R} & 
+\backslash
+multicolumn{1}{c|}{L} 
+\backslash
+
+\backslash
+ 
+\backslash
+cline{2-8} 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+multicolumn{1}{c|}{} & 
+\backslash
+multicolumn{1}{c|}{C} & 
+\backslash
+multicolumn{1}{c|}{3337} & 
+\backslash
+multicolumn{1}{c|}{0} & 
+\backslash
+multicolumn{1}{c|}{23} & 
+\backslash
+multicolumn{1}{c|}{7} & 
+\backslash
+multicolumn{1}{c|}{0} & 
+\backslash
+multicolumn{1}{c|}{0} 
+\backslash
+
+\backslash
+ 
+\backslash
+cline{2-8}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+multicolumn{1}{c|}{} & 
+\backslash
+multicolumn{1}{c|}{O} & 
+\backslash
+multicolumn{1}{c|}{20} & 
+\backslash
+multicolumn{1}{c|}{2534} & 
+\backslash
+multicolumn{1}{c|}{0} & 
+\backslash
+multicolumn{1}{c|}{48} & 
+\backslash
+multicolumn{1}{c|}{21} & 
+\backslash
+multicolumn{1}{c|}{14} 
+\backslash
+
+\backslash
+ 
+\backslash
+cline{2-8}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+multicolumn{1}{c|}{} & 
+\backslash
+multicolumn{1}{c|}{U} & 
+\backslash
+multicolumn{1}{c|}{15} & 
+\backslash
+multicolumn{1}{c|}{97} & 
+\backslash
+multicolumn{1}{c|}{2913} & 
+\backslash
+multicolumn{1}{c|}{3} & 
+\backslash
+multicolumn{1}{c|}{11} & 
+\backslash
+multicolumn{1}{c|}{73} 
+\backslash
+
+\backslash
+ 
+\backslash
+cline{2-8}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+multicolumn{1}{c|}{} & 
+\backslash
+multicolumn{1}{c|}{D} & 
+\backslash
+multicolumn{1}{c|}{63} & 
+\backslash
+multicolumn{1}{c|}{9} & 
+\backslash
+multicolumn{1}{c|}{15} & 
+\backslash
+multicolumn{1}{c|}{3097} & 
+\backslash
+multicolumn{1}{c|}{181} & 
+\backslash
+multicolumn{1}{c|}{133} 
+\backslash
+
+\backslash
+ 
+\backslash
+cline{2-8}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+multicolumn{1}{c|}{} & 
+\backslash
+multicolumn{1}{c|}{R} & 
+\backslash
+multicolumn{1}{c|}{64} & 
+\backslash
+multicolumn{1}{c|}{24} & 
+\backslash
+multicolumn{1}{c|}{22} & 
+\backslash
+multicolumn{1}{c|}{13} & 
+\backslash
+multicolumn{1}{c|}{3447} & 
+\backslash
+multicolumn{1}{c|}{17} 
+\backslash
+
+\backslash
+ 
+\backslash
+cline{2-8}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+multicolumn{1}{c|}{} & 
+\backslash
+multicolumn{1}{c|}{L} & 
+\backslash
+multicolumn{1}{c|}{0} & 
+\backslash
+multicolumn{1}{c|}{1} & 
+\backslash
+multicolumn{1}{c|}{1} & 
+\backslash
+multicolumn{1}{c|}{23} & 
+\backslash
+multicolumn{1}{c|}{0} & 
+\backslash
+multicolumn{1}{c|}{2973} 
+\backslash
+
+\backslash
+ 
+\backslash
+cline{2-8}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tabular} 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{table}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Deconvolutional Neural Network
 \end_layout
 
 \begin_layout Standard
-pass
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/deconv.png
+	lyxscale 20
+	scale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Visualization of activations in our deconvolution network for 6 classes(first
+ row: close, down, left; second row: open, right,up)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
