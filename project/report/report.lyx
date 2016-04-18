@@ -5,6 +5,7 @@
 \textclass article
 \begin_preamble
 \usepackage{multirow}
+\usepackage{amsmath}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -93,7 +94,6 @@ lda
 \end_layout
 
 \begin_layout Standard
-
 \begin_inset Float figure
 wide false
 sideways false
@@ -124,11 +124,9 @@ centering
 \end_layout
 
 \begin_layout Plain Layout
-
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-
 LDA for tongue protruding down
 \end_layout
 
@@ -143,7 +141,6 @@ LDA for tongue protruding down
 \end_layout
 
 \begin_layout Standard
-
 \begin_inset Float figure
 wide false
 sideways false
@@ -174,11 +171,9 @@ centering
 \end_layout
 
 \begin_layout Plain Layout
-
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-
 LDA for 6 classes(first row: close, down, left; second row: open, right,up)
 \end_layout
 
@@ -197,7 +192,7 @@ LDA for 6 classes(first row: close, down, left; second row: open, right,up)
 \end_layout
 
 \begin_layout Section
-Data Pre-processing
+Data Pre-processing and Augmentation
 \end_layout
 
 \begin_layout Standard
@@ -206,6 +201,126 @@ Resize & shuffle, normalization
 
 \begin_layout Standard
 Parameter setting, Random brightness/saturation/contrast, Random lighting,
+\end_layout
+
+\begin_layout Standard
+Since the neural network only accept uniform input size, we resized and
+ cropped all the image to 45x37x3 and take the central area of them.
+ We also normalized the training data respecting to the mean the variance
+ of the whole training set.
+\end_layout
+
+\begin_layout Standard
+It's a common method to reduce overfitting by using label-preserving transformat
+ions.
+ In our implementation, the transformed images are generated on the CPU
+ while the training is taking place on the GPU.
+ Our data augmentation method altered the intensities of the RGB channels
+ in training images.
+ More specifically, we performed PCA on the set of RGB pixel values throughout
+ the training set.
+ To each training image, we add multiple of the found pricipal components,
+ with magnitudes proportional to the corresponding eigenvalues times a random
+ viriable drawn from a Gaussian with mean zero and standard deviation 0.1.
+ Therefore to each RGB image pixel 
+\begin_inset Formula $I{}_{xy}=[I_{xy}^{R},I_{xy}^{G},I_{xy}^{B}]^{T}$
+\end_inset
+
+ we add the following quantity:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{equation*}
+\end_layout
+
+\begin_layout Plain Layout
+
+[p_1, p_2, p_3][
+\backslash
+alpha_1
+\backslash
+lambda_1, 
+\backslash
+alpha_2
+\backslash
+lambda_2, 
+\backslash
+alpha_3
+\backslash
+lambda_3]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{equation*}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$p_i$
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+lambda_i$
+\end_layout
+
+\end_inset
+
+ are 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$i$
+\end_layout
+
+\end_inset
+
+th eigenvector and eigenvalue of the 3x3 convariance matrix of RGB pixel
+ values, respectively, and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+alpha_i$
+\end_layout
+
+\end_inset
+
+ is the random variable.
+ (# from ImageNet)
 \end_layout
 
 \begin_layout Standard
@@ -289,7 +404,7 @@ centering
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Principle Components Extraction for 6 classes
+Principle components extraction for 6 classes
 \end_layout
 
 \end_inset
@@ -312,6 +427,10 @@ Model
 
 \begin_layout Standard
 cnn introduction, model structure
+\end_layout
+
+\begin_layout Standard
+There are several kinds of layers in our CNN model:
 \end_layout
 
 \begin_layout Standard
@@ -442,55 +561,22 @@ Fully connected layer will compute the class scores, resulting in volume
 \end_layout
 
 \begin_layout Standard
-Input(45 x 37 x 3) 
+Here is the structure of our CNN model:
 \end_layout
 
 \begin_layout Standard
-Convolution(3 -> 64, 12 x 4) 
+Input(45 x 37 x 3) ==> Convolution(3 -> 64, 12 x 4) ==> Maxpool(3 x 3, 2,
+ 2, 1, 1) ==> ReLU ==> Convolution(64 -> 64, 3 x 3, 1, 1, 1, 1) 
 \end_layout
 
 \begin_layout Standard
-Maxpool(3 x 3, 2, 2, 1, 1) 
+==> ReLU ==> Convolution(64 -> 64, 3 x 3, 1, 1, 1, 1) ==>Maxpool ==> ReLU
+ ==> Convolution(64 -> 256, 9 x 9) ==> Dropout(0.5) ==> ReLU ==> Reshape(256)
+ 
 \end_layout
 
 \begin_layout Standard
-ReLU 
-\end_layout
-
-\begin_layout Standard
-Convolution(64 -> 64, 3 x 3, 1, 1, 1, 1) 
-\end_layout
-
-\begin_layout Standard
-ReLU 
-\end_layout
-
-\begin_layout Standard
-Convolution(64 -> 64, 3 x 3, 1, 1, 1, 1)
-\end_layout
-
-\begin_layout Standard
-Maxpool ReLU Convolution(64 -> 256, 9 x 9)
-\end_layout
-
-\begin_layout Standard
-Dropout(0.5)
-\end_layout
-
-\begin_layout Standard
-ReLU 
-\end_layout
-
-\begin_layout Standard
-Reshape(256) 
-\end_layout
-
-\begin_layout Standard
-Linear(256 -> 6) 
-\end_layout
-
-\begin_layout Standard
-Softmax
+==> Linear(256 -> 6) ==>Softmax
 \end_layout
 
 \begin_layout Section
@@ -965,6 +1051,52 @@ end{table}
 
 \begin_layout Section
 Deconvolutional Neural Network
+\end_layout
+
+\begin_layout Standard
+convolutional layer -> transpose
+\end_layout
+
+\begin_layout Standard
+maxpooling->maxunpooling
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/unpooling.png
+	lyxscale 50
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Maxpooling and max-unpooling
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
