@@ -22,17 +22,7 @@ Step 3:
 (optional) Change the test image path **TEST_IMAGE[]** (relative path);
 
 Step 4:
-In terminal,
-
-**mkdir ..../faceClassifier/src/build/**
-
-**cd ..../faceClassifier/src/build/**
-
-**cmake ..**
-
-**make**
-
-**./run**
+make
 
 
 
@@ -48,14 +38,4 @@ Step 3:
 (optional) Change the test image path **TEST_IMAGE[]** (relative path);
 
 Step 4:
-In terminal,
-
-**mkdir ..../faceClassifier/demo/build/**
-
-**cd ..../faceClassifier/demo/build/**
-
-**cmake ..**
-
-**make**
-
-**./run**
+make
