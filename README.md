@@ -1,41 +1,15 @@
-# faceClassifier
-Face Classifier using a cascade of CNNs
+# Cascade CNN for face detection
+Reference papar: [A Convolutional Neural Network Cascade for Face Detection](http://users.eecs.northwestern.edu/~xsh835/assets/cvpr2015_cascnn.pdf)
 
 Files structure:
 
-          ---faceClassifier
+          ---Cascade-CNN
               ---demo                 simple demo for illustrating basic idea
               ---preprocess           convert weights from lua file to binary file
               ---src                  main program
               ---test                 test images
               ---weights              weights of each layer
 
-###Run **main program**:
+![image pyramid](https://farm5.staticflickr.com/4175/34231245250_231f96f2e7_b.jpg)
 
-Step 1:
-Open file "..../faceClassifier/src/model.c";
-
-Step 2:
-Modify the **FILE_PATH[]** to the path which your folder ***..../faceClassifier*** is on;
-
-Step 3:
-(optional) Change the test image path **TEST_IMAGE[]** (relative path);
-
-Step 4:
-make
-
-
-
-###Run **demo**:
-
-Step 1:
-Open file "..../faceClassifier/demo/model.c";
-
-Step 2:
-Modify the **FILE_PATH[]** to the path which your folder ***..../faceClassifier*** is on;
-
-Step 3:
-(optional) Change the test image path **TEST_IMAGE[]** (relative path);
-
-Step 4:
-make
+![detection result & heatmap](https://farm5.staticflickr.com/4167/34231244660_b693a4ba00_c.jpg)
