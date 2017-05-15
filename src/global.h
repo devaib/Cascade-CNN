@@ -2,14 +2,15 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <cv.h>
-#include <highgui.h>
+#include <opencv2/core/core_c.h>
+#include <opencv2/highgui/highgui_c.h>
 #include <string.h>
 #include <math.h>
-#include <unistd.h>
 
-#define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
-#define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
+//#define max(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b;})
+//#define min(a, b) ({__typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b;})
+#define max(a, b)	(((a) > (b)) ? (a) : (b));
+#define min()
 
 typedef int bool;
 #define true 1

@@ -2,7 +2,7 @@
 
 // ***************** parameters settings start *************************
 // path of cnn folder
-const char FILE_PATH[] = "/Users/wbh/cnn/";
+const char FILE_PATH[] = "..\..";
 
 // test image path
 // const char TEST_IMAGE[] = "test/img/faces6.jpg";
